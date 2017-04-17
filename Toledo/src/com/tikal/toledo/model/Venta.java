@@ -23,7 +23,6 @@ public class Venta {
 	private List<Detalle> detalles;
 
 	
-	
 	public boolean isFacturado() {
 		return facturado;
 	}
