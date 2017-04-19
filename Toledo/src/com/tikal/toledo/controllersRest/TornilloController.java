@@ -13,39 +13,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.tikal.toledo.controllersRest.VO.ListaLotesVO;
-import com.tikal.toledo.dao.LoteDAO;
-import com.tikal.toledo.model.Lote;
+import com.tikal.toledo.dao.TornilloDAO;
+import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.util.JsonConvertidor;
 
 @Controller
-@RequestMapping(value={"/lotes"})
-public class LoteController {
+@RequestMapping(value={"/tornillos"})
+public class TornilloController {
 
 	@Autowired
-	LoteDAO lotedao;
+	TornilloDAO tornillodao;
 	
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
-			Lote l= (Lote)JsonConvertidor.fromJson(json, Lote.class);
-			lotedao.guardar(l);
-			rs.getWriter().println(JsonConvertidor.toJson(l));
-	}
-	
-	@RequestMapping(value = {
-	"/save" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public void guardar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
-		ListaLotesVO listavo= (ListaLotesVO) JsonConvertidor.fromJson(json, ListaLotesVO.class);
-		lotedao.guardarLotes(listavo.getLista());
-		rs.getWriter().println(JsonConvertidor.toJson(listavo));
+			Tornillo c= (Tornillo) JsonConvertidor.fromJson(json, Tornillo.class);
+			tornillodao.guardar(c);
+			rs.getWriter().println(JsonConvertidor.toJson(c));
 	}
 	
 	@RequestMapping(value = {
 	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
-		List<Lote> lotes= lotedao.porProducto(Long.parseLong(id));
-		rs.getWriter().println(JsonConvertidor.toJson(lotes));
+			
+			rs.getWriter().println(JsonConvertidor.toJson(tornillodao.cargar(Long.parseLong(id))));
 	}
 	
+	@RequestMapping(value = {
+	"/search/{search}" }, method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
+	public void busca(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException{
+			List<Tornillo> lista= tornillodao.buscar(search);
+			rs.getWriter().println(JsonConvertidor.toJson(lista));
+	}
 }
