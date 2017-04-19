@@ -20,6 +20,8 @@ public class Lote {
 	private Date fecha;
 	
 	private float costo;
+	
+	private Long proveedor;
 
 	public Long getId() {
 		return id;
@@ -60,7 +62,13 @@ public class Lote {
 	public void setCosto(float costo) {
 		this.costo = costo;
 	}
-	
-	
+
+	public Long getProveedor() {
+		return proveedor;
+	}
+
+	public void setProveedor(Long proveedor) {
+		this.proveedor = proveedor;
+	}
 	
 }
