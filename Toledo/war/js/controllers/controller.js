@@ -21,5 +21,25 @@ app.config([ '$routeProvider', function($routeProvider) {
 		templateUrl : "pages/tornillos.html",
 //		controller : "controller"
 	});
+	$routeProvider.when('/altaCliente', {
+		templateUrl : "pages/altaCliente.html",
+//		controller : "controller"
+	});
+	$routeProvider.when('/altaProveedor', {
+		templateUrl : "pages/altaProveedor.html",
+//		controller : "controller"
+	});
+	$routeProvider.when('/altaHerramienta', {
+		templateUrl : "pages/altaHerramienta.html",
+//		controller : "controller"
+	});
+	$routeProvider.when('/altaTornillos', {
+		templateUrl : "pages/altaTornillos.html",
+//		controller : "controller"
+	});
+	$routeProvider.when('/inventario', {
+		templateUrl : "pages/inventario.html",
+//		controller : "controller"
+	});
 	
 } ]);
