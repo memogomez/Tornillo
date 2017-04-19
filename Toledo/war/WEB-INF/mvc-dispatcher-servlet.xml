@@ -19,6 +19,7 @@
 	<bean class="com.tikal.toledo.dao.imp.TornilloDAOIpm"/>
 	<bean class="com.tikal.toledo.dao.imp.VentaDAOImp"/>
 	<bean class="com.tikal.toledo.security.UsuarioDAOImp"/>
+	<bean class="com.tikal.toledo.security.PerfilDAOImp"/>
 
 	<!-- Register Bean for Objectify's Entities -->
 	<bean class="com.tikal.toledo.Register" scope="singleton" />
