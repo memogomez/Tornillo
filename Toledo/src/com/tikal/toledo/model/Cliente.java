@@ -72,10 +72,4 @@ public class Cliente {
 		this.domicilio.cp=cp;
 	}
 
-	private class Domicilio{
-		String calle;
-		String colonia;
-		String numero;
-		String cp;
-	}
 }
