@@ -3,8 +3,10 @@ package com.tikal.toledo.model;
 import java.util.Date;
 import java.util.List;
 
+import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
+@Entity
 public class Venta {
 
 	@Id
@@ -22,6 +24,7 @@ public class Venta {
 	
 	private List<Detalle> detalles;
 
+	private String xml;
 	
 	public boolean isFacturado() {
 		return facturado;
@@ -82,4 +85,14 @@ public class Venta {
 	public void addDetalle(Detalle detalle){
 		this.detalles.add(detalle);
 	}
+
+	public String getXml() {
+		return xml;
+	}
+
+	public void setXml(String xml) {
+		this.xml = xml;
+	}
+	
+	
 }
