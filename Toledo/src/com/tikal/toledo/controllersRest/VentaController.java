@@ -51,6 +51,7 @@ public class VentaController {
 			rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
 	
+	
 	@RequestMapping(value = {
 	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
 	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
