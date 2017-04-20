@@ -1,6 +1,7 @@
 package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tikal.toledo.dao.ProveedorDAO;
+import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.Proveedor;
 import com.tikal.toledo.util.JsonConvertidor;
 
@@ -41,5 +43,12 @@ public class ProveedorController {
 	"/search/{search}" }, method = RequestMethod.GET, produces = "application/json")
 	public void search(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException{
 		rs.getWriter().println(JsonConvertidor.toJson(proveedordao.buscar(search)));
+	}
+	
+	@RequestMapping(value = {
+	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
+	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		List<Proveedor> lista= proveedordao.todos();
+		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
 }

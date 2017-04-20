@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tikal.toledo.dao.ProductoDAO;
+import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.util.JsonConvertidor;
 
@@ -44,5 +45,12 @@ public class ProductoController {
 	public void busca(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException{
 			List<Producto> lista= productodao.buscar(search);
 			rs.getWriter().println(JsonConvertidor.toJson(lista));
+	}
+	
+	@RequestMapping(value = {
+	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
+	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		List<Producto> lista= productodao.todos();
+		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
 }
