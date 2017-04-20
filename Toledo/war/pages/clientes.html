@@ -28,72 +28,18 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="odd gradeX">
-									<td>14324</td>
-									<td>Ferreteria 1</td>
-									<td>RFCE4324</td>
-									<td>Alvaro Obregon 200</td>
-									<td class="center">7221345625</td>
+								<tr  ng-repeat="cliente in clientes" class="odd gradeX">
+									<td>{{cliente.id}}</td>
+									<td>{{cliente.nombre}}</td>
+									<td>{{cliente.rfc}}</td>
+									<td>{{cliente.domicilio.calle}} {{cliente.domicilio.colonia}} {{cliente.domicilio.numero}}</td>
+									<td>{{cliente.telefono}}</td>
 									<td>
 
 										<button class="btn btn-success">Editar</button>
 										<button class="btn btn-danger">Eliminar</button>
 									</td>
-								</tr>
-								<tr class="odd gradeX">
-									<td>24324</td>
-									<td>Ferreteria 2</td>
-									<td>RFCE4324</td>
-									<td>Porfirio Diaz 100</td>
-									<td class="center">7221313425</td>
-									<td><button class="btn btn-success">Editar</button>
-										<button class="btn btn-danger">Eliminar</button></td>
-								</tr>
-								<tr class="odd gradeX">
-									<td>34324</td>
-									<td>Ferreteria 3</td>
-									<td>RFCE4324</td>
-									<td>Alvaro Obregon 200</td>
-									<td class="center">7221345625</td>
-									<td><button class="btn btn-success">Editar</button>
-										<button class="btn btn-danger">Eliminar</button></td>
-								</tr>
-								<tr class="odd gradeX">
-									<td>44324</td>
-									<td>Ferreteria 4</td>
-									<td>RFCE4324</td>
-									<td>Alvaro Obregon 200</td>
-									<td class="center">7221345625</td>
-									<td><button class="btn btn-success">Editar</button>
-										<button class="btn btn-danger">Eliminar</button></td>
-								</tr>
-								<tr class="odd gradeX">
-									<td>54324</td>
-									<td>Ferreteria 5</td>
-									<td>RFCE4324</td>
-									<td>Alvaro Obregon 200</td>
-									<td class="center">7221345625</td>
-									<td><button class="btn btn-success">Editar</button>
-										<button class="btn btn-danger">Eliminar</button></td>
-								</tr>
-								<tr class="odd gradeX">
-									<td>64324</td>
-									<td>Ferreteria 6</td>
-									<td>RFCE4324</td>
-									<td>Alvaro Obregon 200</td>
-									<td class="center">7221345625</td>
-									<td><button class="btn btn-success">Editar</button>
-										<button class="btn btn-danger">Eliminar</button></td>
-								</tr>
-								<tr class="odd gradeX">
-									<td>74324</td>
-									<td>Ferreteria 7</td>
-									<td>RFCE4324</td>
-									<td>Alvaro Obregon 200</td>
-									<td class="center">7221345625</td>
-									<td><button class="btn btn-success">Editar</button>
-										<button class="btn btn-danger">Eliminar</button></td>
-								</tr>
+								</tr>								
 							</tbody>
 						</table>
 						<button type="submit" value="enviar" class="btn btn-primary"

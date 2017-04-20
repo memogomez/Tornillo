@@ -17,15 +17,21 @@
                     <div class="panel-body">
                         <form>
                           Precio por Unidad:<br>
-                          <input type="text" class="form-control">
+                          <input type="text" class="form-control" ng-model="newTornillo.precio">
                           <br>                         
                           Medida:<br>
-                          <input type="text" class="form-control">
+                          <input type="text" class="form-control" ng-model="newTornillo.medida">
+                          <br>
+                          Marca:<br>
+                          <input type="text" class="form-control" ng-model="newTornillo.marca">
+                          <br>
+                          Proveedor:<br>
+                          <input type="text" class="form-control" ng-model="newTornillo.proveedor">
                           <br>
                           Cantidad por Mayoreo:<br>
-                          <input type="text" class="form-control">                                                                                                                          
+                          <input type="text" class="form-control" ng-model="newTornillo.cantidad">                                                                                                                          
                           <br><br>
-                          <button type="submit" value="Registrar" class="btn btn-primary">Registrar</button>
+                          <button type="submit" value="Registrar" class="btn btn-primary" ng-click="registraTornillos(newTornillo)">Registrar</button>
                       </form> 
                       <!-- /.table-responsive -->
                   </div>
