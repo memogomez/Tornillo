@@ -90,26 +90,6 @@
 	</pluginRepositories>
 	<dependencies>
 		<dependency>
-			<groupId>technology.tikal</groupId>
-			<artifactId>tikal-commons-shared</artifactId>
-			<version>0.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>technology.tikal</groupId>
-			<artifactId>taller-automotriz-shared</artifactId>
-			<version>0.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>technology.tikal</groupId>
-			<artifactId>tikal-customers-shared</artifactId>
-			<version>0.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>technology.tikal</groupId>
-			<artifactId>tikal-accounts-shared</artifactId>
-			<version>0.1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>

@@ -14,11 +14,22 @@ app.service('herramientasService', [
 			});
 		return d.promise;
 	}
+	this.findHerramientas = function() {
+		var d = $q.defer();
+		$http.get("/productos/findAll/").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
 }])
 app.controller("herramientasController",[
 	'$scope',
 	'herramientasService',
-	function($scope, herramientasService){
+	'$routeParams',
+	function($scope, herramientasService,$routeParams){
 	
 	$scope.registraHerramienta = function(newHerramienta) {
 		console.log(newHerramienta);		
@@ -26,5 +37,13 @@ app.controller("herramientasController",[
 					alert("Herramienta Agregada");
 				})
 	}
+	$scope.herramientas = function() {
+		herramientasService.findHerramientas($routeParams.id).then(
+			function(data) {
+				$scope.herramientas = data;				
+				console.log(data);
+			})
+	}
+	$scope.herramientas();
 		
 }]);

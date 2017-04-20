@@ -28,7 +28,8 @@ app.service('proveedoresService', [
 app.controller("proveedoresController",[
 	'$scope',
 	'proveedoresService',
-	function($scope, proveedoresService){
+	'$routeParams',
+	function($scope, proveedoresService,$routeParams){
 	
 	$scope.registraProveedor = function(newProveedor) {
 		console.log(newProveedor);		

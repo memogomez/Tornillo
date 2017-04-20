@@ -14,11 +14,22 @@ app.service('tornillosService', [
 			});
 		return d.promise;
 	}
+	this.findTornillos = function() {
+		var d = $q.defer();
+		$http.get("/tornillos/findAll/").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
 }])
 app.controller("tornillosController",[
 	'$scope',
 	'tornillosService',
-	function($scope, tornillosService){
+	'$routeParams',
+	function($scope, tornillosService, $routeParams){
 	
 	$scope.registraTornillos = function(newTornillo) {
 		console.log(newTornillo);		
@@ -26,5 +37,13 @@ app.controller("tornillosController",[
 					alert("Tornillo Agregado");
 				})
 	}
+	$scope.tornillos = function() {
+		tornillosService.findTornillos($routeParams.id).then(
+			function(data) {
+				$scope.tornillos = data;				
+				console.log(data);
+			})
+	}
+	$scope.tornillos();
 		
 }]);

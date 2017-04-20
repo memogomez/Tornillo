@@ -3,7 +3,7 @@ app.config([ '$routeProvider', function($routeProvider) {
 
 	$routeProvider.when('/inicio', {
 		templateUrl : "pages/inicio.html",
-//		controller : "controller"
+		controller : "inicioController"
 	});
 	$routeProvider.when('/clientes', {
 		templateUrl : "pages/clientes.html",
@@ -41,7 +41,6 @@ app.config([ '$routeProvider', function($routeProvider) {
 		templateUrl : "pages/inventario.html",
 //		controller : "controller"
 	});
-
 	$routeProvider.when('/login', {
 		templateUrl : "pages/login.html",
 		controller : "navigation"
@@ -71,4 +70,11 @@ app.config([ '$routeProvider', function($routeProvider) {
 		templateUrl : "pages/resetpass.html",
 		controller : "controladorReset"
 	})
+	$routeProvider.otherwise({
+		redirectTo : '/inicio'
+	});
 } ]);
+
+app.controller('inicioController',function(){
+	
+})
