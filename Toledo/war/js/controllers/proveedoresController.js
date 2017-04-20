@@ -24,12 +24,23 @@ app.service('proveedoresService', [
 		});
 		return d.promise;
 	}
+	this.findProveedor = function(id) {
+		var d = $q.defer();
+		$http.get("/proveedores/find/"+id).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
 }])
 app.controller("proveedoresController",[
 	'$scope',
 	'proveedoresService',
 	'$routeParams',
-	function($scope, proveedoresService,$routeParams){
+	'$location',
+	function($scope, proveedoresService,$routeParams, $location){
 	
 	$scope.registraProveedor = function(newProveedor) {
 		console.log(newProveedor);		
@@ -46,4 +57,25 @@ app.controller("proveedoresController",[
 	}
 	$scope.proveedores();
 		
+	$scope.editar = function(id) {
+		$location.path("/proveedores/edit/" + id);
+	}
+	
+}]);
+app.controller("proveedoresEditController",[
+	'$scope',
+	'proveedoresService',
+	'$routeParams',
+	'$location',
+	function($scope, proveedoresService,$routeParams, $location){
+	proveedoresService.findProveedor($routeParams.id).then(function(data){
+		$scope.newProveedor=data;
+	})
+	
+	$scope.registraProveedor = function(newProveedor) {
+		console.log(newProveedor);		
+		proveedoresService.registraProveedor(newProveedor).then(function(newProveedor) {
+					alert("Proveedor Modificado");
+				})
+	}
 }]);

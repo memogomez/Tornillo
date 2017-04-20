@@ -9,9 +9,17 @@ app.config([ '$routeProvider', function($routeProvider) {
 		templateUrl : "pages/clientes.html",
 		controller : "clientesController"
 	});
+	$routeProvider.when('/clientes/edit/:id', {
+		templateUrl : "pages/clientesEdita.html",
+		controller : "clientesEditController"
+	});
 	$routeProvider.when('/proveedores', {
 		templateUrl : "pages/proveedores.html",
 		controller : "proveedoresController"
+	});
+	$routeProvider.when('/proveedores/edit/:id', {
+		templateUrl : "pages/proveedoresEdita.html",
+		controller : "proveedoresEditController"
 	});
 	$routeProvider.when('/herramientas', {
 		templateUrl : "pages/herramientas.html",

@@ -1,0 +1,50 @@
+
+<div class="col-sm-8 text-left"> 
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"> Edita Clientes</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Modificación de Clientes
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <form>
+                          Nombre:<br>
+                          <input type="text" class="form-control" ng-model="newCliente.nombre">
+                          <br>
+                          RFC:<br>
+                          <input type="text" class="form-control" ng-model="newCliente.rfc">
+                          <br>
+                          Calle:<br>
+                          <input type="text" class="form-control" ng-model="newCliente.domicilio.calle">
+                          <br>
+                          Colonia:<br>
+                          <input type="text" class="form-control" ng-model="newCliente.domicilio.colonia">
+                          <br>
+                          Numero:<br> 
+                          <input type="text" class="form-control" ng-model="newCliente.domicilio.numero">
+                          <br>
+                          Telefono:<br>
+                          <input type="text" class="form-control" ng-model="newCliente.telefono">
+                          <br><br>
+                          <button type="submit" value="Registrar" class="btn btn-primary" ng-click="editaCliente(newCliente)">Modificar</button>
+                      </form> 
+                      <!-- /.table-responsive -->
+                  </div>
+                  <!-- /.panel-body -->
+              </div>
+              <!-- /.panel -->
+          </div>
+          <!-- /.col-lg-12 -->
+      </div>
+  </div>
+</div ng-view>
+

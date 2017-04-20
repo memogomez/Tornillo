@@ -23,13 +23,24 @@ app.service('clientesService', [
 			d.reject(response);
 		});
 		return d.promise;
-	}
+	};
+	this.findCliente = function(id) {
+		var d = $q.defer();
+		$http.get("/clientes/find/"+id).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
 }])
 app.controller("clientesController",[
 	'$scope',
 	'clientesService',
 	'$routeParams',
-	function($scope, clientesService, $routeParams){
+	'$location',
+	function($scope, clientesService, $routeParams,$location){
 	
 	$scope.registraCliente = function(newCliente) {
 		console.log(newCliente);		
@@ -45,4 +56,26 @@ app.controller("clientesController",[
 			})
 	}
 	$scope.clientes();
+	
+	$scope.editar = function(id) {
+		$location.path("/clientes/edit/" + id);
+	}
+	
+}]);
+app.controller("clientesEditController",[
+	'$scope',
+	'clientesService',
+	'$routeParams',
+	'$location',
+	function($scope, clientesService, $routeParams,$location){
+		clientesService.findCliente($routeParams.id).then(function(data){
+			$scope.newCliente=data;
+		})
+		
+		$scope.editaCliente = function(newCliente) {
+		console.log(newCliente);		
+		clientesService.registraCliente(newCliente).then(function(newCliente) {
+					alert("Cliente Modificado");
+				})
+	}	
 }]);
