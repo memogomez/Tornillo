@@ -17,8 +17,8 @@ app.service('sessionService', [
 					if (data.usuario) {
 						$rootScope.authenticated = true;
 						$rootScope.variable = true;
-						$rootScope.cargarEmpresasHeader();
-						$location.path("/empresas/list");
+//						$rootScope.cargarEmpresasHeader();
+						$location.path("/inicio");
 					} else {
 						$rootScope.authenticated = false;
 					}
