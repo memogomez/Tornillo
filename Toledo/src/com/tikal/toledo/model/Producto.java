@@ -19,6 +19,12 @@ public class Producto {
 	
 	private String marca;
 	
+	private int maximo;
+	
+	private int minimo;
+	
+	private int existencia;
+	
 	public String getMarca() {
 		return marca;
 	}
@@ -57,6 +63,30 @@ public class Producto {
 
 	public void setProveedor(String proveedor) {
 		this.proveedor = proveedor;
+	}
+
+	public int getMaximo() {
+		return maximo;
+	}
+
+	public void setMaximo(int maximo) {
+		this.maximo = maximo;
+	}
+
+	public int getMinimo() {
+		return minimo;
+	}
+
+	public void setMinimo(int minimo) {
+		this.minimo = minimo;
+	}
+
+	public int getExistencia() {
+		return existencia;
+	}
+
+	public void setExistencia(int existencia) {
+		this.existencia = existencia;
 	}
 	
 }

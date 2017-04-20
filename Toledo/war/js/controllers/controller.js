@@ -78,3 +78,7 @@ app.config([ '$routeProvider', function($routeProvider) {
 app.controller('inicioController',function(){
 	
 })
+
+app.run(['$rootScope','sessionService',function ($rootScope,sessionService) {
+	sessionService.isAuthenticated();
+}]);
