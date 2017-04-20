@@ -1,0 +1,27 @@
+<body>
+	<!--Aqui va-->
+	<section class="jumbotron">
+		<div class="container"></div>
+		<h2>Inicio de Sesion</h2>
+		<p>TikalCacao</p>
+	</section>
+
+	<section class="main container">
+		<div class="row">
+			<section class="posts col-md-9">
+
+				<form role="form" ng-submit="login()">
+					<article class="post clearfix">
+						Nombre de Usuario: <input type="text" class="form-control"
+							id="usuario" name="usuario" ng-model="credentials.username">
+						Contrase&ntilde;a: <input type="password" class="form-control" id="pass"
+							name="pass" ng-model="credentials.password"> <br>
+						<button type="submit" value="Guardar" class="btn btn-primary">Ingresar</button>
+						<button type="reset" value="Limpiar" class="btn btn-primary">Limpiar</button>
+						<a href="#/resetPass">Restablecer Contrase&ntilde;a</a>
+					</article>
+				</form>
+			</section>
+
+		</div>
+	</section>

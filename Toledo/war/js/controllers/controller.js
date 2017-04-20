@@ -41,5 +41,34 @@ app.config([ '$routeProvider', function($routeProvider) {
 		templateUrl : "pages/inventario.html",
 //		controller : "controller"
 	});
-	
+
+	$routeProvider.when('/login', {
+		templateUrl : "pages/login.html",
+		controller : "navigation"
+	});
+
+	$routeProvider.when('/altaperfiles', {
+		templateUrl : "pages/altaperfil.html",
+		controller : "perfilController"
+	})
+
+	$routeProvider.when('/modificarperfiles', {
+		templateUrl : "pages/modificaperfiles.html",
+		controller : "controladorListaPerfiles"
+	})
+
+	$routeProvider.when('/altausuarios', {
+		templateUrl : "pages/altausuario.html",
+		controller : "usuarioController"
+	})
+
+	$routeProvider.when('/modificarusuarios', {
+		templateUrl : "pages/modificausuarios.html",
+		controller : "controladorListaUsuarios"
+	})
+
+	$routeProvider.when('/resetPass', {
+		templateUrl : "pages/resetpass.html",
+		controller : "controladorReset"
+	})
 } ]);
