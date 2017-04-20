@@ -45,5 +45,13 @@ public class ClienteController {
 		List<Cliente> lista= clientesdao.buscar(search);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
+	
+
+	@RequestMapping(value = {
+	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
+	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		List<Cliente> lista= clientesdao.todos();
+		rs.getWriter().println(JsonConvertidor.toJson(lista));
+	}
 		
 }
