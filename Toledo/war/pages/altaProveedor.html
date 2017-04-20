@@ -19,15 +19,15 @@
                         <form>
                           <br>   
                           Nombre:<br>
-                          <input type="text" class="form-control">
+                          <input type="text" class="form-control" ng-model="newProveedor.nombre">
                           <br>                         
                           Direccion:<br>
-                          <input type="text" class="form-control">
+                          <input type="text" class="form-control" ng-model="newProveedor.direccion">
                           <br>
                           Telefono:<br>
-                          <input type="text" class="form-control">
+                          <input type="text" class="form-control" ng-model="newProveedor.telefono">
                           <br><br>
-                          <button type="submit" value="Registrar" class="btn btn-primary">Registrar</button>
+                          <button type="submit" value="Registrar" class="btn btn-primary" ng-click="registraProveedor(newProveedor)">Registrar</button>
                       </form> 
                       <!-- /.table-responsive -->
                   </div>
