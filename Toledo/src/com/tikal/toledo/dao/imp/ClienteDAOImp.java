@@ -33,4 +33,9 @@ public class ClienteDAOImp implements ClienteDAO{
 		return result;
 	}
 
+	@Override
+	public List<Cliente> todos() {
+		return ofy().load().type(Cliente.class).limit(50).list();
+	}
+
 }

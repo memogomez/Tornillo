@@ -32,5 +32,10 @@ public class ProductoDAOImp implements ProductoDAO{
 		}
 		return result;
 	}
+
+	@Override
+	public List<Producto> todos() {
+		return ofy().load().type(Producto.class).limit(50).list();
+	}
 	
 }

@@ -32,4 +32,9 @@ public class ProveedorDAOImp implements ProveedorDAO{
 		return result;
 	}
 
+	@Override
+	public List<Proveedor> todos() {
+		return ofy().load().type(Proveedor.class).limit(50).list();
+	}
+
 }

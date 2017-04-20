@@ -11,5 +11,7 @@ public interface ProductoDAO {
 	public Producto cargar(Long id);
 
 	public List<Producto> buscar(String search);
+	
+	public List<Producto> todos();
 
 }

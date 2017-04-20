@@ -11,4 +11,6 @@ public interface TornilloDAO {
 	public Tornillo cargar(Long id);
 
 	public List<Tornillo> buscar(String search);
+	
+	public List<Tornillo> todos();
 }

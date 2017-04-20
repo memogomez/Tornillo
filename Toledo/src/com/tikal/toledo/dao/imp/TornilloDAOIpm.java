@@ -33,4 +33,9 @@ public class TornilloDAOIpm implements TornilloDAO {
 		return result;
 	}
 
+	@Override
+	public List<Tornillo> todos() {
+		return ofy().load().type(Tornillo.class).limit(50).list();
+	}
+
 }
