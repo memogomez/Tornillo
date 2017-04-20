@@ -45,6 +45,7 @@ public class ClienteController {
 		List<Cliente> lista= clientesdao.buscar(search);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
+	
 
 	@RequestMapping(value = {
 	"/findAll" }, method = RequestMethod.GET, produces = "application/json")

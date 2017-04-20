@@ -16,6 +16,8 @@ public class Cliente {
 	
 	private Domicilio domicilio;
 	
+	private String telefono;
+	
 	public Long getId() {
 		return id;
 	}
@@ -71,5 +73,23 @@ public class Cliente {
 	public void setCP(String cp){
 		this.domicilio.cp=cp;
 	}
+
+	public Domicilio getDomicilio() {
+		return domicilio;
+	}
+
+	public void setDomicilio(Domicilio domicilio) {
+		this.domicilio = domicilio;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+	
+	
 
 }
