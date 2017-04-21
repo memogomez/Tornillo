@@ -34,14 +34,14 @@ public class ProductoController {
 	}
 	
 	@RequestMapping(value = {
-	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
+	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
 			
 			rs.getWriter().println(JsonConvertidor.toJson(productodao.cargar(Long.parseLong(id))));
 	}
 	
 	@RequestMapping(value = {
-	"/search/{search}" }, method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
+	"/search/{search}" }, method = RequestMethod.GET, produces = "application/json")
 	public void busca(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException{
 			List<Producto> lista= productodao.buscar(search);
 			rs.getWriter().println(JsonConvertidor.toJson(lista));

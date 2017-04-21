@@ -1,0 +1,47 @@
+
+<div class="col-sm-8 text-left"> 
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"> Edita Herramientas</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Modificación de Herramientas
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <form>
+                          Nombre:<br>
+                          <input type="text" class="form-control" ng-model="newHerramienta.nombre">
+                          <br>
+                          Precio:<br>
+                          <input type="text" class="form-control" ng-model="newHerramienta.precio">
+                          <br>
+                          Marca:<br>
+                          <input type="text" class="form-control" ng-model="newHerramienta.marca">
+                          <br>
+                          Proveedor:<br>
+                          <input type="text" class="form-control" ng-model="newHerramienta.proveedor">                                                                                                                          
+                          <br>
+                          Existencia:<br>
+                          <input type="number" class="form-control" ng-model="newHerramienta.existencia">
+                          <br><br>
+                          <button type="submit" value="Registrar" class="btn btn-primary" ng-click="editaHerramienta(newHerramienta)">Modificar</button>
+                      </form> 
+                      <!-- /.table-responsive -->
+                  </div>
+                  <!-- /.panel-body -->
+              </div>
+              <!-- /.panel -->
+          </div>
+          <!-- /.col-lg-12 -->
+      </div>
+  </div>
+</div ng-view>
+

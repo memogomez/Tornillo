@@ -25,9 +25,17 @@ app.config([ '$routeProvider', function($routeProvider) {
 		templateUrl : "pages/herramientas.html",
 		controller : "herramientasController"
 	});
+	$routeProvider.when('/herramientas/edit/:id', {
+		templateUrl : "pages/herramientasEdita.html",
+		controller : "herramientasEditController"
+	});
 	$routeProvider.when('/tornillos', {
 		templateUrl : "pages/tornillos.html",
 		controller : "tornillosController"
+	});
+	$routeProvider.when('/tornillos/edit/:id', {
+		templateUrl : "pages/tornillosEdita.html",
+		controller : "tornillosEditController"
 	});
 	$routeProvider.when('/altaCliente', {
 		templateUrl : "pages/altaCliente.html",

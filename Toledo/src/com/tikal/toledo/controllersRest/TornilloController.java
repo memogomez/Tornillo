@@ -34,14 +34,14 @@ public class TornilloController {
 	}
 	
 	@RequestMapping(value = {
-	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
+	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
 			
 			rs.getWriter().println(JsonConvertidor.toJson(tornillodao.cargar(Long.parseLong(id))));
 	}
 	
 	@RequestMapping(value = {
-	"/search/{search}" }, method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
+	"/search/{search}" }, method = RequestMethod.GET, produces = "application/json")
 	public void busca(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException{
 			List<Tornillo> lista= tornillodao.buscar(search);
 			rs.getWriter().println(JsonConvertidor.toJson(lista));
