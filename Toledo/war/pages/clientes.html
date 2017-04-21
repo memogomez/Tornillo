@@ -24,7 +24,8 @@
 									<th>RFC</th>
 									<th>Direccion</th>
 									<th>Telefono</th>
-									<th>Acciones</th>
+									<th>Maximo Credito</th>
+									<th>Acciones</th>									
 								</tr>
 							</thead>
 							<tbody>
@@ -34,6 +35,7 @@
 									<td>{{cliente.rfc}}</td>
 									<td>{{cliente.domicilio.calle}} {{cliente.domicilio.colonia}} {{cliente.domicilio.numero}}</td>
 									<td>{{cliente.telefono}}</td>
+									<td>{{cliente.credito}}</td>
 									<td>
 
 										<button class="btn btn-success" ng-click="editar(cliente.id)">Editar</button>
