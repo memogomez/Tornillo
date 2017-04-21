@@ -7,6 +7,8 @@ public class Detalle {
 	private int cantidad;
 	private float precioUnitario;
 	private float total;
+	private int tipo;
+	
 	public String getDescripcion() {
 		return descripcion;
 	}
@@ -37,6 +39,11 @@ public class Detalle {
 	public void setTotal(float total) {
 		this.total = total;
 	}
+	public int getTipo() {
+		return tipo;
+	}
+	public void setTipo(int tipo) {
+		this.tipo = tipo;
+	}
 	
-	
-}
+	}

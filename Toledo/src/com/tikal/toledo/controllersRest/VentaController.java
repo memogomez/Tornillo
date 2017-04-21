@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.tikal.toledo.dao.ProductoDAO;
+import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.dao.VentaDAO;
-import com.tikal.toledo.model.Cliente;
+import com.tikal.toledo.model.Detalle;
+import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.util.JsonConvertidor;
 
@@ -25,6 +28,11 @@ public class VentaController {
 	@Autowired
 	VentaDAO ventadao;
 	
+	@Autowired
+	ProductoDAO productodao;
+	
+	@Autowired
+	TornilloDAO tornillodao;
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
@@ -56,6 +64,14 @@ public class VentaController {
 	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
 		List<Venta> lista= ventadao.todos(0);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
+	}
+	
+	private void actualizarInventario(List<Detalle> detalles){
+		for(Detalle d:detalles){
+			if(d.getTipo()==0){
+				Producto p= productodao.cargar(d.getIdProducto());
+			}
+		}
 	}
 	
 }
