@@ -18,6 +18,8 @@ public class Cliente {
 	
 	private String telefono;
 	
+	private int credito;
+	
 	public Long getId() {
 		return id;
 	}
@@ -88,6 +90,14 @@ public class Cliente {
 
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
+	}
+
+	public int getCredito() {
+		return credito;
+	}
+
+	public void setCredito(int credito) {
+		this.credito = credito;
 	}
 	
 	
