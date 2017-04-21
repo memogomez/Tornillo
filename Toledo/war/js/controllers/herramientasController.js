@@ -3,7 +3,8 @@ app.service('herramientasService', [
 	'$q',
 	'$location',
 	'$rootScope',
-	function($http, $q, $location,$rootScope) {
+	'$window',
+	function($http, $q, $location,$rootScope,$window) {
 	
 	this.registraHerramienta = function(newHerramienta) {
 		var d = $q.defer();
@@ -40,12 +41,15 @@ app.controller("herramientasController",[
 	'herramientasService',
 	'$routeParams',
 	'$location',
-	function($scope, herramientasService,$routeParams,$location){
+	'$window',
+	function($scope, herramientasService,$routeParams,$location,$window){
 	
 	$scope.registraHerramienta = function(newHerramienta) {
 		console.log(newHerramienta);		
 		herramientasService.registraHerramienta(newHerramienta).then(function(newHerramienta) {
 					alert("Herramienta Agregada");
+					$window.location.reload();
+					$location.path("/herramientas");
 				})
 	}
 	$scope.herramientas = function() {
@@ -67,7 +71,8 @@ app.controller("herramientasEditController",[
 	'herramientasService',
 	'$routeParams',
 	'$location',
-	function($scope, herramientasService,$routeParams,$location){
+	'$window',
+	function($scope, herramientasService,$routeParams,$location,$window){
 		herramientasService.findHerramienta($routeParams.id).then(function(data){
 			$scope.newHerramienta=data;
 		})
@@ -75,7 +80,9 @@ app.controller("herramientasEditController",[
 		$scope.editaHerramienta = function(newHerramienta) {
 			console.log(newHerramienta);		
 			herramientasService.registraHerramienta(newHerramienta).then(function(newHerramineta) {
-						alert("Herramienta Modificado");
+						alert("Herramienta Modificada");
+						$window.location.reload();
+						$location.path("/herramientas");
 					})
 		}	
 	

@@ -3,7 +3,8 @@ app.service('clientesService', [
 	'$q',
 	'$location',
 	'$rootScope',
-	function($http, $q, $location,$rootScope) {
+	'$window',
+	function($http, $q, $location,$rootScope, $window) {
 	
 	this.registraCliente = function(newCliente) {
 		var d = $q.defer();
@@ -40,12 +41,15 @@ app.controller("clientesController",[
 	'clientesService',
 	'$routeParams',
 	'$location',
-	function($scope, clientesService, $routeParams,$location){
+	'$window',
+	function($scope, clientesService, $routeParams,$location,$window){
 	
 	$scope.registraCliente = function(newCliente) {
 		console.log(newCliente);		
 		clientesService.registraCliente(newCliente).then(function(newCliente) {
 					alert("Cliente Agregado");
+					$window.location.reload();
+					$location.path("/clientes");
 				})
 	}
 	$scope.clientes = function() {
@@ -67,7 +71,8 @@ app.controller("clientesEditController",[
 	'clientesService',
 	'$routeParams',
 	'$location',
-	function($scope, clientesService, $routeParams,$location){
+	'$window',
+	function($scope, clientesService, $routeParams,$location, $window){
 		clientesService.findCliente($routeParams.id).then(function(data){
 			$scope.newCliente=data;
 		})
@@ -76,6 +81,8 @@ app.controller("clientesEditController",[
 		console.log(newCliente);		
 		clientesService.registraCliente(newCliente).then(function(newCliente) {
 					alert("Cliente Modificado");
+					$window.location.reload();
+					$location.path("/clientes");
 				})
 	}	
 }]);

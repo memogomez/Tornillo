@@ -3,7 +3,8 @@ app.service('proveedoresService', [
 	'$q',
 	'$location',
 	'$rootScope',
-	function($http, $q, $location,$rootScope) {
+	'$window',
+	function($http, $q, $location,$rootScope,$window) {
 	
 	this.registraProveedor = function(newProveedor) {
 		var d = $q.defer();
@@ -40,12 +41,15 @@ app.controller("proveedoresController",[
 	'proveedoresService',
 	'$routeParams',
 	'$location',
-	function($scope, proveedoresService,$routeParams, $location){
+	'$window',
+	function($scope, proveedoresService,$routeParams, $location,$window){
 	
 	$scope.registraProveedor = function(newProveedor) {
 		console.log(newProveedor);		
 		proveedoresService.registraProveedor(newProveedor).then(function(newProveedor) {
 					alert("Proveedor Agregado");
+					$window.location.reload();
+					$location.path("/proveedores");
 				})
 	}
 	$scope.proveedores = function() {
@@ -67,7 +71,8 @@ app.controller("proveedoresEditController",[
 	'proveedoresService',
 	'$routeParams',
 	'$location',
-	function($scope, proveedoresService,$routeParams, $location){
+	'$window',
+	function($scope, proveedoresService,$routeParams, $location,$window){
 	proveedoresService.findProveedor($routeParams.id).then(function(data){
 		$scope.newProveedor=data;
 	})
@@ -76,6 +81,8 @@ app.controller("proveedoresEditController",[
 		console.log(newProveedor);		
 		proveedoresService.registraProveedor(newProveedor).then(function(newProveedor) {
 					alert("Proveedor Modificado");
+					$window.location.reload();
+					$location.path("/proveedores");
 				})
 	}
 }]);

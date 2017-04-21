@@ -3,7 +3,8 @@ app.service('tornillosService', [
 	'$q',
 	'$location',
 	'$rootScope',
-	function($http, $q, $location,$rootScope) {
+	'$window',
+	function($http, $q, $location,$rootScope,$window) {
 	
 	this.registraTornillos = function(newTornillo) {
 		var d = $q.defer();
@@ -40,12 +41,15 @@ app.controller("tornillosController",[
 	'tornillosService',
 	'$routeParams',
 	'$location',
-	function($scope, tornillosService, $routeParams, $location){
+	'$window',
+	function($scope, tornillosService, $routeParams, $location,$window){
 	
 	$scope.registraTornillos = function(newTornillo) {
 		console.log(newTornillo);		
 		tornillosService.registraTornillos(newTornillo).then(function(newTornillo) {
 					alert("Tornillo Agregado");
+					$window.location.reload();
+					$location.path("/herramientas");
 				})
 	}
 	$scope.tornillos = function() {
@@ -67,7 +71,8 @@ app.controller("tornillosEditController",[
 	'tornillosService',
 	'$routeParams',
 	'$location',
-	function($scope, tornillosService, $routeParams, $location){
+	'$window',
+	function($scope, tornillosService, $routeParams, $location,$window){
 		tornillosService.findTornillo($routeParams.id).then(function(data){
 			$scope.newTornillo=data;
 		})
@@ -76,6 +81,8 @@ app.controller("tornillosEditController",[
 			console.log(newTornillo);		
 			tornillosService.registraTornillos(newTornillo).then(function(newTornillo) {
 						alert("Tornillo Modificado");
+						$window.location.reload();
+						$location.path("/tornillos");
 					})
 		}	
 }]);
