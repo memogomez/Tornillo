@@ -48,8 +48,8 @@ app.controller("tornillosController",[
 		console.log(newTornillo);		
 		tornillosService.registraTornillos(newTornillo).then(function(newTornillo) {
 					alert("Tornillo Agregado");
-					$window.location.reload();
-					$location.path("/herramientas");
+//					$window.location.reload();
+//					$location.path("/herramientas");
 				})
 	}
 	$scope.tornillos = function() {
