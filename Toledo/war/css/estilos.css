@@ -25,6 +25,12 @@
     .sidebar {
       background-color: #f2f2f2;
     }
+    .list-group-item {    
+      margin-bottom: none;
+      background-color: #f2f2f2;
+      border: none;
+	}	
+	
     /* Set black background color, white text and some padding */
     footer {
       background-color: #f2f2f2;

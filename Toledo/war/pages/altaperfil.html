@@ -1,0 +1,68 @@
+<div class="col-sm-8 text-left"> 
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"> Alta Perfiles</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Registro de Perfiles
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        Nombre del Perfil: <input type="text" class="form-control"
+					ng-model="perfil.tipo"> <br>
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Crear Empresa</th>
+							<th>Editar Empresa</th>
+							<th>Crear R&eacute;gimen</th>
+							<th>Editar R&eacute;gimen</th>
+							<th>Crear Empleado</th>
+							<th>Editar Empleado</th>
+							<th>Ejecutar N&oacute;</th>
+							<th>Alta de Usuarios</th>
+							<th>Editar Usuarios</th>
+							<th>Crear Perfiles</th>
+							<th>Editar Perfiles</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><input type="checkbox" ng-model="perfil.permisos[0]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[1]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[2]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[3]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[4]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[5]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[6]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[7]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[8]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[9]"></td>
+							<td><input type="checkbox" ng-model="perfil.permisos[10]"></td>
+						</tr>
+					</tbody>
+				</table>
+				<br>
+				<button type="submit" value="Guardar" class="btn btn-primary"
+					ng-click="EnviarFormulario()">Guardar</button>
+				<button type="submit" value="Limpiar" class="btn btn-primary">Limpiar</button>
+			<nav>
+				<div class="center-blog"></div>
+			</nav>
+                      <!-- /.table-responsive -->
+                  </div>
+                  <!-- /.panel-body -->
+              </div>
+              <!-- /.panel -->
+          </div>
+          <!-- /.col-lg-12 -->
+      </div>
+  </div>
+</div ng-view>
