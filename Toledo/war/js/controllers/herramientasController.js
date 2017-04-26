@@ -86,6 +86,9 @@ app.controller("herramientasController",[
 	}
 	$scope.proveedores();
 	
+	$scope.lotes = function(id) {			
+		$location.path("/altaLotes/" + id);
+	}
 }]);
 app.controller("herramientasEditController",[
 	'$scope',
@@ -115,4 +118,5 @@ app.controller("herramientasEditController",[
 				})
 		}
 		$scope.proveedores();
+			
 }]);

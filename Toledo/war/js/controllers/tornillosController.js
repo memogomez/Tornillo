@@ -85,6 +85,10 @@ app.controller("tornillosController",[
 	}
 	$scope.proveedores();
 	
+	$scope.lotes = function(id) {			
+		$location.path("/altaLotes/" + id);
+	}
+	
 }]);
 app.controller("tornillosEditController",[
 	'$scope',

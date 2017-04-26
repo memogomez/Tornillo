@@ -53,7 +53,7 @@ app.config([ '$routeProvider', function($routeProvider) {
 		templateUrl : "pages/altaTornillos.html",
 		controller : "tornillosController"
 	});
-	$routeProvider.when('/altaLotes', {
+	$routeProvider.when('/altaLotes/:id', {
 		templateUrl : "pages/altaLotes.html",
 		controller : "lotesController"
 	});
