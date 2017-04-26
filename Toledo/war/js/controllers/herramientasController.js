@@ -4,7 +4,8 @@ app.service('herramientasService', [
 	'$location',
 	'$rootScope',
 	'$window',
-	function($http, $q, $location,$rootScope,$window) {
+	'proveedoresService',
+	function($http, $q, $location,$rootScope,$window,proveedoresService) {
 	
 	this.registraHerramienta = function(newHerramienta) {
 		var d = $q.defer();
@@ -35,6 +36,16 @@ app.service('herramientasService', [
 		});
 		return d.promise;
 	};
+	this.findProveedores = function() {
+		var d = $q.defer();
+		$http.get("/proveedores/findAll/").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
 }])
 app.controller("herramientasController",[
 	'$scope',
@@ -42,7 +53,8 @@ app.controller("herramientasController",[
 	'$routeParams',
 	'$location',
 	'$window',
-	function($scope, herramientasService,$routeParams,$location,$window){
+	'proveedoresService',
+	function($scope, herramientasService,$routeParams,$location,$window, proveedoresService){
 	
 	$scope.registraHerramienta = function(newHerramienta) {
 		console.log(newHerramienta);		
@@ -65,6 +77,15 @@ app.controller("herramientasController",[
 		$location.path("/herramientas/edit/" + id);
 	}
 	
+	$scope.proveedores = function() {
+		proveedoresService.findProveedores($routeParams.id).then(
+			function(data) {
+				$scope.proveedores = data;				
+				console.log(data);
+			})
+	}
+	$scope.proveedores();
+	
 }]);
 app.controller("herramientasEditController",[
 	'$scope',
@@ -72,7 +93,8 @@ app.controller("herramientasEditController",[
 	'$routeParams',
 	'$location',
 	'$window',
-	function($scope, herramientasService,$routeParams,$location,$window){
+	'proveedoresService',
+	function($scope, herramientasService,$routeParams,$location, $window, proveedoresService){
 		herramientasService.findHerramienta($routeParams.id).then(function(data){
 			$scope.newHerramienta=data;
 		})
@@ -84,6 +106,13 @@ app.controller("herramientasEditController",[
 						$window.location.reload();
 						$location.path("/herramientas");
 					})
-		}	
-	
+		}
+		$scope.proveedores = function() {
+			proveedoresService.findProveedores($routeParams.id).then(
+				function(data) {
+					$scope.proveedores = data;				
+					console.log(data);
+				})
+		}
+		$scope.proveedores();
 }]);

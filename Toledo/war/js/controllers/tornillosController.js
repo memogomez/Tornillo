@@ -4,7 +4,8 @@ app.service('tornillosService', [
 	'$location',
 	'$rootScope',
 	'$window',
-	function($http, $q, $location,$rootScope,$window) {
+	'proveedoresService',
+	function($http, $q, $location,$rootScope,$window,proveedoresService) {
 	
 	this.registraTornillos = function(newTornillo) {
 		var d = $q.defer();
@@ -35,6 +36,16 @@ app.service('tornillosService', [
 		});
 		return d.promise;
 	};
+	this.findProveedores = function() {
+		var d = $q.defer();
+		$http.get("/proveedores/findAll/").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
 }])
 app.controller("tornillosController",[
 	'$scope',
@@ -42,7 +53,8 @@ app.controller("tornillosController",[
 	'$routeParams',
 	'$location',
 	'$window',
-	function($scope, tornillosService, $routeParams, $location,$window){
+	'proveedoresService',
+	function($scope, tornillosService, $routeParams, $location, $window, proveedoresService){
 	
 	$scope.registraTornillos = function(newTornillo) {
 		console.log(newTornillo);		
@@ -64,6 +76,14 @@ app.controller("tornillosController",[
 	$scope.editar = function(id) {
 		$location.path("/tornillos/edit/" + id);
 	}
+	$scope.proveedores = function() {
+		proveedoresService.findProveedores($routeParams.id).then(
+			function(data) {
+				$scope.proveedores = data;				
+				console.log(data);
+			})
+	}
+	$scope.proveedores();
 	
 }]);
 app.controller("tornillosEditController",[
@@ -72,7 +92,8 @@ app.controller("tornillosEditController",[
 	'$routeParams',
 	'$location',
 	'$window',
-	function($scope, tornillosService, $routeParams, $location,$window){
+	'proveedoresService',
+	function($scope, tornillosService, $routeParams, $location, $window, proveedoresService){
 		tornillosService.findTornillo($routeParams.id).then(function(data){
 			$scope.newTornillo=data;
 		})
@@ -84,5 +105,13 @@ app.controller("tornillosEditController",[
 						$window.location.reload();
 						$location.path("/tornillos");
 					})
-		}	
+		}
+		$scope.proveedores = function() {
+			proveedoresService.findProveedores($routeParams.id).then(
+				function(data) {
+					$scope.proveedores = data;				
+					console.log(data);
+				})
+		}
+		$scope.proveedores();
 }]);

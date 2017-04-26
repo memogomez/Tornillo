@@ -26,9 +26,10 @@
                           Marca:<br>
                           <input type="text" class="form-control" ng-model="newHerramienta.marca">
                           <br>
-                          Proveedor:<br>
-                          <input type="text" class="form-control" ng-model="newHerramienta.proveedor">                                                                                                                          
-                          <br>
+                          Proveedor:<br>                          
+                          <select class="form-control" ng-model="newHerramienta.proveedor">
+							<option ng-repeat="prov in proveedores">{{prov.nombre}}</option>
+						  </select><br>
                           Existencia:<br>
                           <input type="number" class="form-control" ng-model="newHerramienta.existencia">
                           <br><br>

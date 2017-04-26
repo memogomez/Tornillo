@@ -1,0 +1,47 @@
+<div class="col-sm-8 text-left"> 
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header"> Modifica Usuarios</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Modificacion de Usuarios
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div>
+					<table ng-controller="controladorListaUsuarios"
+						class="table table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>Usuario</th>
+								<th>Perfil</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="usuario in usuariosLista" ng-if="usuario.usuario!='root'">
+								<td>{{usuario.usuario}}</td>
+								<td><select ng-model="usuario.perfil">
+										<option ng-repeat="x in perfiles" value="{{x.tipo}}" ng-if="x.tipo!='Administrador'">{{x.tipo}}</option>
+									</select></td>
+								<td><button type="button" class="btn btn-success"
+										ng-click="actualizarUsuario(usuario)">Actualizar</button>
+										<button type="button" class="btn btn-danger"
+										ng-click="eliminarUsuario(usuario)">Eliminar</button></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+                  <!-- /.panel-body -->
+              </div>
+              <!-- /.panel -->
+          </div>
+          <!-- /.col-lg-12 -->
+      </div>
+  </div>
+</div ng-view>
