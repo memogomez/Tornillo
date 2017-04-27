@@ -27,66 +27,18 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="odd gradeX">
-									<td>Tornillo 1</td>
-									<td>1/8</td>
-									<td>Marca 1</td>
-									<td class="center">130</td>
+								<tr ng-repeat="inv in inventario" class="odd gradeX">
+									<td>{{inv.nombre}}</td>
+									<td>{{inv.medidas}}</td>
+									<td>{{inv.marca}}</td>
+									<td class="center">{{inv.existencia}}</td>
 									<td>
 
 										<button class="btn btn-success" data-toggle="modal"
 											data-target=".bd-example-modal-lg">Lotes</button>
 									</td>
 								</tr>
-								<tr class="odd gradeX">
-									<td>Tornillo 1</td>
-									<td>5/32</td>
-									<td>Marca 2</td>
-									<td class="center">150</td>
-									<td>
-
-										<button class="btn btn-success">Lotes</button>
-									</td>
-								<tr class="odd gradeX">
-									<td>Tornillo 2</td>
-									<td>3/16</td>
-									<td>Marca 3</td>
-									<td class="center">200</td>
-									<td>
-
-										<button class="btn btn-success">Lotes</button>
-									</td>
-								</tr>
-								<tr class="odd gradeX">
-									<td>Herramienta 1</td>
-									<td>1/4</td>
-									<td>Marca 4</td>
-									<td class="center">83</td>
-									<td>
-
-										<button class="btn btn-success">Lotes</button>
-									</td>
-								</tr>
-								<tr class="odd gradeX">
-									<td>Herramienta 2</td>
-									<td>5/8</td>
-									<td>Marca 5</td>
-									<td class="center">17</td>
-									<td>
-
-										<button class="btn btn-success">Editar</button>
-									</td>
-								</tr>
-								<tr class="odd gradeX">
-									<td>Herramienta 3</td>
-									<td>3/4</td>
-									<td>Marca 6</td>
-									<td class="center">13</td>
-									<td>
-
-										<button class="btn btn-success">Editar</button>
-									</td>
-								</tr>
+								
 							</tbody>
 						</table>
 						<!-- /.table-responsive -->

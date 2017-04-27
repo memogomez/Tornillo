@@ -4,7 +4,8 @@ app.service('lotesService', [
 	'$location',
 	'$rootScope',
 	'$window',
-	function($http, $q, $location,$rootScope, $window) {
+	'proveedoresService',
+	function($http, $q, $location,$rootScope, $window, proveedoresService) {
 	
 	this.registraLote = function(newLote) {
 		var d = $q.defer();
@@ -35,6 +36,16 @@ app.service('lotesService', [
 		});
 		return d.promise;
 	};
+	this.findProveedores = function() {
+		var d = $q.defer();
+		$http.get("/proveedores/findAll/").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
 }])
 app.controller("lotesController",[
 	'$scope',
@@ -44,7 +55,8 @@ app.controller("lotesController",[
 	'$window',
 	'herramientasService',
 	'tornillosService',
-	function($scope, lotesService, $routeParams,$location, $window, herramientasService, tornillosService){
+	'proveedoresService',
+	function($scope, lotesService, $routeParams,$location, $window, herramientasService, tornillosService, proveedoresService){
 		$scope.newLote={};
 		herramientasService.findHerramienta($routeParams.id).then(function(data){
 			$scope.newHerramienta=data;
@@ -66,7 +78,14 @@ app.controller("lotesController",[
 					$location.path("/inventario");
 				})
 	}	
-	
+		$scope.proveedores = function() {
+			proveedoresService.findProveedores($routeParams.id).then(
+				function(data) {
+					$scope.proveedores = data;				
+					console.log(data);
+				})
+		}
+		$scope.proveedores();
 	
 	
 }]);

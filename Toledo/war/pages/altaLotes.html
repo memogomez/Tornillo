@@ -29,9 +29,10 @@
                           Cantidad:<br>
                           <input type="text" class="form-control" ng-model="newLote.cantidad">
                           <br>
-                          Proveedor:<br>
-                          <input type="text" class="form-control" ng-model="newLote.proveedor">
-                          <br><br>
+                          Proveedor:<br>                          
+                          <select class="form-control" ng-model="newLote.proveedor">
+							<option ng-repeat="prov in proveedores" value="{{prov.id}}">{{prov.nombre}}</option>
+						  </select><br><br>
                           <button type="submit" value="Registrar" class="btn btn-primary" ng-click="registraLote(newLote)">Registrar</button>
                       </form> 
                       <!-- /.table-responsive -->
