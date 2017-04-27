@@ -17,9 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.tikal.toledo.controllersRest.VO.ListaLotesVO;
 import com.tikal.toledo.controllersRest.VO.LoteVO;
 import com.tikal.toledo.dao.LoteDAO;
+import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.ProveedorDAO;
+import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.model.Lote;
+import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Proveedor;
+import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.util.JsonConvertidor;
 
 @Controller
@@ -32,12 +36,27 @@ public class LoteController {
 	@Autowired
 	ProveedorDAO pdao;
 	
+	@Autowired 
+	ProductoDAO hdao;
 	
+	@Autowired 
+	TornilloDAO tdao;
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
 			Lote l= (Lote)JsonConvertidor.fromJson(json, Lote.class);
 			lotedao.guardar(l);
+			Producto h= hdao.cargar(l.getIdProducto());
+			if(h!=null){
+				h.setExistencia(h.getExistencia()+l.getCantidad());
+				hdao.guardar(h);
+			}else{
+				Tornillo t=tdao.cargar(l.getId());
+				if(tdao!=null){
+					t.setExistencia(t.getExistencia()+l.getCantidad());
+					tdao.guardar(t);
+				}
+			}
 			rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
 	
