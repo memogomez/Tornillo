@@ -59,6 +59,7 @@ public class LoteController {
 			LoteVO lvo= new LoteVO(l);
 			Proveedor p= pdao.cargar(l.getProveedor());
 			lvo.setProveedor(p.getNombre());
+			lvos.add(lvo);
 		}
 		rs.getWriter().println(JsonConvertidor.toJson(lvos));
 	}
