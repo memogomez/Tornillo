@@ -1,0 +1,55 @@
+<div class="container" style="font-size: 11px">
+	<div class="row">
+		<div class="col-md-8">
+			<div class="row">
+				<form class="form-inline" style="text-align: left">
+					<div class="form-group">
+						<label for="email">Cliente:</label> <select
+							class="form-control input-sm" ng-model="venta.idCliente">
+							<option value="0">Otro...</option>
+							<option ng-repeat="cliente in clientes" value="{{cliente.id}}">{{cliente.nombre}}</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="email">Buscar:</label> <input type="email"
+							class="form-control input-sm" id="email" ng-model="buscar">
+					</div>
+
+				</form>
+
+			</div>
+			<div class="row">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Producto</th>
+							<th>Medidas</th>
+							<th>Precio</th>
+							<th>Mayoreo</th>
+							<th>Existencia</th>
+							<th>Cantidad</th>
+							<th>Importe</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="producto in productos">
+							<td>{{producto.nombre}}</td>
+							<td>{{producto.medidas}}</td>
+							<td>{{producto.precio}}</td>
+							<td>{{producto.mayoreo}}</td>
+							<td>{{producto.existencia}}</td>
+							<td><input type="text" ng-model="producto.cantidad"
+								ng-change="producto.importe= producto.cantidad*producto.importe"></td>
+							<td><input type="text" ng-model="producto.importe"></td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+			<hr>
+			<div class="row"></div>
+		</div>
+
+		<div class="col-md-4"></div>
+	</div>
+</div>
