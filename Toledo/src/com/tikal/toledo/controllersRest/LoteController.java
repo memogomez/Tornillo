@@ -27,60 +27,62 @@ import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.util.JsonConvertidor;
 
 @Controller
-@RequestMapping(value={"/lotes"})
+@RequestMapping(value = { "/lotes" })
 public class LoteController {
 
 	@Autowired
 	LoteDAO lotedao;
-	
+
 	@Autowired
 	ProveedorDAO pdao;
-	
-	@Autowired 
+
+	@Autowired
 	ProductoDAO hdao;
-	
-	@Autowired 
+
+	@Autowired
 	TornilloDAO tdao;
+
 	@RequestMapping(value = {
-	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
-			Lote l= (Lote)JsonConvertidor.fromJson(json, Lote.class);
-			lotedao.guardar(l);
-			Producto h= hdao.cargar(l.getIdProducto());
-			if(h!=null){
-				h.setExistencia(h.getExistencia()+l.getCantidad());
-				hdao.guardar(h);
-			}else{
-				Tornillo t=tdao.cargar(l.getId());
-				if(tdao!=null){
-					t.setExistencia(t.getExistencia()+l.getCantidad());
-					tdao.guardar(t);
-				}
+			"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException {
+		Lote l = (Lote) JsonConvertidor.fromJson(json, Lote.class);
+		lotedao.guardar(l);
+		Producto h = hdao.cargar(l.getIdProducto());
+		if (h != null) {
+			h.setExistencia(h.getExistencia() + l.getCantidad());
+			hdao.guardar(h);
+		} else {
+			Tornillo t = tdao.cargar(l.getId());
+			if (tdao != null) {
+				t.setExistencia(t.getExistencia() + l.getCantidad());
+				tdao.guardar(t);
 			}
-			rs.getWriter().println(JsonConvertidor.toJson(l));
+		}
+		rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
-	
+
 	@RequestMapping(value = {
-	"/save" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public void guardar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
-		ListaLotesVO listavo= (ListaLotesVO) JsonConvertidor.fromJson(json, ListaLotesVO.class);
+			"/save" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public void guardar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException {
+		ListaLotesVO listavo = (ListaLotesVO) JsonConvertidor.fromJson(json, ListaLotesVO.class);
 		lotedao.guardarLotes(listavo.getLista());
 		rs.getWriter().println(JsonConvertidor.toJson(listavo));
 	}
-	
-	@RequestMapping(value = {
-	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
-	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
-		List<Lote> lotes= lotedao.porProducto(Long.parseLong(id));
-		List<LoteVO> lvos= new ArrayList<LoteVO>();
-		
-		for(Lote l:lotes){
-			LoteVO lvo= new LoteVO(l);
-			Proveedor p= pdao.cargar(l.getProveedor());
-			lvo.setProveedor(p.getNombre());
+
+	@RequestMapping(value = { "/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
+	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException {
+		List<Lote> lotes = lotedao.porProducto(Long.parseLong(id));
+		List<LoteVO> lvos = new ArrayList<LoteVO>();
+
+		for (Lote l : lotes) {
+			LoteVO lvo = new LoteVO(l);
+			if (l.getProveedor() != null) {
+				Proveedor p = pdao.cargar(l.getProveedor());
+				lvo.setProveedor(p.getNombre());
+			}
 			lvos.add(lvo);
 		}
 		rs.getWriter().println(JsonConvertidor.toJson(lvos));
 	}
-	
+
 }
