@@ -46,6 +46,16 @@ app.service('lotesService', [
 		});
 		return d.promise;
 	};
+	this.findLote = function(id) {
+		var d = $q.defer();
+		$http.get("/lotes/find/"+id).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
 }])
 app.controller("lotesController",[
 	'$scope',

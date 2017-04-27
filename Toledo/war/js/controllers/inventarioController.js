@@ -6,7 +6,8 @@ app.service('inventarioService', [
 	'$window',
 	'herramientasService',
 	'tornillosService',
-	function($http, $q, $location,$rootScope, $window, proveedoresService, herramientasService, tornillosService) {
+	'lotesService',
+	function($http, $q, $location,$rootScope, $window, proveedoresService, herramientasService, tornillosService, lotesService) {
 		this.findHerramientas = function() {
 			var d = $q.defer();
 			$http.get("/productos/findAll/").then(function(response) {
@@ -27,16 +28,27 @@ app.service('inventarioService', [
 			});
 			return d.promise;
 		};
+		this.findLote = function(id) {
+			var d = $q.defer();
+			$http.get("/lotes/find/"+id).then(function(response) {
+				console.log(response);
+				d.resolve(response.data);
+			}, function(response) {
+				d.reject(response);
+			});
+			return d.promise;
+		};
 }])
 app.controller("inventarioController",[
 	'$scope',
-	'lotesService',
+	'inventarioService',
 	'$routeParams',
 	'$location',
 	'$window',
 	'herramientasService',
 	'tornillosService',
-	function($scope, lotesService, $routeParams,$location, $window, herramientasService, tornillosService, proveedoresService){
+	'lotesService',
+	function($scope, inventarioService, $routeParams,$location, $window, herramientasService, tornillosService, lotesService){
 		
 		
 		$scope.inventario=[];
@@ -65,7 +77,14 @@ app.controller("inventarioController",[
 		}
 		$scope.tornillos();
 	
-		
+		$scope.mostrarLotes = function(inv){
+			$scope.nombreInventario=inv.nombre;
+			lotesService.findLote(inv.id).then(
+					function(data) {
+						$scope.lotes = data;				
+						console.log(data);						
+				})
+		}
 	
 	
 }]);

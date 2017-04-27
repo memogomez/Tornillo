@@ -50,7 +50,7 @@ public class LoteController {
 	}
 	
 	@RequestMapping(value = {
-	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
+	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
 		List<Lote> lotes= lotedao.porProducto(Long.parseLong(id));
 		List<LoteVO> lvos= new ArrayList<LoteVO>();
