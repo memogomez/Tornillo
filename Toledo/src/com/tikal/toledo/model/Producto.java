@@ -25,6 +25,12 @@ public class Producto {
 	
 	private int existencia;
 	
+	private int tipo;
+	
+	public Producto(){
+		setTipo(0);
+	}
+	
 	public String getMarca() {
 		return marca;
 	}
@@ -87,6 +93,14 @@ public class Producto {
 
 	public void setExistencia(int existencia) {
 		this.existencia = existencia;
+	}
+
+	public int getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(int tipo) {
+		this.tipo = tipo;
 	}
 	
 }

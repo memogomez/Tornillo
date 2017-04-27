@@ -10,6 +10,10 @@ public class Tornillo extends Producto{
 	private String medidas;
 	
 	private String mayoreo;
+	
+	public Tornillo(){
+		this.setTipo(1);
+	}
 
 	public String getMedidas() {
 		return medidas;

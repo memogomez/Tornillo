@@ -6,7 +6,7 @@ public class Detalle {
 	private Long idProducto;
 	private int cantidad;
 	private float precioUnitario;
-	private float total;
+	private float importe;
 	private int tipo;
 	
 	public String getDescripcion() {
@@ -34,10 +34,10 @@ public class Detalle {
 		this.precioUnitario = precioUnitario;
 	}
 	public float getTotal() {
-		return total;
+		return importe;
 	}
-	public void setTotal(float total) {
-		this.total = total;
+	public void setTotal(float importe) {
+		this.importe = importe;
 	}
 	public int getTipo() {
 		return tipo;

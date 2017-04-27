@@ -29,6 +29,7 @@
 							<th>Existencia</th>
 							<th>Cantidad</th>
 							<th>Importe</th>
+							<th>
 						</tr>
 					</thead>
 					<tbody>
@@ -39,8 +40,13 @@
 							<td>{{producto.mayoreo}}</td>
 							<td>{{producto.existencia}}</td>
 							<td><input type="text" ng-model="producto.cantidad"
-								ng-change="producto.importe= producto.cantidad*producto.importe"></td>
+								ng-change="producto.importe= producto.cantidad*producto.precio"></td>
 							<td><input type="text" ng-model="producto.importe"></td>
+							<td>
+								<button type="button" class="btn btn-default btn-sm" ng-click="agregarDetalle(producto)">
+									<span class="glyphicon glyphicon-plus"></span>
+								</button>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -50,6 +56,22 @@
 			<div class="row"></div>
 		</div>
 
-		<div class="col-md-4"></div>
+		<div class="col-md-4">
+			<div class="well well-sm">
+			<h4>Venta</h4>
+			<table class="table table-stripped">
+			<tbody>
+				<tr><td>Fecha:</td>
+				<td>{{venta.fecha}}</td>
+				</tr>
+				<tr ng-repeat="det in venta.detalles">
+					<td>{{det.descripcion}}</td>
+					<td>{{det.cantidad}}</td>
+					<td>{{det.importe}}</td>
+				</tr>
+			</tbody>
+			</table>
+			</div>
+		</div>
 	</div>
 </div>
