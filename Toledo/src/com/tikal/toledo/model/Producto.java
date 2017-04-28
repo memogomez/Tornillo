@@ -12,7 +12,10 @@ public class Producto {
 	@Index
 	private String nombre;
 	
-	private float precio;
+	private float precioMostrador;
+	private float precioMayoreo;
+	private float precioCredito;
+	
 	
 	@Index
 	private String proveedor;
@@ -55,14 +58,6 @@ public class Producto {
 		this.nombre = nombre;
 	}
 
-	public float getPrecio() {
-		return precio;
-	}
-
-	public void setPrecio(float precio) {
-		this.precio = precio;
-	}
-
 	public String getProveedor() {
 		return proveedor;
 	}
@@ -102,5 +97,30 @@ public class Producto {
 	public void setTipo(int tipo) {
 		this.tipo = tipo;
 	}
+
+	public float getPrecioMostrador() {
+		return precioMostrador;
+	}
+
+	public void setPrecioMostrador(float precioMostrador) {
+		this.precioMostrador = precioMostrador;
+	}
+
+	public float getPrecioMayoreo() {
+		return precioMayoreo;
+	}
+
+	public void setPrecioMayoreo(float precioMayoreo) {
+		this.precioMayoreo = precioMayoreo;
+	}
+
+	public float getPrecioCredito() {
+		return precioCredito;
+	}
+
+	public void setPrecioCredito(float precioCredito) {
+		this.precioCredito = precioCredito;
+	}
+	
 	
 }

@@ -53,7 +53,7 @@ public class LoteController {
 			hdao.guardar(h);
 		} else {
 			Tornillo t = tdao.cargar(l.getId());
-			if (tdao != null) {
+			if (t != null) {
 				t.setExistencia(t.getExistencia() + l.getCantidad());
 				tdao.guardar(t);
 			}
