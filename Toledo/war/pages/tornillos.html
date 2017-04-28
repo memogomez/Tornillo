@@ -21,7 +21,9 @@
 							<thead>
 								<tr>
 									<th>Id</th>
-									<th>Precio por Unidad</th>
+									<th>Precio Mostrador</th>
+									<th>Precio Mayoreo</th>
+									<th>Precio Credito</th>
 									<th>Medida</th>
 									<th>Proveedor</th>
 									<th>Cantidad por Mayoreo</th>
@@ -31,7 +33,9 @@
 							<tbody>
 								<tr ng-repeat="tornillo in tornillos" class="odd gradeX">
 									<td>{{tornillo.id}}</td>
-									<td>{{tornillo.precio}}</td>
+									<td>{{tornillo.precioMostrador}}</td>
+									<td>{{tornillo.precioMayoreo}}</td>
+									<td>{{tornillo.precioCredito}}</td>
 									<td>{{tornillo.medidas}}</td>
 									<td>{{tornillo.proveedor}}</td>
 									<td class="center">{{tornillo.mayoreo}}</td>
