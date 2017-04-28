@@ -2,6 +2,11 @@
 <div class="col-sm-8 text-left">
 	<div id="page-wrapper">
 		<div class="row">
+		<div class="form-group col-md-6">
+			<label>Buscar:</label> 
+			<input type="text" ng-model="search.busquedaAttr">
+		</div>
+		
 			<div class="col-lg-12">
 				<h1 class="page-header">Inventario</h1>
 			</div>
@@ -28,7 +33,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="inv in inventario" class="odd gradeX">
+								<tr ng-repeat="inv in inventario | filter:search:strict" class="odd gradeX">
 									<td>{{inv.nombre}}</td>
 									<td>{{inv.clave}}</td>
 									<td>{{inv.medidas}}</td>

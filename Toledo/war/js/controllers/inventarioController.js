@@ -60,7 +60,14 @@ app.controller("inventarioController",[
 					for(var i =0; i<data.length; i++){
 						$scope.inventario.push(data[i]);
 					}
-					
+					console.log($scope.inventario);
+					for (var i = 0; i < $scope.inventario.length; i++) {
+						$scope.inventario[i].busquedaAttr = $scope.inventario[i].nombre
+						+ " "
+						+ $scope.inventario[i].clave
+						+ " "
+						+ $scope.inventario[i].medida
+					}
 				})
 		}
 		$scope.herramientas();
