@@ -3,14 +3,14 @@
 		<div class="col-md-8">
 			<div class="row">
 				<form class="form-inline" style="text-align: left">
-					<div class="form-group">
+					<div class="form-group col-md-6">
 						<label for="email">Cliente:</label> <select
-							class="form-control input-sm" ng-model="venta.idCliente">
+							class="form-control input-sm" ng-model="venta.idCliente" style="width: inherit;">
 							<option value="0">Otro...</option>
 							<option ng-repeat="cliente in clientes" value="{{cliente.id}}">{{cliente.nombre}}</option>
 						</select>
 					</div>
-					<div class="form-group">
+					<div class="form-group col-md-6">
 						<label for="email">Buscar:</label> <input type="email"
 							class="form-control input-sm" id="email" ng-model="buscar">
 					</div>
@@ -25,7 +25,7 @@
 							<th>Producto</th>
 							<th>Medidas</th>
 							<th>Precio</th>
-							<th>Mayoreo</th>
+							<th>$</th>
 							<th>Existencia</th>
 							<th>Cantidad</th>
 							<th>Importe</th>
@@ -36,8 +36,12 @@
 						<tr ng-repeat="producto in productos">
 							<td>{{producto.nombre}}</td>
 							<td>{{producto.medidas}}</td>
+							<td><select ng-model="producto.precio">
+								<option ng-value="producto.precioMostrador">Mostrador</option>
+								<option ng-value="producto.precioMayoreo">Mayoreo</option>
+								<option ng-value="producto.precioCredito">Cr&eacute;dito</option>
+							</select></td>
 							<td>{{producto.precio}}</td>
-							<td>{{producto.mayoreo}}</td>
 							<td>{{producto.existencia}}</td>
 							<td><input type="text" ng-model="producto.cantidad"
 								ng-change="producto.importe= producto.cantidad*producto.precio"></td>
