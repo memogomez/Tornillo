@@ -95,6 +95,11 @@ app.config([ '$routeProvider', function($routeProvider) {
 		templateUrl : "pages/resetpass.html",
 		controller : "controladorReset"
 	})
+	$routeProvider.when('/archivo', {
+		templateUrl : "pages/archivo.html",
+		controller : "archivoController"
+	});
+	
 	$routeProvider.otherwise({
 		redirectTo : '/inicio'
 	});

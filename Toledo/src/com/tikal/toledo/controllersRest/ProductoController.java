@@ -34,6 +34,20 @@ public class ProductoController {
 	}
 	
 	@RequestMapping(value = {
+	"/addMultiple" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public void addMultiple(HttpServletRequest re, HttpServletResponse rs,@RequestBody String cadena) throws IOException{
+		
+		String[] primeros=cadena.split("<Sect>");
+		
+		for(String s:primeros){
+			System.out.println(s);
+		}
+//			Producto c= (Producto) JsonConvertidor.fromJson(json, Producto.class);
+//			productodao.guardar(c);
+//			rs.getWriter().println(JsonConvertidor.toJson(c));
+	}
+	
+	@RequestMapping(value = {
 	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
 			
@@ -53,4 +67,6 @@ public class ProductoController {
 		List<Producto> lista= productodao.todos();
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
+	
+	
 }
