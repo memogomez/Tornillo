@@ -12,6 +12,7 @@ public class Producto {
 	@Index
 	private String nombre;
 	
+	private String clave;
 	private float precioMostrador;
 	private float precioMayoreo;
 	private float precioCredito;
@@ -120,6 +121,14 @@ public class Producto {
 
 	public void setPrecioCredito(float precioCredito) {
 		this.precioCredito = precioCredito;
+	}
+
+	public String getClave() {
+		return clave;
+	}
+
+	public void setClave(String clave) {
+		this.clave = clave;
 	}
 	
 	
