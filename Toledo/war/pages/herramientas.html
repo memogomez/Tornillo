@@ -19,7 +19,7 @@
 							id="dataTables-example">
 							<thead>
 								<tr>
-									<th>Codigo</th>
+									<th>Clave</th>
 									<th>Producto</th>
 									<th>Precio Mostrador</th>
 									<th>Precio Mayoreo</th>
@@ -31,8 +31,8 @@
 							</thead>
 							<tbody>
 								<tr  ng-repeat="herramienta in herramientas" class="odd gradeX">
-									<td>{{herramienta.id}}</td>
-									<td>{{herramienta.nombre}}</td>
+									<td>{{herramienta.clave}}</td>
+									<td>{{herramienta.nombre}}</td>									
 									<td>{{herramienta.precioMostrador}}</td>
 									<td>{{herramienta.precioMayoreo}}</td>
 									<td>{{herramienta.precioCredito}}</td>

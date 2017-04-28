@@ -20,6 +20,7 @@
 							<thead>
 								<tr>
 									<th>Producto</th>
+									<th>Clave</th>
 									<th>Medida</th>
 									<th>Marca</th>
 									<th>Existencia</th>
@@ -29,6 +30,7 @@
 							<tbody>
 								<tr ng-repeat="inv in inventario" class="odd gradeX">
 									<td>{{inv.nombre}}</td>
+									<td>{{inv.clave}}</td>
 									<td>{{inv.medidas}}</td>
 									<td>{{inv.marca}}</td>
 									<td class="center">{{inv.existencia}}</td>
