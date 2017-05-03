@@ -38,4 +38,15 @@ public class TornilloDAOIpm implements TornilloDAO {
 		return ofy().load().type(Tornillo.class).limit(50).list();
 	}
 
+	@Override
+	public void guardar(List<Tornillo> lista) {
+		ofy().save().entities(lista).now();
+	}
+
+	@Override
+	public void alv() {
+		List<Tornillo> lista= ofy().load().type(Tornillo.class).list();
+		ofy().delete().entities(lista);
+	}
+
 }

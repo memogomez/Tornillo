@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tikal.toledo.dao.ProductoDAO;
-import com.tikal.toledo.model.Cliente;
+import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.model.Producto;
+import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.util.JsonConvertidor;
+import com.tikal.toledo.util.Parseador;
 
 @Controller
 @RequestMapping(value={"/productos"})
@@ -24,6 +26,9 @@ public class ProductoController {
 
 	@Autowired
 	ProductoDAO productodao;
+	
+	@Autowired
+	TornilloDAO tdao;
 	
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
@@ -36,15 +41,12 @@ public class ProductoController {
 	@RequestMapping(value = {
 	"/addMultiple" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void addMultiple(HttpServletRequest re, HttpServletResponse rs,@RequestBody String cadena) throws IOException{
-		
-		String[] primeros=cadena.split("<Sect>");
-		
-		for(String s:primeros){
-			System.out.println(s);
-		}
+		cadena = cadena.replace("<P>TOLEDO </P>", "");
+		List<Tornillo> lista=Parseador.parsear(cadena);
 //			Producto c= (Producto) JsonConvertidor.fromJson(json, Producto.class);
 //			productodao.guardar(c);
-//			rs.getWriter().println(JsonConvertidor.toJson(c));
+			rs.getWriter().println(JsonConvertidor.toJson(lista));
+			tdao.guardar(lista);
 	}
 	
 	@RequestMapping(value = {

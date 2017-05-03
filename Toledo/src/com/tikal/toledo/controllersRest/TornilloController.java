@@ -53,4 +53,11 @@ public class TornilloController {
 		List<Tornillo> lista= tornillodao.todos();
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
+	
+	@RequestMapping(value = {
+	"/alv" }, method = RequestMethod.GET, produces = "application/json")
+	public void alv(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		tornillodao.alv();
+		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
+	}
 }
