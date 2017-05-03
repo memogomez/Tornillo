@@ -66,8 +66,9 @@ app.controller("inventarioController",[
 						+ " "
 						+ $scope.inventario[i].clave
 						+ " "
-						+ $scope.inventario[i].medida
-					}
+						+ $scope.inventario[i].medidas
+						+ " "
+					}					
 				})
 		}
 		$scope.herramientas();
