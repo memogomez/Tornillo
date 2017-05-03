@@ -26,6 +26,18 @@ app.service('tornillosService', [
 		});
 		return d.promise;
 	};
+	
+	this.findTornillosPage = function(page) {
+		var d = $q.defer();
+		$http.get("/tornillos/pages/"+page).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
+	
 	this.findTornillo = function(id) {
 		var d = $q.defer();
 		$http.get("/tornillos/find/"+id).then(function(response) {
@@ -56,6 +68,7 @@ app.controller("tornillosController",[
 	'proveedoresService',
 	function($scope, tornillosService, $routeParams, $location, $window, proveedoresService){
 	
+	
 	$scope.registraTornillos = function(newTornillo) {
 		console.log(newTornillo);		
 		tornillosService.registraTornillos(newTornillo).then(function(newTornillo) {
@@ -64,14 +77,14 @@ app.controller("tornillosController",[
 //					$location.path("/herramientas");
 				})
 	}
-	$scope.tornillos = function() {
-		tornillosService.findTornillos($routeParams.id).then(
+	$scope.cargaTornillos = function() {
+		tornillosService.findTornillosPage(1).then(
 			function(data) {
 				$scope.tornillos = data;				
 				console.log(data);
 			})
 	}
-	$scope.tornillos();
+	$scope.cargaTornillos();
 	
 	$scope.editar = function(id) {
 		$location.path("/tornillos/edit/" + id);

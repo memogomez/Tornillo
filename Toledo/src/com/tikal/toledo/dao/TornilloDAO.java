@@ -16,5 +16,7 @@ public interface TornilloDAO {
 	
 	public List<Tornillo> todos();
 	
+	public List<Tornillo> page(int p);
+	
 	public void alv();
 }

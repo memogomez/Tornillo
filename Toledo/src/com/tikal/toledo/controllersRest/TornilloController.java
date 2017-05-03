@@ -55,6 +55,14 @@ public class TornilloController {
 	}
 	
 	@RequestMapping(value = {
+	"/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
+	public void pages(HttpServletRequest re, HttpServletResponse rs,@PathVariable int page) throws IOException{
+		List<Tornillo> lista= tornillodao.todos();
+		rs.getWriter().println(JsonConvertidor.toJson(lista));
+	}
+	
+	
+	@RequestMapping(value = {
 	"/alv" }, method = RequestMethod.GET, produces = "application/json")
 	public void alv(HttpServletRequest re, HttpServletResponse rs) throws IOException{
 		tornillodao.alv();

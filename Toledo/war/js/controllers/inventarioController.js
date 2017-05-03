@@ -50,7 +50,10 @@ app.controller("inventarioController",[
 	'lotesService',
 	function($scope, inventarioService, $routeParams,$location, $window, herramientasService, tornillosService, lotesService){
 		
-		
+		$scope.paginas = new Array(20);
+		$scope.getNumber = function(num) {
+		    return new Array(num);   
+		}
 		$scope.inventario=[];
 		$scope.herramientas = function() {
 			herramientasService.findHerramientas().then(

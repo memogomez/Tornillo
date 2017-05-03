@@ -49,4 +49,10 @@ public class TornilloDAOIpm implements TornilloDAO {
 		ofy().delete().entities(lista);
 	}
 
+	@Override
+	public List<Tornillo> page(int p) {
+		List<Tornillo> lista= ofy().load().type(Tornillo.class).offset((p-1)*50).limit(50).list();
+		return lista;
+	}
+
 }

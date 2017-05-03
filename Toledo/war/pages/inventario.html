@@ -93,8 +93,9 @@
 								<td>{{lote.proveedor}}</td>
 							</tr>							
 						</tbody>
-					</table>
-				</div>
+					</table>					
+				</div>			
+					
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary"
 						data-dismiss="modal">Cerrar</button>
@@ -102,5 +103,12 @@
 			</div>
 		</div>
 	</div>
+<ul class="pagination">
+  <li ng-repeat="i in paginas"><a href="#">{{$index+1}}</a></li>
+<!--   <li><a href="#">2</a></li> -->
+<!--   <li><a href="#">3</a></li> -->
+<!--   <li><a href="#">4</a></li> -->
+<!--   <li><a href="#">5</a></li> -->
+</ul>
 </div>
 
