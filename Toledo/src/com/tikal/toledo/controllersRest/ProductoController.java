@@ -64,11 +64,19 @@ public class ProductoController {
 	}
 	
 	@RequestMapping(value = {
-	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
-	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
-		List<Producto> lista= productodao.todos();
+	"/findAll/{page}" }, method = RequestMethod.GET, produces = "application/json")
+	public void search(HttpServletRequest re, HttpServletResponse rs,@PathVariable int page) throws IOException{
+		List<Producto> lista= productodao.todos(page);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
 	
+	@RequestMapping(value = {
+	"/numPages" }, method = RequestMethod.GET, produces = "application/json")
+	public void numOfPages(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		List<Producto> lista= productodao.todos();
+		int pages = (lista.size()/50);
+		pages++;
+		rs.getWriter().println(pages);
+	}
 	
 }

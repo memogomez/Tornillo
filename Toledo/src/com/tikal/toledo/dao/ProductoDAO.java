@@ -13,5 +13,7 @@ public interface ProductoDAO {
 	public List<Producto> buscar(String search);
 	
 	public List<Producto> todos();
+	
+	public List<Producto> todos(int page);
 
 }

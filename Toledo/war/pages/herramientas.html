@@ -1,13 +1,14 @@
 <div class="col-sm-8 text-left">
 	<div id="page-wrapper">
 		<div class="row">
-		<div class="form-group col-md-6">
-			<label>Buscar:</label> 
-			<input type="text" ng-model="busqueda.buscar">
-			<button type="submit" class="btn btn-primary" ng-click="buscar(busqueda.buscar)">
-      		  <span class="glyphicon glyphicon-search"></span>
-      		</button>
-		</div>
+			{{paginas}}
+			<div class="form-group col-md-6">
+				<label>Buscar:</label> <input type="text" ng-model="busqueda.buscar">
+				<button type="submit" class="btn btn-primary"
+					ng-click="buscar(busqueda.buscar)">
+					<span class="glyphicon glyphicon-search"></span>
+				</button>
+			</div>
 			<div class="col-lg-12">
 				<h1 class="page-header">Herramientas</h1>
 			</div>
@@ -43,11 +44,20 @@
 									<td>{{herramienta.precioMostrador}}</td>
 									<td>{{herramienta.precioMayoreo}}</td>
 									<td>{{herramienta.precioCredito}}</td>
-									<td class="center">{{herramienta.proveedor}}</td>			
-									<td class="center">{{herramienta.existencia}}</td>						
-									<td><button class="btn btn-success" data-toggle="tooltip" title="Editar" ng-click="editar(herramienta.id)"><i class="glyphicon glyphicon-pencil"></i></button>
-										<button class="btn btn-danger" data-toggle="tooltip" title="Eliminar"><i class="glyphicon glyphicon-remove"></i></button>
-										<button class="btn btn-info" data-toggle="tooltip" title="Agregar Lote" ng-click="lotes(herramienta.id)"><i class="glyphicon glyphicon-plus"></i></button></td>
+									<td class="center">{{herramienta.proveedor}}</td>
+									<td class="center">{{herramienta.existencia}}</td>
+									<td><button class="btn btn-success" data-toggle="tooltip"
+											title="Editar" ng-click="editar(herramienta.id)">
+											<i class="glyphicon glyphicon-pencil"></i>
+										</button>
+										<button class="btn btn-danger" data-toggle="tooltip"
+											title="Eliminar">
+											<i class="glyphicon glyphicon-remove"></i>
+										</button>
+										<button class="btn btn-info" data-toggle="tooltip"
+											title="Agregar Lote" ng-click="lotes(herramienta.id)">
+											<i class="glyphicon glyphicon-plus"></i>
+										</button></td>
 								</tr>
 							</tbody>
 						</table>
@@ -56,6 +66,12 @@
 						<button type="submit" value="enviar" class="btn btn-primary"
 							onclick="location='#/inventario'">Inventario</button>
 						<!-- /.table-responsive -->
+						<div>
+							<ul class="pagination .pagination-sm">
+								<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"><a ng-click="cargaPagina(abc)">{{abc}}</a></li>
+								
+							</ul>
+						</div>
 					</div>
 					<!-- /.panel-body -->
 				</div>

@@ -16,9 +16,9 @@ app.service('herramientasService', [
 			});
 		return d.promise;
 	}
-	this.findHerramientas = function() {
+	this.findHerramientas = function(page) {
 		var d = $q.defer();
-		$http.get("/productos/findAll/").then(function(response) {
+		$http.get("/productos/findAll/"+page).then(function(response) {
 			console.log(response);
 			d.resolve(response.data);
 		}, function(response) {
@@ -46,6 +46,16 @@ app.service('herramientasService', [
 		});
 		return d.promise;
 	};
+	this.numPages = function() {
+		var d = $q.defer();
+		$http.get("/productos/numPages").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
 	this.busqueda = function(buscar) {
 		var d = $q.defer();
 		$http.get("/productos/search/"+buscar).then(function(response) {
@@ -65,6 +75,34 @@ app.controller("herramientasController",[
 	'$window',
 	'proveedoresService',
 	function($scope, herramientasService,$routeParams,$location,$window, proveedoresService){
+	
+	$scope.paginaActual=1;
+	$scope.llenarPags=function(){
+		var inicio=0;
+		if($scope.paginaActual>3){
+			inicio=$scope.paginaActual;
+		}
+		var fin = inicio+5;
+		if(fin>$scope.maxPage){
+			fin=$scope.maxPage;
+		}
+		$scope.paginas=[];
+		for(var i = inicio; i< fin; i++){
+			$scope.paginas.push(i+1);
+		}
+		$('#pag1').addClass("active");
+	}
+	
+	$scope.cargarPagina=function(pag){
+		if($scope.paginaActual!=pag){
+			$scope.herramientas(pag);
+		}
+	}
+	herramientasService.numPages().then(function(data){
+		$scope.maxPage=data;
+		$scope.llenarPags();
+		
+	})
 	$scope.busqueda={};
 	$scope.registraHerramienta = function(newHerramienta) {
 		console.log(newHerramienta);		
@@ -74,14 +112,15 @@ app.controller("herramientasController",[
 					$location.path("/herramientas");
 				})
 	}
-	$scope.herramientas = function() {
-		herramientasService.findHerramientas($routeParams.id).then(
+	$scope.herramientas = function(page) {
+		herramientasService.findHerramientas(page).then(
 			function(data) {
-				$scope.herramientas = data;				
+				$scope.herramientas = data;
+				$scope.llenarPags();
 				console.log(data);
 			})
 	}
-	$scope.herramientas();
+	$scope.herramientas(1);
 	
 	$scope.editar = function(id) {
 		$location.path("/herramientas/edit/" + id);
