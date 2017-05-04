@@ -65,7 +65,7 @@ app.controller("herramientasController",[
 	'$window',
 	'proveedoresService',
 	function($scope, herramientasService,$routeParams,$location,$window, proveedoresService){
-	
+	$scope.busqueda={};
 	$scope.registraHerramienta = function(newHerramienta) {
 		console.log(newHerramienta);		
 		herramientasService.registraHerramienta(newHerramienta).then(function(newHerramienta) {
@@ -101,9 +101,11 @@ app.controller("herramientasController",[
 	}
 	
 	$scope.buscar = function(buscar){
-		herramientasService.busqueda().then(
+		
+		herramientasService.busqueda(buscar).then(
 				function(data) {
-					$scope.resultadoBusqueda = data;				
+					$scope.resultadoBusqueda = data;	
+					$scope.busqueda.buscar="";
 					console.log(data);
 				})
 	}
