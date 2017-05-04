@@ -58,6 +58,16 @@ app.service('tornillosService', [
 		});
 		return d.promise;
 	};
+	this.busqueda = function(buscar) {
+		var d = $q.defer();
+		$http.get("/tornillos/search/"+buscar).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
 }])
 app.controller("tornillosController",[
 	'$scope',
@@ -102,6 +112,23 @@ app.controller("tornillosController",[
 		$location.path("/altaLotes/" + id);
 	}
 	
+	$scope.buscar = function(buscar){
+		
+		tornillosService.busqueda(buscar).then(
+				function(data) {
+					$scope.tornillos = data;	
+					$scope.busqueda.buscar="";
+					console.log(data);
+				})
+	}
+	
+	$scope.mostrarTornillos = function(){
+		tornillosService.findTornillos($routeParams.id).then(
+			function(data) {
+				$scope.tornillos = data;				
+				console.log(data);
+			})
+}
 }]);
 app.controller("tornillosEditController",[
 	'$scope',

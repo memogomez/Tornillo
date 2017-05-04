@@ -143,8 +143,15 @@ app.controller("herramientasController",[
 		
 		herramientasService.busqueda(buscar).then(
 				function(data) {
-					$scope.resultadoBusqueda = data;	
+					$scope.herramientas = data;	
 					$scope.busqueda.buscar="";
+					console.log(data);
+				})
+	}
+	$scope.mostrarHerramientas = function(){
+		herramientasService.findHerramientas($routeParams.id).then(
+				function(data) {
+					$scope.herramientas = data;				
 					console.log(data);
 				})
 	}
