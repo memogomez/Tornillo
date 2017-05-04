@@ -46,6 +46,16 @@ app.service('herramientasService', [
 		});
 		return d.promise;
 	};
+	this.busqueda = function(buscar) {
+		var d = $q.defer();
+		$http.get("/productos/search/"+buscar).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
 }])
 app.controller("herramientasController",[
 	'$scope',
@@ -88,6 +98,14 @@ app.controller("herramientasController",[
 	
 	$scope.lotes = function(id) {			
 		$location.path("/altaLotes/" + id);
+	}
+	
+	$scope.buscar = function(buscar){
+		herramientasService.busqueda().then(
+				function(data) {
+					$scope.resultadoBusqueda = data;				
+					console.log(data);
+				})
 	}
 }]);
 app.controller("herramientasEditController",[
