@@ -38,9 +38,9 @@
 									<td>{{herramienta.precioCredito}}</td>
 									<td class="center">{{herramienta.proveedor}}</td>			
 									<td class="center">{{herramienta.existencia}}</td>						
-									<td><button class="btn btn-success" ng-click="editar(herramienta.id)">Editar</button>
-										<button class="btn btn-danger">Eliminar</button>
-										<button class="btn btn-info" ng-click="lotes(herramienta.id)">Agregar Lote</button></td>
+									<td><button class="btn btn-success" data-toggle="tooltip" title="Editar" ng-click="editar(herramienta.id)"><i class="glyphicon glyphicon-pencil"></i></button>
+										<button class="btn btn-danger" data-toggle="tooltip" title="Eliminar"><i class="glyphicon glyphicon-remove"></i></button>
+										<button class="btn btn-info" data-toggle="tooltip" title="Agregar Lote" ng-click="lotes(herramienta.id)"><i class="glyphicon glyphicon-plus"></i></button></td>
 								</tr>
 							</tbody>
 						</table>
