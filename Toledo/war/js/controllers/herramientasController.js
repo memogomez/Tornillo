@@ -90,7 +90,7 @@ app.controller("herramientasController",[
 		for(var i = inicio; i< fin; i++){
 			$scope.paginas.push(i+1);
 		}
-		$('#pag1').addClass("active");
+		$('#pag'+$scope.paginaActual).addClass("active");
 	}
 	
 	$scope.cargarPagina=function(pag){
