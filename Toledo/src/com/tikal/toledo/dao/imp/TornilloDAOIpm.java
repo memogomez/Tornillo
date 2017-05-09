@@ -26,7 +26,7 @@ public class TornilloDAOIpm implements TornilloDAO {
 		List<Tornillo> lista= ofy().load().type(Tornillo.class).list();
 		List<Tornillo> result= new ArrayList<Tornillo>();
 		for(Tornillo p:lista){
-			if(p.getId().toString().contains(search) || p.getNombre().toLowerCase().contains(search)|| p.getMedidas().toLowerCase().contains(search)){
+			if(p.getClave().toLowerCase().contains(search) ||p.getId().toString().contains(search) || p.getNombre().toLowerCase().contains(search)|| p.getMedidas().toLowerCase().contains(search)){
 				result.add(p);
 			}
 		}
@@ -46,7 +46,7 @@ public class TornilloDAOIpm implements TornilloDAO {
 	@Override
 	public void alv() {
 		List<Tornillo> lista= ofy().load().type(Tornillo.class).list();
-		ofy().delete().entities(lista);
+		ofy().delete().entities(lista).now();
 	}
 
 	@Override
