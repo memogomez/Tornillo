@@ -17,6 +17,7 @@ import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
+import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
 import com.tikal.toledo.util.Parseador;
 
@@ -64,9 +65,16 @@ public class ProductoController {
 	}
 	
 	@RequestMapping(value = {
-	"/findAll/{page}" }, method = RequestMethod.GET, produces = "application/json")
+	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
 	public void search(HttpServletRequest re, HttpServletResponse rs,@PathVariable int page) throws IOException{
-		List<Producto> lista= productodao.todos(page);
+		List<Producto> lista= productodao.todos();
+		rs.getWriter().println(JsonConvertidor.toJson(lista));
+	}
+	
+	@RequestMapping(value = { "/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
+	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException {
+		AsignadorDeCharset.asignar(re, rs);
+		List<Producto> lista = productodao.todos(page);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
 	

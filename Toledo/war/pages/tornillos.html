@@ -1,17 +1,18 @@
 
-<div class="col-sm-8 text-left">
+<div class="col-sm-10 text-left">
 	<div id="page-wrapper">
 		<div class="row">
-		<div class="form-group col-md-6">
-			<label>Buscar:</label> 
-			<input type="text" ng-model="busqueda.buscar">
-			<button type="submit" class="btn btn-primary" ng-click="buscar(busqueda.buscar)">
-      		  <span class="glyphicon glyphicon-search"></span>
-      		</button>
-      		<button type="submit" class="btn btn-primary" data-toggle="tooltip" title="Mostrar Todos" ng-click="mostrarTornillos()">
-      		  <span class="glyphicon glyphicon-eye-open"></span>
-      		</button>
-		</div>
+			<div class="form-group col-md-6">
+				<label>Buscar:</label> <input type="text" ng-model="busqueda.buscar">
+				<button type="submit" class="btn btn-primary"
+					ng-click="buscar(busqueda.buscar)">
+					<span class="glyphicon glyphicon-search"></span>
+				</button>
+				<button type="submit" class="btn btn-primary" data-toggle="tooltip"
+					title="Mostrar Todos" ng-click="mostrarTornillos()">
+					<span class="glyphicon glyphicon-eye-open"></span>
+				</button>
+			</div>
 			<div class="col-lg-12">
 				<h1 class="page-header">Tornillos</h1>
 			</div>
@@ -31,18 +32,20 @@
 							<thead>
 								<tr>
 									<th>Clave</th>
+									<th>Nombre
 									<th>Precio Mostrador</th>
 									<th>Precio Mayoreo</th>
 									<th>Precio Credito</th>
 									<th>Medida</th>
 									<th>Proveedor</th>
-									<th>Cantidad por Mayoreo</th>
-									<th>Acciones</th>
+									<th>C/Mayoreo</th>
+									<th style="width: 16%;">Acciones</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr ng-repeat="tornillo in tornillos" class="odd gradeX">
 									<td>{{tornillo.clave}}</td>
+									<td>{{tornillo.nombre}}</td>
 									<td>{{tornillo.precioMostrador}}</td>
 									<td>{{tornillo.precioMayoreo}}</td>
 									<td>{{tornillo.precioCredito}}</td>
@@ -51,9 +54,19 @@
 									<td class="center">{{tornillo.mayoreo}}</td>
 									<td>
 
-										<button class="btn btn-success" data-toggle="tooltip" title="Editar" ng-click="editar(tornillo.id)"><i class="glyphicon glyphicon-pencil"></i></button>
-										<button class="btn btn-danger" data-toggle="tooltip" title="Eliminar"><i class="glyphicon glyphicon-remove"></i></button>
-										<button class="btn btn-info" data-toggle="tooltip" title="Agregar Lote" ng-click="lotes(tornillo.id)"><i class="glyphicon glyphicon-plus"></i></button></td>
+										<button class="btn btn-success" data-toggle="tooltip"
+											title="Editar" ng-click="editar(tornillo.id)">
+											<i class="glyphicon glyphicon-pencil"></i>
+										</button>
+										<button class="btn btn-danger" data-toggle="tooltip"
+											title="Eliminar">
+											<i class="glyphicon glyphicon-remove"></i>
+										</button>
+										<button class="btn btn-info" data-toggle="tooltip"
+											title="Agregar Lote" ng-click="lotes(tornillo.id)">
+											<i class="glyphicon glyphicon-plus"></i>
+										</button>
+									</td>
 									</td>
 								</tr>
 							</tbody>
@@ -63,6 +76,13 @@
 						<button type="submit" value="enviar" class="btn btn-primary"
 							onclick="location='#/inventario'">Inventario</button>
 						<!-- /.table-responsive -->
+						<div ng-show="todos">
+							<ul class="pagination .pagination-sm">
+								<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"
+									ng-click="cargarPagina(abc)"><a>{{abc}}</a></li>
+
+							</ul>
+						</div>
 					</div>
 					<!-- /.panel-body -->
 				</div>

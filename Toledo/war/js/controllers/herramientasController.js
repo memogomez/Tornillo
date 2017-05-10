@@ -18,7 +18,7 @@ app.service('herramientasService', [
 	}
 	this.findHerramientas = function(page) {
 		var d = $q.defer();
-		$http.get("/productos/findAll/"+page).then(function(response) {
+		$http.get("/productos/pages/"+page).then(function(response) {
 			console.log(response);
 			d.resolve(response.data);
 		}, function(response) {
@@ -26,6 +26,17 @@ app.service('herramientasService', [
 		});
 		return d.promise;
 	};
+	this.findHerramientasAll = function(page) {
+		var d = $q.defer();
+		$http.get("/productos/findAll/").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
+	
 	this.findHerramienta = function(id) {
 		var d = $q.defer();
 		$http.get("/productos/find/"+id).then(function(response) {

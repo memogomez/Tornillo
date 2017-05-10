@@ -6,7 +6,7 @@ app.service('tornillosService', [
 	'$window',
 	'proveedoresService',
 	function($http, $q, $location,$rootScope,$window,proveedoresService) {
-	
+
 	this.registraTornillos = function(newTornillo) {
 		var d = $q.defer();
 		$http.post("/tornillos/add/", newTornillo).then(
@@ -58,6 +58,16 @@ app.service('tornillosService', [
 		});
 		return d.promise;
 	};
+	this.numPages = function() {
+		var d = $q.defer();
+		$http.get("/tornillos/numPages").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	};
 	this.busqueda = function(buscar) {
 		var d = $q.defer();
 		$http.get("/tornillos/search/"+buscar).then(function(response) {
@@ -78,6 +88,38 @@ app.controller("tornillosController",[
 	'proveedoresService',
 	function($scope, tornillosService, $routeParams, $location, $window, proveedoresService){
 	
+		
+		$scope.paginaActual=1;
+		$scope.llenarPags=function(){
+			var inicio=0;
+			if($scope.paginaActual>3){
+				inicio=$scope.paginaActual-3;
+			}
+			var fin = inicio+5;
+			if(fin>$scope.maxPage){
+				fin=$scope.maxPage;
+			}
+			$scope.paginas=[];
+			for(var i = inicio; i< fin; i++){
+				$scope.paginas.push(i+1);
+			}
+			for(var i = inicio; i<= fin; i++){
+				$('#pag'+i).removeClass("active");
+			}
+			$('#pag'+$scope.paginaActual).addClass("active");
+		}
+		
+		$scope.cargarPagina=function(pag){
+			if($scope.paginaActual!=pag){
+				$scope.paginaActual=pag;
+				$scope.cargaTornillos(pag);
+			}
+		}
+		tornillosService.numPages().then(function(data){
+			$scope.maxPage=data;
+			$scope.llenarPags();
+			
+		})
 	
 	$scope.registraTornillos = function(newTornillo) {
 		console.log(newTornillo);		
@@ -87,14 +129,15 @@ app.controller("tornillosController",[
 //					$location.path("/herramientas");
 				})
 	}
-	$scope.cargaTornillos = function() {
-		tornillosService.findTornillosPage(1).then(
+	$scope.cargaTornillos = function(page) {
+		tornillosService.findTornillosPage(page).then(
 			function(data) {
-				$scope.tornillos = data;				
+				$scope.tornillos = data;	
+				$scope.llenarPags();
 				console.log(data);
 			})
 	}
-	$scope.cargaTornillos();
+	$scope.cargaTornillos(1);
 	
 	$scope.editar = function(id) {
 		$location.path("/tornillos/edit/" + id);
@@ -111,9 +154,9 @@ app.controller("tornillosController",[
 	$scope.lotes = function(id) {			
 		$location.path("/altaLotes/" + id);
 	}
-	
+	$scope.todos=true;
 	$scope.buscar = function(buscar){
-		
+		$scope.todos=false;
 		tornillosService.busqueda(buscar).then(
 				function(data) {
 					$scope.tornillos = data;	
@@ -123,11 +166,8 @@ app.controller("tornillosController",[
 	}
 	
 	$scope.mostrarTornillos = function(){
-		tornillosService.findTornillos($routeParams.id).then(
-			function(data) {
-				$scope.tornillos = data;				
-				console.log(data);
-			})
+		$scope.todos=true;
+		$scope.cargarPagina(1);
 }
 }]);
 app.controller("tornillosEditController",[

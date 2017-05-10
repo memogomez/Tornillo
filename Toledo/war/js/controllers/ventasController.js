@@ -15,7 +15,7 @@ app.controller("ventaController",['clientesService','ventasService','tornillosSe
 	
 	$scope.productos=[];
 	$scope.herramientas = function() {
-		herramientasService.findHerramientas().then(
+		herramientasService.findHerramientasAll().then(
 			function(data) {
 				$scope.herramientas = data;				
 				for(var i =0; i<data.length; i++){

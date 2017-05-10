@@ -15,56 +15,64 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.model.Cliente;
+import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
+import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
 
 @Controller
-@RequestMapping(value={"/tornillos"})
+@RequestMapping(value = { "/tornillos" })
 public class TornilloController {
 
 	@Autowired
 	TornilloDAO tornillodao;
-	
+
 	@RequestMapping(value = {
-	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
-			Tornillo c= (Tornillo) JsonConvertidor.fromJson(json, Tornillo.class);
-			tornillodao.guardar(c);
-			rs.getWriter().println(JsonConvertidor.toJson(c));
+			"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException {
+		AsignadorDeCharset.asignar(re, rs);
+		Tornillo c = (Tornillo) JsonConvertidor.fromJson(json, Tornillo.class);
+		tornillodao.guardar(c);
+		rs.getWriter().println(JsonConvertidor.toJson(c));
 	}
-	
-	@RequestMapping(value = {
-	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
-	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
-			
-			rs.getWriter().println(JsonConvertidor.toJson(tornillodao.cargar(Long.parseLong(id))));
+
+	@RequestMapping(value = { "/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
+	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException {
+		AsignadorDeCharset.asignar(re, rs);
+		rs.getWriter().println(JsonConvertidor.toJson(tornillodao.cargar(Long.parseLong(id))));
 	}
-	
-	@RequestMapping(value = {
-	"/search/{search}" }, method = RequestMethod.GET, produces = "application/json")
-	public void busca(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException{
-			List<Tornillo> lista= tornillodao.buscar(search);
-			rs.getWriter().println(JsonConvertidor.toJson(lista));
-	}
-	
-	@RequestMapping(value = {
-	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
-	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
-		List<Tornillo> lista= tornillodao.todos();
+
+	@RequestMapping(value = { "/search/{search}" }, method = RequestMethod.GET, produces = "application/json")
+	public void busca(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException {
+		AsignadorDeCharset.asignar(re, rs);
+		List<Tornillo> lista = tornillodao.buscar(search);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
-	
-	@RequestMapping(value = {
-	"/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
-	public void pages(HttpServletRequest re, HttpServletResponse rs,@PathVariable int page) throws IOException{
-		List<Tornillo> lista= tornillodao.todos();
+
+	@RequestMapping(value = { "/findAll" }, method = RequestMethod.GET, produces = "application/json")
+	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+		AsignadorDeCharset.asignar(re, rs);
+		List<Tornillo> lista = tornillodao.todos();
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
-	
-	
-	@RequestMapping(value = {
-	"/alv" }, method = RequestMethod.GET, produces = "application/json")
-	public void alv(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+
+	@RequestMapping(value = { "/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
+	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException {
+		AsignadorDeCharset.asignar(re, rs);
+		List<Tornillo> lista = tornillodao.page(page);
+		rs.getWriter().println(JsonConvertidor.toJson(lista));
+	}
+
+	@RequestMapping(value = { "/numPages" }, method = RequestMethod.GET, produces = "application/json")
+	public void numOfPages(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+		List<Tornillo> lista = tornillodao.todos();
+		int pages = (lista.size() / 50);
+		pages++;
+		rs.getWriter().println(pages);
+	}
+
+	@RequestMapping(value = { "/alv" }, method = RequestMethod.GET, produces = "application/json")
+	public void alv(HttpServletRequest re, HttpServletResponse rs) throws IOException {
 		tornillodao.alv();
 		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
 	}
