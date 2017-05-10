@@ -17,17 +17,25 @@
                     <!-- /.panel-heading -->
                     <div class="panel-body">
                         <form>
-                          <br>   
+                          <div class="col-md-6">  
                           Nombre:<br>
                           <input type="text" class="form-control" ng-model="newProveedor.nombre">
-                          <br>                         
+                          <br>
+                          </div> 
+                          <div class="col-md-6">                        
                           Direccion:<br>
                           <input type="text" class="form-control" ng-model="newProveedor.direccion">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Telefono:<br>
                           <input type="text" class="form-control" ng-model="newProveedor.telefono">
-                          <br><br>
+                          <br>
+                          </div>
+                          <br>
+                          <div class="col-md-12">
                           <button type="submit" value="Registrar" class="btn btn-primary" ng-click="registraProveedor(newProveedor)">Registrar</button>
+                          </div>
                       </form> 
                       <!-- /.table-responsive -->
                   </div>

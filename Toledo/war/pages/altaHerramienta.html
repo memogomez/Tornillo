@@ -17,32 +17,50 @@
                     <!-- /.panel-heading -->
                     <div class="panel-body">
                         <form>
+                         <div class="col-md-6">
                           Nombre:<br>
                           <input type="text" class="form-control" ng-model="newHerramienta.nombre">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Clave:<br>
                           <input type="text" class="form-control" ng-model="newHerramienta.clave">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Precio Mostrador:<br>
                           <input type="text" class="form-control" ng-model="newHerramienta.precioMostrador">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Precio Mayoreo:<br>
                           <input type="text" class="form-control" ng-model="newHerramienta.precioMayoreo">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Precio Credito:<br>
                           <input type="text" class="form-control" ng-model="newHerramienta.precioCredito">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Marca:<br>
                           <input type="text" class="form-control" ng-model="newHerramienta.marca">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Proveedor:<br>                          
                           <select class="form-control" ng-model="newHerramienta.proveedor">
 							<option ng-repeat="prov in proveedores">{{prov.nombre}}</option>
 						  </select><br>
+						  </div>
+						  <div class="col-md-6">
                           Existencia:<br>
                           <input type="number" class="form-control" ng-model="newHerramienta.existencia">
-                          <br><br>
+                          <br></div>
+                          <br>
+                          <div class="col-md-6">
                           <button type="submit" value="Registrar" class="btn btn-primary" ng-click="registraHerramienta(newHerramienta)">Registrar</button>
+                          </div>
                       </form> 
                       <!-- /.table-responsive -->
                   </div>

@@ -17,23 +17,36 @@
                     <!-- /.panel-heading -->
                     <div class="panel-body">
                         <form>
+                         <div class="col-md-6">
                           Producto:<br>
                           <input type="text" class="form-control" ng-model="newLote.producto">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Fecha:<br>
                           <input type="date" class="form-control" ng-model="newLote.fecha">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Precio por unidad:<br>
                           <input type="text" class="form-control" ng-model="newLote.costo">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Cantidad:<br>
                           <input type="text" class="form-control" ng-model="newLote.cantidad">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Proveedor:<br>                          
                           <select class="form-control" ng-model="newLote.proveedor">
 							<option ng-repeat="prov in proveedores" value="{{prov.id}}">{{prov.nombre}}</option>
-						  </select><br><br>
+						  </select><br>
+						  </div>
+						  <br>
+						   <div class="col-md-12">
                           <button type="submit" value="Registrar" class="btn btn-primary" ng-click="registraLote(newLote)">Registrar</button>
+                          </div>
                       </form> 
                       <!-- /.table-responsive -->
                   </div>

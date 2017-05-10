@@ -16,35 +16,56 @@
                     <!-- /.panel-heading -->
                     <div class="panel-body">
                         <form>
+                         <div class="col-md-6">
                           Nombre:<br>
                           <input type="text" class="form-control" ng-model="newTornillo.nombre">
                           <br>  
+                          </div>
+                          <div class="col-md-6">
                           Clave:<br>
                           <input type="text" class="form-control" ng-model="newTornillo.clave">
-                          <br>    
+                          <br>
+                          </div>
+                          <div class="col-md-6">    
                           Precio Mostrador:<br>
                           <input type="text" class="form-control" ng-model="newTornillo.precioMostrador">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Precio Mayoreo:<br>
                           <input type="text" class="form-control" ng-model="newTornillo.precioMayoreo">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Precio Credito:<br>
                           <input type="text" class="form-control" ng-model="newTornillo.precioCredito">
-                          <br>                       
+                          <br>
+                          </div>
+                          <div class="col-md-6">                       
                           Medida:<br>
                           <input type="text" class="form-control" ng-model="newTornillo.medidas">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Marca:<br>
                           <input type="text" class="form-control" ng-model="newTornillo.marca">
                           <br>
+                          </div>
+                          <div class="col-md-6">
                           Proveedor:<br>                          
                           <select class="form-control" ng-model="newTornillo.proveedor">
 							<option ng-repeat="prov in proveedores">{{prov.nombre}}</option>
 						  </select><br>
+						  </div>
+						  <div class="col-md-6">
                           Cantidad por Mayoreo:<br>
                           <input type="text" class="form-control" ng-model="newTornillo.mayoreo">     
-                          <br><br>
+                          <br>
+                          </div>
+                          <br>
+                          <div class="col-md-12">
                           <button type="submit" value="Registrar" class="btn btn-primary" ng-click="registraTornillos(newTornillo)">Registrar</button>
+                          </div>
                       </form> 
                       <!-- /.table-responsive -->
                   </div>
