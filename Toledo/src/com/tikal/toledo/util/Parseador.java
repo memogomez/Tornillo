@@ -71,7 +71,7 @@ public class Parseador {
 		return lista;
 	}
 	
-	private static String getClave(String nombre){
+	public static String getClave(String nombre){
 		String clave="";
 		nombre = nombre.replaceAll("\\."," ");
 		nombre = nombre.trim();

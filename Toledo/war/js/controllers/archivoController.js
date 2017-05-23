@@ -47,6 +47,18 @@ app.service('archivoService',['$http','$q',function($http,$q){
 				});
 		return d.promise;
 	}
+	this.sendfile2=function(cadena,url){
+		var d = $q.defer();
+		$http.post(url,cadena).then(
+				function(response) {
+					console.log(response);
+					d.resolve(response.data);
+				},
+				function(response) {
+				});
+		return d.promise;
+	}
+	
 	
 	 this.uploadFileToUrl = function(data,url) {
    	  var d= $q.defer();

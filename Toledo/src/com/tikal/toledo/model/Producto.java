@@ -12,6 +12,7 @@ public class Producto {
 	@Index
 	private String nombre;
 	
+	@Index
 	private String clave;
 	private float precioMostrador;
 	private float precioMayoreo;

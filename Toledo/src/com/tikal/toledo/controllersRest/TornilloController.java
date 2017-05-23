@@ -19,6 +19,7 @@ import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
+import com.tikal.toledo.util.Parseador;
 
 @Controller
 @RequestMapping(value = { "/tornillos" })
@@ -71,6 +72,25 @@ public class TornilloController {
 		rs.getWriter().println(pages);
 	}
 
+	@RequestMapping(value = { "/setClaves" }, method = RequestMethod.GET, produces = "application/json")
+	public void claves(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+		List<Tornillo> lista=tornillodao.todos();
+		for(Tornillo t:lista){
+			String nombre= t.getNombre();
+			if(nombre.toLowerCase().contains("din")){
+				nombre=nombre.substring(nombre.indexOf(" ")+1);
+				nombre=nombre.substring(nombre.indexOf(" ")+1);
+			}
+			String clave=Parseador.getClave(nombre);
+			t.setClave(clave);
+			
+			System.out.println(clave);
+		}
+		tornillodao.guardar(lista);
+		
+//		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
+	}
+	
 	@RequestMapping(value = { "/alv" }, method = RequestMethod.GET, produces = "application/json")
 	public void alv(HttpServletRequest re, HttpServletResponse rs) throws IOException {
 		tornillodao.alv();
