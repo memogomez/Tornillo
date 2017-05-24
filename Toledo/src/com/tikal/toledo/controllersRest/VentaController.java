@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.tikal.toledo.dao.ClienteDAO;
 import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.dao.VentaDAO;
+import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.Detalle;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
@@ -35,11 +37,16 @@ public class VentaController {
 	ProductoDAO productodao;
 	
 	@Autowired
+	ClienteDAO clientedao;
+	
+	@Autowired
 	TornilloDAO tornillodao;
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
 			Venta l= (Venta)JsonConvertidor.fromJson(json, Venta.class);
+			Cliente c= clientedao.cargar(l.getIdCliente());
+			l.setCliente(c.getNombre());
 			ventadao.guardar(l);
 			rs.getWriter().println(JsonConvertidor.toJson(l));
 	}

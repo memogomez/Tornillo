@@ -2,22 +2,27 @@
 	<div class="row">
 		<div class="col-md-8">
 			<div class="row">
+			{{venta}}
 				<form class="form-inline" style="text-align: left">
 					<div class="form-group col-md-6">
 						<label for="email">Cliente:</label> <select
-							class="form-control input-sm" ng-model="venta.idCliente" style="width: inherit;">
+							class="form-control input-sm" ng-model="venta.idCliente"
+							style="width: inherit;">
 							<option value="0">Otro...</option>
 							<option ng-repeat="cliente in clientes" value="{{cliente.id}}">{{cliente.nombre}}</option>
 						</select>
 					</div>
 					<div class="form-group col-md-6">
 						<label for="email">Buscar:</label> <input type="text"
-							class="form-control input-sm" id="buscar" ng-model="busqueda.buscar">
-						<button type="submit" class="btn btn-primary" ng-click="buscar(busqueda.buscar)">
-								<span class="glyphicon glyphicon-search"></span>
+							class="form-control input-sm" id="buscar"
+							ng-model="busqueda.buscar">
+						<button type="submit" class="btn btn-primary"
+							ng-click="buscar(busqueda.buscar)">
+							<span class="glyphicon glyphicon-search"></span>
 						</button>
-						<button type="submit" class="btn btn-primary" data-toggle="tooltip"
-							title="Mostrar Todos" ng-click="mostrarTornillos()">
+						<button type="submit" class="btn btn-primary"
+							data-toggle="tooltip" title="Mostrar Todos"
+							ng-click="mostrarTornillos()">
 							<span class="glyphicon glyphicon-eye-open"></span>
 						</button>
 					</div>
@@ -44,24 +49,31 @@
 							<td>{{producto.nombre}}</td>
 							<td>{{producto.medidas}}</td>
 							<td><select ng-model="producto.precio">
-								<option ng-value="producto.precioMostrador">Mostrador</option>
-								<option ng-value="producto.precioMayoreo">Mayoreo</option>
-								<option ng-value="producto.precioCredito">Cr&eacute;dito</option>
+									<option ng-value="producto.precioMostrador">Mostrador</option>
+									<option ng-value="producto.precioMayoreo">Mayoreo</option>
+									<option ng-value="producto.precioCredito">Cr&eacute;dito</option>
 							</select></td>
 							<td>{{producto.precio}}</td>
 							<td>{{producto.existencia}}</td>
 							<td><input type="text" ng-model="producto.cantidad"
-								ng-change="producto.importe= producto.cantidad*producto.precio"></td>
+								ng-change="producto.importe= calculaImporte(producto)"></td>
 							<td><input type="text" ng-model="producto.importe"></td>
 							<td>
-								<button type="button" class="btn btn-default btn-sm" ng-click="agregarDetalle(producto)">
+								<button type="button" class="btn btn-default btn-sm"
+									ng-click="agregarDetalle(producto)">
 									<span class="glyphicon glyphicon-plus"></span>
 								</button>
 							</td>
 						</tr>
 					</tbody>
 				</table>
+				<div ng-show="todos">
+					<ul class="pagination .pagination-sm">
+						<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"
+							ng-click="cargarPagina(abc)"><a>{{abc}}</a></li>
 
+					</ul>
+				</div>
 			</div>
 			<hr>
 			<div class="row"></div>
@@ -69,19 +81,22 @@
 
 		<div class="col-md-4">
 			<div class="well well-sm">
-			<h4>Venta</h4>
-			<table class="table table-stripped">
-			<tbody>
-				<tr><td>Fecha:</td>
-				<td>{{venta.fecha}}</td>
-				</tr>
-				<tr ng-repeat="det in venta.detalles">
-					<td>{{det.descripcion}}</td>
-					<td>{{det.cantidad}}</td>
-					<td>{{det.importe}}</td>
-				</tr>
-			</tbody>
-			</table>
+				<h4>Venta</h4>
+				<table class="table table-stripped">
+					<tbody>
+						<tr>
+							<td>Fecha:</td>
+							<td>{{venta.fecha}}</td>
+						</tr>
+						<tr ng-repeat="det in venta.detalles">
+							<td>{{det.descripcion}}</td>
+							<td>{{det.cantidad}}</td>
+							<td>{{det.importe}}</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<button class="btn btn-small" ng-click="guardarVenta()")>Guardar</button>
 			</div>
 		</div>
 	</div>
