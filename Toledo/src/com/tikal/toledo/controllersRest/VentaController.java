@@ -2,6 +2,7 @@ package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,7 @@ public class VentaController {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
 			Venta l= (Venta)JsonConvertidor.fromJson(json, Venta.class);
+			l.setFecha(new Date());
 			Cliente c= clientedao.cargar(l.getIdCliente());
 			l.setCliente(c.getNombre());
 			ventadao.guardar(l);
