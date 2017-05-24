@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tikal.toledo.dao.ClienteDAO;
+import com.tikal.toledo.dao.LoteDAO;
 import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.dao.VentaDAO;
 import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.Detalle;
+import com.tikal.toledo.model.Lote;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.model.Venta;
@@ -42,6 +44,10 @@ public class VentaController {
 	
 	@Autowired
 	TornilloDAO tornillodao;
+	
+	@Autowired
+	LoteDAO lotedao;
+	
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
@@ -50,6 +56,9 @@ public class VentaController {
 			Cliente c= clientedao.cargar(l.getIdCliente());
 			l.setCliente(c.getNombre());
 			ventadao.guardar(l);
+			
+			actualizarInventario(l.getDetalles());
+			
 			rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
 	
@@ -72,9 +81,9 @@ public class VentaController {
 	}
 	
 	@RequestMapping(value = {
-	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
-	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
-		List<Venta> lista= ventadao.todos(0);
+	"/findAll/{page}" }, method = RequestMethod.GET, produces = "application/json")
+	public void search(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException{
+		List<Venta> lista= ventadao.todos(page);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
 	
@@ -107,6 +116,21 @@ public class VentaController {
 		for(Detalle d:detalles){
 			if(d.getTipo()==0){
 				Producto p= productodao.cargar(d.getIdProducto());
+				int restante= p.getExistencia()-d.getCantidad();
+				p.setExistencia(restante);
+				List<Lote> lista= lotedao.porProducto(p.getId());
+				int aux= d.getCantidad();
+				
+				for(Lote l : lista){
+					if(aux< l.getCantidad()){
+						l.setCantidad(l.getCantidad()-aux);
+						break;
+					}else{
+						aux= aux-l.getCantidad();
+						l.setCantidad(0);
+					}
+				}
+				lotedao.guardarLotes(lista);
 			}
 		}
 	}

@@ -16,7 +16,7 @@ public class LoteDAOImp implements LoteDAO {
 
 	@Override
 	public List<Lote> porProducto(Long idProducto) {
-		List<Lote> result= ofy().load().type(Lote.class).filter("idProducto",idProducto).list();
+		List<Lote> result= ofy().load().type(Lote.class).filter("idProducto",idProducto).order("- fecha").list();
 		return result;
 	}
 

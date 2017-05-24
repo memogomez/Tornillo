@@ -17,6 +17,7 @@ public class Lote {
 	
 	private int cantidad;
 	
+	@Index
 	private Date fecha;
 	
 	private float costo;
