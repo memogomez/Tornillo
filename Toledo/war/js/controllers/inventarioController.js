@@ -38,6 +38,27 @@ app.service('inventarioService', [
 			});
 			return d.promise;
 		};
+		
+		this.loadInventario=function(page){
+			var d = $q.defer();
+			$http.get("/inventario/pages/"+page).then(function(response) {
+				console.log(response);
+				d.resolve(response.data);
+			}, function(response) {
+				d.reject(response);
+			});
+			return d.promise;
+		}
+		this.numPages = function() {
+			var d = $q.defer();
+			$http.get("/inventario/numPages").then(function(response) {
+				console.log(response);
+				d.resolve(response.data);
+			}, function(response) {
+				d.reject(response);
+			});
+			return d.promise;
+		};
 }])
 app.controller("inventarioController",[
 	'$scope',
@@ -49,11 +70,29 @@ app.controller("inventarioController",[
 	'tornillosService',
 	'lotesService',
 	function($scope, inventarioService, $routeParams,$location, $window, herramientasService, tornillosService, lotesService){
-		
-		$scope.paginas = new Array(20);
-		$scope.getNumber = function(num) {
-		    return new Array(num);   
+		$scope.paginaActual=1;
+		$scope.llenarPags=function(){
+			var inicio=0;
+			if($scope.paginaActual>3){
+				inicio=$scope.paginaActual-3;
+			}
+			var fin = inicio+5;
+			if(fin>$scope.maxPage){
+				fin=$scope.maxPage;
+			}
+			$scope.paginas=[];
+			for(var i = inicio; i< fin; i++){
+				$scope.paginas.push(i+1);
+			}
+			for(var i = inicio; i<= fin; i++){
+				$('#pag'+i).removeClass("active");
+			}
+			$('#pag'+$scope.paginaActual).addClass("active");
 		}
+//		$scope.paginas = new Array(20);
+//		$scope.getNumber = function(num) {
+//		    return new Array(num);   
+//		}
 		$scope.inventario=[];
 		$scope.herramientas = function() {
 			herramientasService.findHerramientas().then(
@@ -74,7 +113,7 @@ app.controller("inventarioController",[
 					}					
 				})
 		}
-		$scope.herramientas();
+//		$scope.herramientas();
 		
 		$scope.tornillos = function() {
 			tornillosService.findTornillos().then(
@@ -86,7 +125,7 @@ app.controller("inventarioController",[
 					}
 				})
 		}
-		$scope.tornillos();
+//		$scope.tornillos();
 	
 		$scope.mostrarLotes = function(inv){
 			$scope.nombreInventario=inv.nombre;
@@ -97,5 +136,32 @@ app.controller("inventarioController",[
 				})
 		}
 	
+		$scope.cargaInventario=function(page){
+			inventarioService.loadInventario(page).then(function(data){
+				console.log(data);
+				$scope.todos=true;
+				$scope.inventario=[];
+				for(var i =0; i<data[1].length;i++){
+					$scope.inventario.push(data[1][i]);
+				}
+				for(var i =0; i<data[0].length;i++){
+					$scope.inventario.push(data[0][i]);
+				}
+				
+			})
+		}
+		
+		$scope.cargarPagina=function(pag){
+			if($scope.paginaActual!=pag){
+				$scope.paginaActual=pag;
+				$scope.cargaInventario(pag);
+			}
+		}
+		inventarioService.numPages().then(function(data){
+			$scope.maxPage=data;
+			$scope.llenarPags();
+			
+		})
+		$scope.cargaInventario(1);
 	
 }]);

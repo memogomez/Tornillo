@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.model.Producto;
+import com.tikal.toledo.model.Tornillo;
 
 public class ProductoDAOImp implements ProductoDAO{
 
@@ -41,6 +42,11 @@ public class ProductoDAOImp implements ProductoDAO{
 	@Override
 	public List<Producto> todos(int page) {
 		return ofy().load().type(Producto.class).offset(50*(page-1)).limit(50).list();
+	}
+	
+	@Override
+	public int total() {
+		return ofy().load().type(Producto.class).count();
 	}
 	
 }

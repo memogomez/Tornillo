@@ -55,4 +55,9 @@ public class TornilloDAOIpm implements TornilloDAO {
 		return lista;
 	}
 
+	@Override
+	public int total() {
+		return ofy().load().type(Tornillo.class).count();
+	}
+
 }

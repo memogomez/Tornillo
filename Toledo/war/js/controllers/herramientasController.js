@@ -160,9 +160,11 @@ app.controller("herramientasController",[
 				})
 	}
 	$scope.mostrarHerramientas = function(){
-		herramientasService.findHerramientas($routeParams.id).then(
+		herramientasService.findHerramientas(1).then(
 				function(data) {
-					$scope.herramientas = data;				
+					$scope.herramientas = data;
+					$scope.paginaActual=1;
+					$scope.llenarPags();
 					console.log(data);
 				})
 	}

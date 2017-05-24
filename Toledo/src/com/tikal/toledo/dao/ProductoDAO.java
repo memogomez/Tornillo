@@ -16,4 +16,6 @@ public interface ProductoDAO {
 	
 	public List<Producto> todos(int page);
 
+	int total();
+
 }
