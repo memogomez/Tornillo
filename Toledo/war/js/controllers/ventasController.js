@@ -13,29 +13,28 @@ app.controller("ventaController",['clientesService','ventasService','tornillosSe
 		$scope.clientes=data;
 	})
 	
-	$scope.productos=[];
-	$scope.herramientas = function() {
-		herramientasService.findHerramientasAll().then(
-			function(data) {
-				$scope.herramientas = data;				
-				for(var i =0; i<data.length; i++){
-					$scope.productos.push(data[i]);
-				}
-				
-			})
-	}
-	$scope.herramientas();
-	
-	$scope.tornillos = function() {
-		tornillosService.findTornillos().then(
-			function(data) {
-				$scope.tornillos = data;				
-				for(var i =0; i<data.length; i++){
-					$scope.productos.push(data[i]);
-				}
-			})
-	}
-	$scope.tornillos();
+//	$scope.productos=[];
+//	$scope.herramientas = function() {
+//		herramientasService.findHerramientasAll().then(
+//			function(data) {
+//				$scope.herramientas = data;				
+//				for(var i =0; i<data.length; i++){
+//					$scope.productos.push(data[i]);
+//				}
+//				
+//			})
+//	}
+//	$scope.herramientas();
+//	$scope.tornillos = function() {
+//		tornillosService.findTornillos().then(
+//			function(data) {
+//				$scope.tornillos = data;				
+//				for(var i =0; i<data.length; i++){
+//					$scope.productos.push(data[i]);
+//				}
+//			})
+//	}
+//	$scope.tornillos();
 	
 	$scope.agregarDetalle=function(producto){
 		var detalle={}
@@ -49,5 +48,41 @@ app.controller("ventaController",['clientesService','ventasService','tornillosSe
 		detalle.importe= producto.importe;
 		detalle.tipo=producto.tipo;
 		$scope.venta.detalles.push(detalle);
+	}
+	
+	$scope.busqueda=[];
+	
+//	$scope.buscar = function(buscar){
+//		$scope.todos=false;
+//		console.log(buscar);
+//		tornillosService.busqueda(buscar).then(
+//				function(data) {
+//					$scope.productos = data;
+//					for(var i =0; i<data.length; i++){
+//						$scope.busqueda.push(data[i]);
+//					}
+//					$scope.busqueda.buscar="";
+//					console.log(data);
+//				})
+//	}
+	$scope.buscar = function(buscar){
+		$scope.busqueda=[];
+		herramientasService.busqueda(buscar).then(
+				function(data) {
+//					$scope.herramientas = data;	
+					for(var i =0; i<data.length; i++){
+						$scope.busqueda.push(data[i]);
+					}
+					tornillosService.busqueda(buscar).then(
+							function(data) {
+//								$scope.productos = data;
+								for(var i =0; i<data.length; i++){
+									$scope.busqueda.push(data[i]);
+								}
+								$scope.busqueda.buscar="";
+								$scope.productos=$scope.busqueda;
+								console.log(data);
+							});
+				})
 	}
 }]);
