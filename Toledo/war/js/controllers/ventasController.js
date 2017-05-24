@@ -13,6 +13,7 @@ app.controller("ventaController",['clientesService','ventasService','tornillosSe
 		$scope.clientes=data;
 	})
 	
+	
 //	$scope.productos=[];
 //	$scope.herramientas = function() {
 //		herramientasService.findHerramientasAll().then(
