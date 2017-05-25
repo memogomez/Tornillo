@@ -3,6 +3,7 @@
  */
 package com.tikal.toledo.util;
 
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.SecureRandom;
@@ -11,7 +12,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import com.tikal.toledo.facturacion.FormatoFecha;
+import com.tikal.toledo.sat.cfd.Comprobante;
+
+
 
 /**
  * @author Tikal
@@ -217,23 +232,56 @@ public class Util {
 		return calendar.getTime();
 	}
 	
-//	
-//	public static String marshallComprobante33(Comprobante c) {
-//		try {
-//			JAXBContext jaxbContext = JAXBContext.newInstance(Comprobante.class);
-//			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-//		
-//			jaxbMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,	
-//				"http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd ");
-//		
-//			StringWriter sw = new StringWriter();
-//			jaxbMarshaller.marshal(c, sw);
-//			return sw.toString();
-//		} catch (JAXBException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
+	public static String regresaTextoOCadenaVacia(String texto) {
+		if (texto == null) {
+			texto = "";
+		}	
+		return texto;
+	}
+	
+	public static XMLGregorianCalendar getXMLDate(Date date, FormatoFecha formato) {
+    	GregorianCalendar c = new GregorianCalendar();
+    	c.setTime(date);
+    	XMLGregorianCalendar date2 = null;
+    	try {
+	    	switch (formato) {
+			case COMPROBANTE:
+				date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(
+						c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH),
+						c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND),
+						DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
+				break;
+			case NOMINA:
+				date2 = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(
+						c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+				break;
+			default:
+				break;
+			}
+    	} catch (DatatypeConfigurationException exception) {
+    		return date2;
+    	}
+    	 
+    	return date2;
+    }
+	
+	
+	public static String marshallComprobante(Comprobante c) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(Comprobante.class);
+			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		
+			jaxbMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,	
+				"http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd ");
+		
+			StringWriter sw = new StringWriter();
+			jaxbMarshaller.marshal(c, sw);
+			return sw.toString();
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 }

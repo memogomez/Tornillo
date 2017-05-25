@@ -20,6 +20,7 @@ import com.tikal.toledo.dao.LoteDAO;
 import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.dao.VentaDAO;
+import com.tikal.toledo.facturacion.ComprobanteVentaFactory;
 import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.Detalle;
 import com.tikal.toledo.model.Lote;
@@ -48,6 +49,9 @@ public class VentaController {
 	@Autowired
 	LoteDAO lotedao;
 	
+	@Autowired
+	ComprobanteVentaFactory cvFactory;
+	
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
@@ -72,12 +76,12 @@ public class VentaController {
 	@RequestMapping(value = {
 	"/facturar" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void facturar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
-			Venta l= (Venta)JsonConvertidor.fromJson(json, Venta.class);
-			
+			Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
+			cvFactory.generarFactura(venta, clientedao.cargar(venta.getIdCliente()));
 			//facturar
 			
-			ventadao.guardar(l);
-			rs.getWriter().println(JsonConvertidor.toJson(l));
+			ventadao.guardar(venta);
+			rs.getWriter().println(JsonConvertidor.toJson(venta));
 	}
 	
 	@RequestMapping(value = {

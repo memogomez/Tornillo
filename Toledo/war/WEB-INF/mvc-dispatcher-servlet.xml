@@ -25,6 +25,8 @@
 	<!-- Register Bean for Objectify's Entities -->
 	<bean class="com.tikal.toledo.Register" scope="singleton" />
 	
+	<bean class="com.tikal.toledo.facturacion.ComprobanteVentaFactory"/>
+	
 <!-- 	<bean class="com.tikal.cacao.security.CustomUsuarioServicio"></bean> -->
 
 	<!-- Beans Components -->
