@@ -30,6 +30,17 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		});
 		return d.promise;
 	}
+	
+	this.findVentas= function(page){
+		var d = $q.defer();
+		$http.get("/ventas/findAll/"+page).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
 }]);
 
 app.controller("ventaController",['clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function(clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
@@ -173,8 +184,17 @@ app.controller("ventaController",['clientesService','ventasService','tornillosSe
 		ventasService.addVenta($scope.venta).then(function(data){
 			alert("La venta ha sido guardada");
 			
-			$window.location.reload();
 		});
 	}
 	
+}]);
+app.controller("ventaListController",['clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function(clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
+	$scope.ventas = function(page) {
+		ventasService.findVentas(page).then(
+			function(data) {
+				$scope.ventas = data;
+				console.log(data);
+			})
+	}
+	$scope.ventas(1);
 }]);

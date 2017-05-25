@@ -1,0 +1,73 @@
+<div class="col-sm-10 text-left">
+	<div id="page-wrapper">
+		<div class="row">
+
+<!-- 		<div class="form-group col-md-6"> -->
+<!-- 			<label>Buscar:</label>  -->
+<!-- 			<input type="text" ng-model="busqueda.buscar"> -->
+<!-- 			<button type="submit" class="btn btn-primary" ng-click="buscar(busqueda.buscar)"> -->
+<!--       		  <span class="glyphicon glyphicon-search"></span> -->
+<!--       		</button> -->
+<!--       		<button type="submit" class="btn btn-primary" data-toggle="tooltip" title="Mostrar Todos" ng-click="mostrarHerramientas()"> -->
+<!--       		  <span class="glyphicon glyphicon-eye-open"></span> -->
+<!--       		</button> -->
+<!-- 		</div> -->
+			<div class="col-lg-12">
+				<h1 class="page-header">Historial de Ventas</h1>
+			</div>
+			<!-- /.col-lg-12 -->
+		</div>
+		<!-- /.row -->
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Ventas</div>
+					<!-- /.panel-heading -->
+					<div class="panel-body">
+						<table width="100%"
+							class="table table-striped table-bordered table-hover"
+							id="dataTables-example">
+							<thead>
+								<tr>
+									<th>Fecha</th>
+									<th>Cliente</th>
+									<th>Monto</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="venta in ventas" class="odd gradeX">
+									<td>{{venta.fecha}}</td>
+									<td>{{venta.cliente}}</td>
+									<td>{{venta.monto}}</td>
+									<td><button class="btn btn-success" data-toggle="tooltip"
+											title="Editar" ng-click="editar(herramienta.id)">
+											<i class="glyphicon glyphicon-pencil"></i>
+										</button>
+										<button class="btn btn-danger" data-toggle="tooltip"
+											title="Eliminar">
+											<i class="glyphicon glyphicon-remove"></i>
+										</button>
+										<button class="btn btn-info" data-toggle="tooltip"
+											title="Agregar Lote" ng-click="lotes(herramienta.id)">
+											<i class="glyphicon glyphicon-plus"></i>
+										</button></td>
+								</tr>
+							</tbody>
+						</table>						
+						<!-- /.table-responsive -->
+						<div>
+							<ul class="pagination .pagination-sm">
+								<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"><a ng-click="cargaPagina(abc)">{{abc}}</a></li>
+								
+							</ul>
+						</div>
+					</div>
+					<!-- /.panel-body -->
+				</div>
+				<!-- /.panel -->
+			</div>
+			<!-- /.col-lg-12 -->
+		</div>
+	</div>
+</div ng-view>

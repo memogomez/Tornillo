@@ -70,6 +70,7 @@ app.config([ '$routeProvider', function($routeProvider) {
 
 	$routeProvider.when('/inventario', {
 		templateUrl : "pages/inventario.html",
+		
 		controller : "inventarioController"
 	});
 	$routeProvider.when('/login', {
