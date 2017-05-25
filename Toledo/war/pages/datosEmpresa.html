@@ -1,101 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Inventario</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/estilos.css">
-  <script src="js/bootstrap.min.js"></script>
-  <script src="js/jquery.js"></script>  
-</head>
-<body>
 
-  <section class="jumbotron">
-    <div class="container">
-      <div class="navbar-form navbar-left">
-         <h4>Control de Inventario</h4>
-     </div>
-     <form action="" class="navbar-form navbar-center" role="search">        
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Buscar">
-      </div>
-      <button type="submit" class="btn btn-primary">
-          <span class="glyphicon glyphicon-search"></span>
-      </button>
-      <button class="glyphicon glyphicon-user form-control navbar-form navbar-right"> Bienvenido ADMINISTRADOR</button>  
-  </form>
-</div>
-</section>
-
-<div class="container-fluid text-center">    
-    <div class="row content">
-      <div class="col-sm-2 sidebar" role="navigation">
-       <div class="sidebar-nav navbar-collapse">                   
-              <ul class="nav" id="side-menu">                        
-               <li><a href="index.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-home col-md-2 text-left"></i> Inicio</a></li>
-             <li><a href="clientes.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-user col-md-2 text-left"></i> Clientes</a></li>
-             <li><a href="proveedores.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-user col-md-2 text-left"></i> Provedores</a></li>
-             <li><a href="herramientas.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-wrench col-md-2 text-left"></i> Herramientas</a></li>
-             <li><a href="tornillos.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-compressed col-md-2 text-left"></i> Tornillos</a></li>
-             <!-- <li><a href="almacen.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon glyphicon-th-list col-md-2 text-left"></i> Almacen</a></li>-->
-             <!--<li><a href="ventas.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon glyphicon-usd col-md-2 text-left"></i> Ventas</a></li>-->
-             <li><a href="index.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-off col-md-2 text-left"></i> Cerrar Sesion</a></li>
-            </ul>
-        </div>
-</div>
 <div class="col-sm-8 text-left"> 
-    <div id="page-wrapper">
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header"> Datos de la Empresa</h1>
-            </div>
-            <!-- /.col-lg-12 -->
-        </div>
-        <!-- /.row -->
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Configuración
-                    </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <form>
-                          Nombre:<br>
-                          <input type="text" class="form-control">
-                          <br>
-                          Regimen Fiscal:<br>
-                          <input type="text" class="form-control">
-                          <br>
-                          RFC:<br>
-                          <input type="text" class="form-control">
-                          <br>
-                          Calle:<br>
-                          <input type="text" class="form-control">
-                          <br>
-                          Colonia:<br>
-                          <input type="text" class="form-control">
-                          <br>
-                          Numero:<br> 
-                          <input type="text" class="form-control">
-                          <br>
-                          Telefono:<br>
-                          <input type="text" class="form-control">
-                          <br><br>
-                          <button type="submit" value="Registrar" class="btn btn-primary">Registrar</button>
-                      </form> 
-                      <!-- /.table-responsive -->
-                  </div>
-                  <!-- /.panel-body -->
-              </div>
-              <!-- /.panel -->
-          </div>
-          <!-- /.col-lg-12 -->
+  <div id="page-wrapper">
+    <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header"> Datos de la Empresa</h1>
       </div>
+      <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Empresa
+          </div>
+          <!-- /.panel-heading -->
+          <div class="panel-body">
+            <form>
+              <div class="col-md-6">
+                Raz&oacute;n Social:<br>
+                <input type="text" class="form-control" ng-model="newEmpresa.rfc">
+                <br>
+              </div>
+              <div class="col-md-6">
+                RFC:<br>
+                <input type="text" class="form-control" ng-model="newEmpresa.domicilio.calle">
+                <br>
+              </div>
+              <div class="col-md-6">
+                Estado: <select class="form-control"
+                ng-model="newEmpresa.direccion.estado" required>
+                <option ng-model="newEmp.direccion.estado">Aguascalientes</option>
+                <option ng-model="newEmp.direccion.estado">Baja California</option>
+                <option ng-model="newEmp.direccion.estado">Baja California Sur</option>
+                <option ng-model="newEmp.direccion.estado">Campeche</option>
+                <option ng-model="newEmp.direcicon.estado">Coahuila</option>
+                <option ng-model="newEmp.direcicon.estado">Colima</option>
+                <option ng-model="newEmp.direcicon.estado">Chiapas</option>
+                <option ng-model="newEmp.direcicon.estado">Chihuahua</option>
+                <option ng-model="newEmp.direcicon.estado">M&eacute;xico</option>
+                <option ng-model="newEmp.direcicon.estado">Durango</option>
+                <option ng-model="newEmp.direcicon.estado">Guanajuato</option>
+                <option ng-model="newEmp.direcicon.estado">Guerrero</option>
+                <option ng-model="newEmp.direcicon.estado">Hidalgo</option>
+                <option ng-model="newEmp.direcicon.estado">Jalisco</option>
+                <option ng-model="newEmp.direcicon.estado">M&eacute;xico</option>
+                <option ng-model="newEmp.direcicon.estado">Michoac&aacute;n</option>
+                <option ng-model="newEmp.direcicon.estado">Morelos</option>
+                <option ng-model="newEmp.direcicon.estado">Nayarit</option>
+                <option ng-model="newEmp.direcicon.estado">Nuevo Le&oacute;n</option>
+                <option ng-model="newEmp.direcicon.estado">Oaxaca</option>
+                <option ng-model="newEmp.direcicon.estado">Puebla</option>
+                <option ng-model="newEmp.direcicon.estado">Quer&eacute;taro</option>
+                <option ng-model="newEmp.direcicon.estado">Quintana Roo</option>
+                <option ng-model="newEmp.direcicon.estado">San Luis Potos&iacute;</option>
+                <option ng-model="newEmp.direcicon.estado">Sinaloa</option>
+                <option ng-model="newEmp.direcicon.estado">Sonora</option>
+                <option ng-model="newEmp.direcicon.estado">Tabasco</option>
+                <option ng-model="newEmp.direcicon.estado">Tamaulipas</option>
+                <option ng-model="newEmp.direcicon.estado">Tlaxcala</option>
+                <option ng-model="newEmp.direcicon.estado">Veracruz</option>
+                <option ng-model="newEmp.direcicon.estado">Yucatan</option>
+                <option ng-model="newEmp.direcicon.estado">Zacatecas</option>
+              </select><br>
+            </div>
+            <br>
+            <div class="col-md-6">
+              Localidad: <input class="form-control" type="text"
+              ng-model="newEmpresa.direccion.localidad"><br>
+            </div>
+            <div class="col-md-6">
+             C&oacute;digo Postal:<input class="form-control" type="text" 
+             ng-model="newEmpresa.direccion.codigoPostal"> <br>
+            </div>
+            <div class="col-md-6">
+             Colonia: <input class="form-control" type="text"
+              ng-model="newEmpresa.direccion.colonia"><br>
+            </div>
+            <div class="col-md-6">
+            Calle: <input class="form-control" type="text"
+             ng-model="newEmpresa.direccion.calle"><br>
+            </div>
+            <div class="col-md-6">
+            Numero Exterior: <input class="form-control" type="text"
+            ng-model="newEmpresa.direccion.numExterior"><br>
+            </div>
+            <div class="col-md-6">
+            Numero Interior: <input class="form-control" type="text"
+            ng-model="newEmpresa.direccion.numInterior"><br>
+            </div>
+            <br>
+            <div class="col-md-12">
+              <button type="submit" value="Registrar" class="btn btn-primary" ng-click="registraEmpresa(newEmpresa)">Registrar</button>
+            </div>
+          </form> 
+          <!-- /.table-responsive -->
+        </div>
+        <!-- /.panel-body -->
+      </div>
+      <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
   </div>
 </div>
-</div>
+</div ng-view>
 
-</body>
-</html>

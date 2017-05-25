@@ -41,16 +41,16 @@
 									<td>{{venta.cliente}}</td>
 									<td>{{venta.monto}}</td>
 									<td><button class="btn btn-success" data-toggle="tooltip"
-											title="Editar" ng-click="editar(herramienta.id)">
-											<i class="glyphicon glyphicon-pencil"></i>
+											title="Facturar" ng-click="facturar(venta.id)">
+											<i class="glyphicon glyphicon-list-alt"></i>
 										</button>
 										<button class="btn btn-danger" data-toggle="tooltip"
-											title="Eliminar">
+											title="Eliminar" ng-click="eliminar(venta.id)">
 											<i class="glyphicon glyphicon-remove"></i>
 										</button>
 										<button class="btn btn-info" data-toggle="tooltip"
-											title="Agregar Lote" ng-click="lotes(herramienta.id)">
-											<i class="glyphicon glyphicon-plus"></i>
+											title="Imprimir" ng-click="lotes()">
+											<i class="glyphicon glyphicon-print"></i>
 										</button></td>
 								</tr>
 							</tbody>

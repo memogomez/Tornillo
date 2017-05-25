@@ -5,6 +5,10 @@ app.config([ '$routeProvider', function($routeProvider) {
 		templateUrl : "pages/inicio.html",
 		controller : "inicioController"
 	});
+	$routeProvider.when('/empresa', {
+		templateUrl : "pages/datosEmpresa.html",
+//		controller : "empresaController"
+	});
 	$routeProvider.when('/clientes', {
 		templateUrl : "pages/clientes.html",
 		controller : "clientesController"

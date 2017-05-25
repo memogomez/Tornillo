@@ -41,6 +41,16 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		});
 		return d.promise;
 	}
+	this.facrrurarVenta= function(){
+		var d = $q.defer();
+		$http.get("/ventas/facturar/").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
 }]);
 
 app.controller("ventaController",['clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function(clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
@@ -197,4 +207,21 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 			})
 	}
 	$scope.ventas(1);
+	
+	$scope.eliminar = function(idVenta){
+		console.log(idVenta);
+//		ventasService.eliminarVenta(idVenta).then(
+//			function(data){
+//				$scope.ventas = data;
+//				console.log(data);			
+//		})
+	}
+	$scope.facturar = function(idVenta){
+//		ventasService.facturarVenta(idVenta).then(
+//		function(data){
+		
+//			$scope.factura = data;
+//			console.log(data);			
+//	})
+	}
 }]);
