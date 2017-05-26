@@ -41,9 +41,9 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		});
 		return d.promise;
 	}
-	this.facrrurarVenta= function(){
+	this.facturarVenta= function(venta){
 		var d = $q.defer();
-		$http.get("/ventas/facturar/").then(function(response) {
+		$http.post("/ventas/facturar/",venta).then(function(response) {
 			console.log(response);
 			d.resolve(response.data);
 		}, function(response) {
@@ -216,12 +216,12 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 //				console.log(data);			
 //		})
 	}
-	$scope.facturar = function(idVenta){
-//		ventasService.facturarVenta(idVenta).then(
-//		function(data){
+	$scope.facturar = function(venta){
+		ventasService.facturarVenta(venta).then(
+		function(data){
 		
-//			$scope.factura = data;
-//			console.log(data);			
-//	})
+			$scope.factura = data;
+			console.log(data);			
+	})
 	}
 }]);
