@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
+import com.tikal.toledo.reporte.ReporteInventario;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
 
@@ -62,5 +64,14 @@ public class InventarioController {
 		int pages = ((totalp+totalt)/ 50);
 		pages++;
 		rs.getWriter().print(pages);
+	}
+	
+	@RequestMapping(value = { "/descargarInventario" }, method = RequestMethod.GET, produces = "application/vnd.ms-excel")
+	public void descarga(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+		List<Producto> productos= productodao.todos();
+		List<Tornillo> tornillos= tornillodao.todos();
+		ReporteInventario reporte= new ReporteInventario();
+		HSSFWorkbook rep=reporte.getReporte(productos, tornillos);
+		rep.write(rs.getOutputStream());
 	}
 }

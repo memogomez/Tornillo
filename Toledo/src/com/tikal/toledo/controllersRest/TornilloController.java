@@ -91,6 +91,17 @@ public class TornilloController {
 //		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
 	}
 	
+	@RequestMapping(value = { "/comillas" }, method = RequestMethod.GET, produces = "application/json")
+	public void comillas(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+		List<Tornillo> lista=tornillodao.todos();
+		for(Tornillo t:lista){
+			t.setMedidas(t.getMedidas().replace("&quot;", "\""));
+		}
+		tornillodao.guardar(lista);
+		
+//		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
+	}
+	
 	@RequestMapping(value = { "/alv" }, method = RequestMethod.GET, produces = "application/json")
 	public void alv(HttpServletRequest re, HttpServletResponse rs) throws IOException {
 		tornillodao.alv();
