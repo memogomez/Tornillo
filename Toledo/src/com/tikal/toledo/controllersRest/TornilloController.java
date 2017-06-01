@@ -98,7 +98,6 @@ public class TornilloController {
 			t.setMedidas(t.getMedidas().replace("&quot;", "\""));
 		}
 		tornillodao.guardar(lista);
-		
 //		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
 	}
 	

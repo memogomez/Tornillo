@@ -49,14 +49,19 @@
 							</tbody>
 						</table>
 						<!-- /.table-responsive -->
-						
-						<div ng-show="todos">
+						<div class="row">
+						<div ng-show="todos" class="col-md-8">
 							<ul class="pagination .pagination-sm">
 								<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"
 									ng-click="cargarPagina(abc)"><a>{{abc}}</a></li>
 
 							</ul>
 						</div>
+						<div class="col-md 4">
+							<a class="btn btn-small" href="/inventario/descargarInventario" download="Inventario.xls">Descargar Excel</a>
+						</div>
+						</div>
+						
 					</div>
 					<!-- /.panel-body -->
 				</div>
