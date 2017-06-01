@@ -28,6 +28,16 @@ public class Venta {
 
 	private String xml;
 	
+	private float monto;
+	
+	public float getMonto() {
+		return monto;
+	}
+
+	public void setMonto(float monto) {
+		this.monto = monto;
+	}
+
 	public boolean isFacturado() {
 		return facturado;
 	}

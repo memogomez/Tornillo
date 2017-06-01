@@ -104,9 +104,11 @@ app.controller("tornillosController",[
 				$scope.paginas.push(i+1);
 			}
 			for(var i = inicio; i<= fin; i++){
-				$('#pag'+i).removeClass("active");
+				$('#pagA'+i).removeClass("active");
+				$('#pagB'+i).removeClass("active");
 			}
-			$('#pag'+$scope.paginaActual).addClass("active");
+			$('#pagA'+$scope.paginaActual).addClass("active");
+			$('#pagB'+$scope.paginaActual).addClass("active");
 		}
 		
 		$scope.cargarPagina=function(pag){
