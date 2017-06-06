@@ -21,6 +21,7 @@ import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.dao.VentaDAO;
 import com.tikal.toledo.facturacion.ComprobanteVentaFactory;
+import com.tikal.toledo.facturacion.ws.WSClient;
 import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.Detalle;
 import com.tikal.toledo.model.Lote;
@@ -29,6 +30,8 @@ import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
+
+import localhost.TimbraCFDIResponse;
 
 @Controller
 @RequestMapping(value={"/ventas"})
@@ -51,6 +54,9 @@ public class VentaController {
 	
 	@Autowired
 	ComprobanteVentaFactory cvFactory;
+	
+	@Autowired
+	WSClient client;
 	
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
@@ -79,8 +85,15 @@ public class VentaController {
 			Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 			cvFactory.generarFactura(venta, clientedao.cargar(venta.getIdCliente()));
 			//facturar
+			TimbraCFDIResponse timbraCFDIResp = client.getTimbraCFDIResponse(venta.getXml());
+			List<Object> listaResultado = timbraCFDIResp.getTimbraCFDIResult().getAnyType();
+			int codigoError = (int) listaResultado.get(1);
+			if (codigoError == 0) {
+				String cfdiXML = (String) listaResultado.get(3);
+				venta.setXml(cfdiXML);
+				ventadao.guardar(venta);
+			}
 			
-			ventadao.guardar(venta);
 			rs.getWriter().println(JsonConvertidor.toJson(venta));
 	}
 	

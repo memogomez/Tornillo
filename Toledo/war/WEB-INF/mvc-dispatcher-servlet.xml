@@ -27,6 +27,8 @@
 	
 	<bean class="com.tikal.toledo.facturacion.ComprobanteVentaFactory"/>
 	
+	<bean class="com.tikal.toledo.facturacion.ws.GenericClient"/>
+	
 <!-- 	<bean class="com.tikal.cacao.security.CustomUsuarioServicio"></bean> -->
 
 	<!-- Beans Components -->
