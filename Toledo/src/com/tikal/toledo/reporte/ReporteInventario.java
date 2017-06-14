@@ -21,7 +21,7 @@ public class ReporteInventario {
 		HSSFSheet sheet = workbook.createSheet();
 		workbook.setSheetName(0, "Hoja excel");
 
-		String[] headers = new String[] { "ID", "CLAVE", "NOMBRE", "MEDIDAS", "INVENTARIO"};
+		String[] headers = new String[] { "ID", "CLAVE", "NOMBRE", "MEDIDAS", "INVENTARIO","PRECIO MOSTRADOR","PRECIO MAYOREO","PRECIO CRÉDITO"};
 		CellStyle headerStyle = workbook.createCellStyle();
 		Font font = workbook.createFont();
 		font.setBoldweight(Font.BOLDWEIGHT_BOLD);

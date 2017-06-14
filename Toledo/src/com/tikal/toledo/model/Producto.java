@@ -23,6 +23,12 @@ public class Producto {
 	private String proveedor;
 	
 	private String marca;
+
+	private float descuento;
+	
+	private float ganancia;
+	
+	private float impuesto;
 	
 	private int maximo;
 	
@@ -131,6 +137,29 @@ public class Producto {
 	public void setClave(String clave) {
 		this.clave = clave;
 	}
-	
+
+	public float getDescuento() {
+		return descuento;
+	}
+
+	public void setDescuento(float descuento) {
+		this.descuento = descuento;
+	}
+
+	public float getGanancia() {
+		return ganancia;
+	}
+
+	public void setGanancia(float ganancia) {
+		this.ganancia = ganancia;
+	}
+
+	public float getImpuesto() {
+		return impuesto;
+	}
+
+	public void setImpuesto(float impuesto) {
+		this.impuesto = impuesto;
+	}
 	
 }

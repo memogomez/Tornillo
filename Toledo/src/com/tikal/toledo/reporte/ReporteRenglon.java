@@ -11,13 +11,43 @@ public class ReporteRenglon {
 	private String medidas;
 	private String clave;
 	private int cantidad;
+	private float precioMostrador;
+	private float precioMayoreo;
+	private float precioCredito;
 	
+	public float getPrecioMostrador() {
+		return precioMostrador;
+	}
+
+	public void setPrecioMostrador(float precioMostrador) {
+		this.precioMostrador = precioMostrador;
+	}
+
+	public float getPrecioMayoreo() {
+		return precioMayoreo;
+	}
+
+	public void setPrecioMayoreo(float precioMayoreo) {
+		this.precioMayoreo = precioMayoreo;
+	}
+
+	public float getPrecioCredito() {
+		return precioCredito;
+	}
+
+	public void setPrecioCredito(float precioCredito) {
+		this.precioCredito = precioCredito;
+	}
+
 	public ReporteRenglon(Producto p){
 		this.id=p.getId();
 		this.nombre=p.getNombre();
 		this.medidas="";
 		this.clave=p.getClave();
 		this.cantidad=p.getExistencia();
+		this.precioMostrador=p.getPrecioMostrador();
+		this.precioCredito= p.getPrecioCredito();
+		this.precioMayoreo= p.getPrecioMayoreo();
 	}
 	
 	public ReporteRenglon(Tornillo p){
@@ -26,6 +56,9 @@ public class ReporteRenglon {
 		this.medidas=p.getMedidas();
 		this.clave=p.getClave();
 		this.cantidad=p.getExistencia();
+		this.precioMostrador=p.getPrecioMostrador();
+		this.precioCredito= p.getPrecioCredito();
+		this.precioMayoreo= p.getPrecioMayoreo();
 	}
 	
 	public Long getId() {
@@ -62,7 +95,7 @@ public class ReporteRenglon {
 	}
 	
 	public void llenarRenglon(HSSFRow r){
-		for(int i=0;i<11;i++){
+		for(int i=0;i<8;i++){
 			r.createCell(i);
 		}
 		
@@ -71,6 +104,10 @@ public class ReporteRenglon {
 		r.getCell(2).setCellValue(this.getNombre());
 		r.getCell(3).setCellValue(this.getMedidas());
 		r.getCell(4).setCellValue(this.getCantidad());
+		r.getCell(5).setCellValue(this.getPrecioMostrador());
+		r.getCell(6).setCellValue(this.getPrecioMayoreo());
+		r.getCell(7).setCellValue(this.getPrecioCredito());
+		
 	}
 	
 }

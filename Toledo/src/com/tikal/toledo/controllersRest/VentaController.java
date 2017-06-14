@@ -63,8 +63,12 @@ public class VentaController {
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
 			Venta l= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 			l.setFecha(new Date());
-			Cliente c= clientedao.cargar(l.getIdCliente());
-			l.setCliente(c.getNombre());
+			l.setCliente("Otro");
+			if(l.getIdCliente()!=0){
+				Cliente c= clientedao.cargar(l.getIdCliente());
+				l.setCliente(c.getNombre());
+			}
+			
 			ventadao.guardar(l);
 			
 			actualizarInventario(l.getDetalles());
