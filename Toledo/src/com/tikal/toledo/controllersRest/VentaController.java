@@ -71,8 +71,7 @@ public class VentaController {
 			
 			ventadao.guardar(l);
 			
-			actualizarInventario(l.getDetalles());
-			
+			l.setMonto(actualizarInventario(l.getDetalles()));
 			rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
 	
@@ -133,7 +132,8 @@ public class VentaController {
 	}
 	
 	
-	private void actualizarInventario(List<Detalle> detalles){
+	private float actualizarInventario(List<Detalle> detalles){
+		float monto=0;
 		for(Detalle d:detalles){
 			if(d.getTipo()==0){
 				Producto p= productodao.cargar(d.getIdProducto());
@@ -152,8 +152,29 @@ public class VentaController {
 					}
 				}
 				lotedao.guardarLotes(lista);
+				productodao.guardar(p);
+			}else{
+				Tornillo p= tornillodao.cargar(d.getIdProducto());
+				int restante= p.getExistencia()-d.getCantidad();
+				p.setExistencia(restante);
+				List<Lote> lista= lotedao.porProducto(p.getId());
+				int aux= d.getCantidad();
+				
+				for(Lote l : lista){
+					if(aux< l.getCantidad()){
+						l.setCantidad(l.getCantidad()-aux);
+						break;
+					}else{
+						aux= aux-l.getCantidad();
+						l.setCantidad(0);
+					}
+				}
+				lotedao.guardarLotes(lista);
+				tornillodao.guardar(p);
 			}
+			monto+= d.getPrecioUnitario()* d.getCantidad();
 		}
+		return monto;
 	}
 	
 }
