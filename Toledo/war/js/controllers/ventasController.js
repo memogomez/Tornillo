@@ -191,10 +191,15 @@ app.controller("ventaController",['clientesService','ventasService','tornillosSe
 	$scope.cargaProductos(1);
 	
 	$scope.guardarVenta= function (){
+		console.log();
+		if($scope.venta.idCliente === undefined){
+			alert("Selecciona un cliente");
+		}else{
 		ventasService.addVenta($scope.venta).then(function(data){
 			alert("La venta ha sido guardada");
 			
 		});
+		}
 	}
 	
 }]);

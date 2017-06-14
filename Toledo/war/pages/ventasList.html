@@ -32,6 +32,7 @@
 									<th>Fecha</th>
 									<th>Cliente</th>
 									<th>Monto</th>
+									<th>Estatus</th>
 									<th>Acciones</th>
 								</tr>
 							</thead>
@@ -40,6 +41,7 @@
 									<td>{{venta.fecha}}</td>
 									<td>{{venta.cliente}}</td>
 									<td>{{venta.monto}}</td>
+									<td>{{venta.estatus}}</td>
 									<td><button class="btn btn-success" data-toggle="tooltip"
 											title="Facturar" ng-click="facturar(venta)">
 											<i class="glyphicon glyphicon-list-alt"></i>
@@ -47,11 +49,7 @@
 										<button class="btn btn-danger" data-toggle="tooltip"
 											title="Eliminar" ng-click="eliminar(venta.id)">
 											<i class="glyphicon glyphicon-remove"></i>
-										</button>
-										<button class="btn btn-info" data-toggle="tooltip"
-											title="Imprimir" ng-click="lotes()">
-											<i class="glyphicon glyphicon-print"></i>
-										</button></td>
+										</button>										
 								</tr>
 							</tbody>
 						</table>						
