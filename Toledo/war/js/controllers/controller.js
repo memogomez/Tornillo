@@ -111,6 +111,13 @@ app.config([ '$routeProvider', function($routeProvider) {
 		controller : "archivoController"
 	});
 	
+	$routeProvider.when('/datosFacturacion', {
+		templateUrl : "pages/emisores.html",
+		controller : "emisoresListController"
+	});
+	
+	
+	
 	$routeProvider.otherwise({
 		redirectTo : '/inicio'
 	});

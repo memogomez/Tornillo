@@ -61,20 +61,20 @@
 									<td>{{venta.cliente}}</td>
 									<td>{{venta.monto}}</td>
 									<td>{{venta.estatus}}</td>
-									<td><button class="btn btn-success" data-toggle="tooltip"
+									<td><button class="btn btn-success" data-toggle="tooltip" ng-show="venta.estatus!='FACTURADO'"
 											title="Facturar" ng-click="facturar(venta)">
 											<i class="glyphicon glyphicon-list-alt"></i>
 										</button>
-										<button class="btn btn-danger" data-toggle="tooltip"
-											title="Imprimir PDF" ng-click="imprimirPDF()">
+										<button class="btn btn-danger" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
+											title="Imprimir PDF" ng-click="imprimirPDF(venta)">
 											<i class="glyphicon glyphicon-print"></i>
 										</button>	
-										<button class="btn btn-primary" data-toggle="tooltip"
-											title="Imprimir XML" ng-click="imprimirXML()">
+										<button class="btn btn-primary" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
+											title="Imprimir XML" ng-click="imprimirXML(venta)">
 											<i class="glyphicon glyphicon-print"></i>
 										</button>	
-										<button class="btn btn-danger" data-toggle="tooltip"
-											title="Cancelar" ng-click="cancelarFactura()">
+										<button class="btn btn-danger" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
+											title="Cancelar" ng-click="cancelarFactura(venta)">
 											<i class="glyphicon glyphicon-ban-circle"></i>
 										</button>										
 								</tr>
