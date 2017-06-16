@@ -9,6 +9,27 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		return d.promise;
 	};
 	
+	this.buscar=function(fi,ff){
+		var d = $q.defer();
+		send={
+				params:{
+					fi:fi,
+					ff,ff
+				}
+		}
+		$http.get("/ventas/buscar/",send).then(
+			function(response) {
+				console.log(response);
+				d.resolve(response.data);
+			}, function(response) {
+				if(response.status==403){
+					alert("No está autorizado para realizar esta acción");
+					$location.path("/");
+				}
+			});
+		return d.promise;
+	}
+	
 	this.numPages = function() {
 		var d = $q.defer();
 		$http.get("/inventario/numPages").then(function(response) {
@@ -31,9 +52,9 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		return d.promise;
 	}
 	
-	this.findVentas= function(page){
+	this.findVentas= function(url,page){
 		var d = $q.defer();
-		$http.get("/ventas/findAll/"+page).then(function(response) {
+		$http.get(url+page).then(function(response) {
 			console.log(response);
 			d.resolve(response.data);
 		}, function(response) {
@@ -51,9 +72,20 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		});
 		return d.promise;
 	}
+	
+	this.numPages = function(){
+		var d = $q.defer();
+		$http.get("/ventas/numPages").then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
 }]);
 
-app.controller("ventaController",['clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function(clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
+app.controller("ventaController",['$window','clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function($window,clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
 	$scope.paginaActual=1;
 	$scope.llenarPags=function(){
 		var inicio=0;
@@ -190,6 +222,8 @@ app.controller("ventaController",['clientesService','ventasService','tornillosSe
 	}
 	$scope.cargaProductos(1);
 	
+	
+	
 	$scope.guardarVenta= function (){
 		console.log();
 		if($scope.venta.idCliente === undefined){
@@ -197,21 +231,43 @@ app.controller("ventaController",['clientesService','ventasService','tornillosSe
 		}else{
 		ventasService.addVenta($scope.venta).then(function(data){
 			alert("La venta ha sido guardada");
-			
+			$location.path('/ventasList');
+			$window.location.reload();
 		});
 		}
 	}
 	
 }]);
 app.controller("ventaListController",['clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function(clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
+	$scope.paginaActual=1;
+	$scope.url="/ventas/findAll/"
+	$scope.llenarPags=function(){
+		var inicio=0;
+		if($scope.paginaActual>3){
+			inicio=$scope.paginaActual-3;
+		}
+		var fin = inicio+5;
+		if(fin>$scope.maxPage){
+			fin=$scope.maxPage;
+		}
+		$scope.paginas=[];
+		for(var i = inicio; i< fin; i++){
+			$scope.paginas.push(i+1);
+		}
+		for(var i = inicio; i<= fin; i++){
+			$('#pag'+i).removeClass("active");
+		}
+		$('#pag'+$scope.paginaActual).addClass("active");
+	}
 	$scope.ventas = function(page) {
-		ventasService.findVentas(page).then(
+		ventasService.findVentas($scope.url,page).then(
 			function(data) {
 				$scope.ventas = data;
 				console.log(data);
+				$scope.llenarPags();
 			})
 	}
-	$scope.ventas(1);
+
 	
 	$scope.eliminar = function(idVenta){
 		console.log(idVenta);
@@ -229,4 +285,40 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 			console.log(data);			
 	})
 	}
+	
+	$scope.cargarPagina=function(pag){
+		if($scope.paginaActual!=pag){
+			$scope.paginaActual=pag;
+			$scope.ventas(pag);
+		}
+	}
+	ventasService.numPages().then(function(data){
+		$scope.maxPage=data;
+		$scope.llenarPags();
+		
+	});
+	$('.datepicker').datepicker({format: 'mm-dd-yyyy'});
+	
+	$('.input-daterange').datepicker({
+	    format: "mm-dd-yyyy"
+	});
+	
+	
+	
+	$('.input-daterange input').each(function() {
+	    $(this).datepicker("format","mm-dd-yyyy");
+	});
+	
+	$scope.ventas(1);
+	
+	//busqueda por fechas
+	$scope.buscar=function(){
+		$scope.url
+		ventasService.buscar($scope.fechaInicio,$scope.fechaFin).then(function(data){
+			$scope.ventas= data;
+			$scope.todos=false;
+		});
+	}
+
+	
 }]);

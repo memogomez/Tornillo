@@ -13,7 +13,7 @@ public class Venta {
 	@Id
 	private Long id;
 	
-	private boolean facturado;
+	private String estatus;
 	
 	@Index
 	private Date fecha;
@@ -38,12 +38,12 @@ public class Venta {
 		this.monto = monto;
 	}
 
-	public boolean isFacturado() {
-		return facturado;
+	public String getEstatus() {
+		return estatus;
 	}
 
-	public void setFacturado(boolean facturado) {
-		this.facturado = facturado;
+	public void setEstatus(String estatus) {
+		this.estatus = estatus;
 	}
 
 	public Long getIdCliente() {

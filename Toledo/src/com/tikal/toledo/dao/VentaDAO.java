@@ -14,4 +14,6 @@ public interface VentaDAO {
 	public List<Venta> buscar(Date fi, Date ff);
 	
 	public List<Venta> todos(int page);
+	
+	public int pages();
 }

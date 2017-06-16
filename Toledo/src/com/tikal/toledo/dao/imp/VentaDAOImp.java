@@ -28,8 +28,12 @@ public class VentaDAOImp implements VentaDAO{
 
 	@Override
 	public List<Venta> todos(int page) {
-//		return ofy().load().type(Venta.class).order("fecha -").offset(25*(page-1)).limit(25).list();
-		return ofy().load().type(Venta.class).list();
+		return ofy().load().type(Venta.class).order("- fecha").offset(25*(page-1)).limit(25).list();
+	}
+
+	@Override
+	public int pages() {
+		return ((ofy().load().type(Venta.class).count()-1)/50)+1;
 	}
 
 }

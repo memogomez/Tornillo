@@ -1,7 +1,10 @@
 package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -68,10 +71,11 @@ public class VentaController {
 				Cliente c= clientedao.cargar(l.getIdCliente());
 				l.setCliente(c.getNombre());
 			}
+			l.setEstatus("VENDIDO");
 			
-			ventadao.guardar(l);
 			
 			l.setMonto(actualizarInventario(l.getDetalles()));
+			ventadao.guardar(l);
 			rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
 	
@@ -94,10 +98,54 @@ public class VentaController {
 			if (codigoError == 0) {
 				String cfdiXML = (String) listaResultado.get(3);
 				venta.setXml(cfdiXML);
+				venta.setEstatus("FACTURADO");
 				ventadao.guardar(venta);
 			}
 			
 			rs.getWriter().println(JsonConvertidor.toJson(venta));
+	}
+	
+	@RequestMapping(value = "/buscar", method = RequestMethod.GET, produces = "application/json")
+	public void buscar(HttpServletRequest req, HttpServletResponse res) {
+		try {
+			AsignadorDeCharset.asignar(req, res);
+			String fi = (String) req.getParameter("fi");
+			String ff = (String) req.getParameter("ff");
+			SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+			Date datei = formatter.parse(fi);
+			Date datef = formatter.parse(ff);
+			Calendar c = Calendar.getInstance();
+			c.setTime(datef);
+			c.add(Calendar.DATE, 1);
+			datef = c.getTime();
+
+			// agregar serie en el @RequestMapping
+			List<Venta> listaR = ventadao.buscar(datei, datef);
+
+			/*
+			 * List<Factura> lista=facturaDAO.buscar(datei, datef,rfc);
+			 * List<FacturaVO> listaVO=new ArrayList<FacturaVO>(); for(Factura
+			 * f:lista){ Comprobante c= Util.unmarshallXML(f.getCfdiXML());
+			 * f.setCfdi(c); FacturaVO fVO = new FacturaVO();
+			 * fVO.setUuid(f.getUuid()); fVO.setEstatus(f.getEstatus());
+			 * fVO.setTotal(NumberFormat.getCurrencyInstance().format(f.getCfdi(
+			 * ).getTotal().doubleValue()));
+			 * fVO.setFechaCertificacion(f.getFechaCertificacion());
+			 * fVO.setRfcReceptor(f.getCfdi().getReceptor().getRfc());
+			 * listaVO.add(fVO);
+			 * 
+			 * if (f.getFechaCertificacion() == null &&
+			 * f.getEstatus().equals(Estatus.GENERADO)) {
+			 * f.setFechaCertificacion(c.getFecha().toGregorianCalendar().
+			 * getTime()); } }
+			 * res.getWriter().println(JsonConvertidor.toJson(listaVO));
+			 */
+			res.getWriter().println(JsonConvertidor.toJson(listaR));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping(value = {
@@ -105,6 +153,12 @@ public class VentaController {
 	public void search(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException{
 		List<Venta> lista= ventadao.todos(page);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
+	}
+	
+	@RequestMapping(value = {
+	"/numPages" }, method = RequestMethod.GET, produces = "application/json")
+	public void pages(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		rs.getWriter().print(ventadao.pages());
 	}
 	
 	@RequestMapping(value = {
