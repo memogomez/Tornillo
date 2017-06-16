@@ -8,10 +8,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,6 +62,16 @@ public class VentaController {
 	
 	@Autowired
 	WSClient client;
+	
+	@PostConstruct
+	public void init() {
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+		// this package must match the package with the WSDL java classes
+		marshaller.setContextPath("localhost");
+
+		client.setMarshaller(marshaller);
+		client.setUnmarshaller(marshaller);
+	}
 	
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
