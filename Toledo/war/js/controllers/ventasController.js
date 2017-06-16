@@ -269,14 +269,7 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 	}
 
 	
-	$scope.eliminar = function(idVenta){
-		console.log(idVenta);
-//		ventasService.eliminarVenta(idVenta).then(
-//			function(data){
-//				$scope.ventas = data;
-//				console.log(data);			
-//		})
-	}
+
 	$scope.facturar = function(venta){
 		ventasService.facturarVenta(venta).then(
 		function(data){
