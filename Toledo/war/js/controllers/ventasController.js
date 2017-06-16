@@ -271,12 +271,15 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 	
 
 	$scope.facturar = function(venta){
-		ventasService.facturarVenta(venta).then(
-		function(data){
-		
-			$scope.factura = data;
-			console.log(data);			
-	})
+		if(venta.idCliente!=0){
+			ventasService.facturarVenta(venta).then(
+					function(data){
+							$scope.factura = data;
+						console.log(data);	
+					})
+		}else{
+			alert('Esta Venta no tiene asociado un Cliente registrado');
+		}
 	}
 	
 	$scope.cargarPagina=function(pag){
