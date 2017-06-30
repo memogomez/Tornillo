@@ -116,7 +116,10 @@ app.config([ '$routeProvider', function($routeProvider) {
 		controller : "emisoresListController"
 	});
 	
-	
+	$routeProvider.when('/formula', {
+		templateUrl : "pages/formula.html",
+		controller : "formulaController"
+	});
 	
 	$routeProvider.otherwise({
 		redirectTo : '/inicio'

@@ -30,7 +30,7 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		return d.promise;
 	}
 	
-	this.numPages = function() {
+	this.numPagesInventario = function() {
 		var d = $q.defer();
 		$http.get("/inventario/numPages").then(function(response) {
 			console.log(response);
@@ -112,7 +112,7 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 			$scope.cargaProductos(pag);
 		}
 	}
-	ventasService.numPages().then(function(data){
+	ventasService.numPagesInventario().then(function(data){
 		$scope.maxPage=data;
 		$scope.llenarPags();
 		
@@ -212,6 +212,7 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 		for(var i =0; i<data[0].length;i++){
 			$scope.productos.push(data[0][i]);
 		}
+		$scope.llenarPags();
 	})
 	}
 	

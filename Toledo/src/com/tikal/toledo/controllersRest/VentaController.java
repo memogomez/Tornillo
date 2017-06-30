@@ -174,6 +174,15 @@ public class VentaController {
 	}
 	
 	@RequestMapping(value = {
+	"/numPagesProductos" }, method = RequestMethod.GET, produces = "application/json")
+	public void pagesProductos(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		int totalp= productodao.total();
+		int totalt = tornillodao.total();
+		int pages= ((totalp+totalt-1)/50)+1;
+		rs.getWriter().print(ventadao.pages());
+	}
+	
+	@RequestMapping(value = {
 	"/productos/{page}" }, method = RequestMethod.GET, produces = "application/json")
 	public void productos(HttpServletRequest re, HttpServletResponse rs,@PathVariable int page) throws IOException{
 		AsignadorDeCharset.asignar(re, rs);

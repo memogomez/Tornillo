@@ -31,6 +31,14 @@
 	<script src="js/controllers/perfil.js"></script>
 	<script src="js/controllers/ventasController.js"></script>
 	<script src="js/controllers/archivoController.js"></script>
+	<script src="js/controllers/formulaController.js"></script>
+	
+	<script>
+// 	if (location.protocol != 'https:')
+// 	{
+// 	 location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+// 	}
+	</script>
 <!-- 	<script src="js/controllers/run.js"></script> -->
 </head>
 <body>
@@ -40,9 +48,9 @@
       <div class="navbar-form navbar-left">
        <h4>Control de Inventario</h4>
      </div>
-     <form action="" class="navbar-form navbar-center" role="search">
-      <button class="glyphicon glyphicon-user form-control navbar-form navbar-right"> Bienvenido ADMINISTRADOR</button>   
-    </form>      
+<!--      <form action="" class="navbar-form navbar-center" role="search"> -->
+<!--       <button class="glyphicon glyphicon-user form-control navbar-form navbar-right"> Bienvenido ADMINISTRADOR</button>    -->
+<!--     </form>       -->
   </div>
 </section>
 
@@ -76,7 +84,18 @@
           	</ul>
           </div>
          </li>
-         <li><a href="#/datosFacturacion"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-list col-md-2 text-left"></i> Datos Emisor</a></li>
+         
+<!--          glyphicon glyphicon-cog -->
+
+         <li  class="dropdown"><a data-toggle="collapse" href="#collapse3"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-cog col-md-2 text-left"></i> Ajustes<span class="caret"></span></a>
+         	<div id="collapse3" class="panel-collapse collapse">
+          	<ul class="list-group">
+            	<li class="list-group-item"><a href="#/datosFacturacion"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-list col-md-2 text-left"></i> Datos Emisor</a></li>
+            	<li class="list-group-item"><a href="#/formula">F&oacute;rmulas</a></li>            	
+          	</ul>
+          </div>
+         </li>
+<!--          <li><a href="#/datosFacturacion"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-list col-md-2 text-left"></i> Datos Emisor</a></li> -->
 <!--         <li ><a href="#/ventas"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-shopping-cart col-md-2 text-left"></i> Ventas</a></li> -->
         <!-- <li><a href="almacen.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon glyphicon-th-list col-md-2 text-left"></i> Almacen</a></li>-->
         <!--<li><a href="ventas.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon glyphicon-usd col-md-2 text-left"></i> Ventas</a></li>-->

@@ -87,4 +87,13 @@ public class ProductoController {
 		rs.getWriter().println(pages);
 	}
 	
+	@RequestMapping(value = {
+	"/aplicaFormula" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public void formula(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+			String[] args= json.split(",");
+			float impuesto =Float.parseFloat(args[0]);
+			float descuento= Float.parseFloat(args[1]);
+			float ganancia= Float.parseFloat(args[2]);
+			rs.getWriter().println(JsonConvertidor.toJson(args));
+	}
 }

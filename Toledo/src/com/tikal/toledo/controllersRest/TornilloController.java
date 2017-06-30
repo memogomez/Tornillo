@@ -1,6 +1,7 @@
 package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tikal.toledo.dao.TornilloDAO;
-import com.tikal.toledo.model.Cliente;
-import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
@@ -104,6 +103,40 @@ public class TornilloController {
 	@RequestMapping(value = { "/alv" }, method = RequestMethod.GET, produces = "application/json")
 	public void alv(HttpServletRequest re, HttpServletResponse rs) throws IOException {
 		tornillodao.alv();
+		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
+	}
+	
+	@RequestMapping(value = { "/cambio" }, method = RequestMethod.GET, produces = "application/json")
+	public void cambio(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+		List<Tornillo> lista=tornillodao.todos();
+		List<Tornillo> lista2= new ArrayList<Tornillo>();
+		for(Tornillo t:lista){
+			Tornillo t2= new Tornillo();
+			t2.setClave(t.getClave());
+			t2.setDescuento(0);
+			t2.setExistencia(0);
+			t2.setGanancia(0);
+			t2.setId(t.getId());
+			t2.setImpuesto(0);
+			t2.setMarca(t.getMarca());
+			t2.setMaximo(t.getMaximo());
+			t2.setMayoreo(t.getMayoreo());
+			t2.setMedidas(t.getMedidas());
+			t2.setMinimo(t.getMinimo());
+			t2.setNombre(t.getNombre());
+			t2.setPrecioCredito(t.getPrecioCredito());
+			t2.setPrecioMayoreo(t.getPrecioMayoreo());
+			t2.setPrecioMostrador(t.getPrecioMostrador());
+			t2.setProveedor(t.getProveedor());
+			t2.setTipo(t.getTipo());
+			lista2.add(t2);
+		}
+		tornillodao.guardar(lista2);
+		
+		
+		
+		
+		
 		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
 	}
 }

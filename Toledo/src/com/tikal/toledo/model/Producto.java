@@ -18,7 +18,6 @@ public class Producto {
 	private float precioMayoreo;
 	private float precioCredito;
 	
-	
 	@Index
 	private String proveedor;
 	
