@@ -116,6 +116,7 @@ public class TornilloController {
 			t2.setDescuento(0);
 			t2.setExistencia(0);
 			t2.setGanancia(0);
+			t2.setPrecioReferencia(t.getPrecioMostrador());
 			t2.setId(t.getId());
 			t2.setImpuesto(0);
 			t2.setMarca(t.getMarca());
@@ -132,10 +133,6 @@ public class TornilloController {
 			lista2.add(t2);
 		}
 		tornillodao.guardar(lista2);
-		
-		
-		
-		
 		
 		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
 	}

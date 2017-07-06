@@ -121,6 +121,16 @@ app.config([ '$routeProvider', function($routeProvider) {
 		controller : "formulaController"
 	});
 	
+	$routeProvider.when('/altaEmisor', {
+		templateUrl : "pages/altaEmisor.html",
+		controller : "emisorController"
+	});
+	
+	$routeProvider.when('/editEmisor/:id', {
+		templateUrl : "pages/altaEmisor.html",
+		controller : "emisorEditController"
+	});
+	
 	$routeProvider.otherwise({
 		redirectTo : '/inicio'
 	});

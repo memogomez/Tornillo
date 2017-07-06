@@ -18,4 +18,5 @@ public interface ProductoDAO {
 
 	int total();
 
+	public void formula(float impuesto, float descuento, float ganancia);
 }

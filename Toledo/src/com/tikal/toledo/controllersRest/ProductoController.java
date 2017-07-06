@@ -29,6 +29,9 @@ public class ProductoController {
 	ProductoDAO productodao;
 	
 	@Autowired
+	TornilloDAO tornillodao;
+	
+	@Autowired
 	TornilloDAO tdao;
 	
 	@RequestMapping(value = {
@@ -91,9 +94,11 @@ public class ProductoController {
 	"/aplicaFormula" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void formula(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
 			String[] args= json.split(",");
-			float impuesto =Float.parseFloat(args[0]);
-			float descuento= Float.parseFloat(args[1]);
-			float ganancia= Float.parseFloat(args[2]);
+			float impuesto =Float.parseFloat(args[0])/100;
+			float descuento= Float.parseFloat(args[1])/100;
+			float ganancia= Float.parseFloat(args[2])/100;
+			productodao.formula(impuesto, descuento, ganancia);
+			tornillodao.formula(impuesto, descuento, ganancia);
 			rs.getWriter().println(JsonConvertidor.toJson(args));
 	}
 }

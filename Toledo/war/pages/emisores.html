@@ -1,0 +1,61 @@
+
+<div class="col-sm-8 text-left">
+	<div id="page-wrapper">
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">Proveedores</h1>
+			</div>
+			<!-- /.col-lg-12 -->
+		</div>
+		<!-- /.row -->
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Configuraci&oacute;n de Emisor</div>
+					<!-- /.panel-heading -->
+					<div class="panel-body">
+						<table width="100%"
+							class="table table-striped table-bordered table-hover"
+							id="dataTables-example">
+							<thead>
+								<tr>
+									<th>RFC</th>
+									<th>Nombre</th>
+									<th>Activo</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="emisor in emisores" class="odd gradeX">
+									<td>{{emisor.rfc}}</td>
+									<td>{{emisor.nombre}}</td>
+									<td><span class="glyphicon glyphicon-ok" aria-hidden="true" ng-show="emisor.activo"></span><span class="glyphicon glyphicon-remove" aria-hidden="true" ng-hide="emisor.activo"></span></td>
+									<td><button class="btn btn-success" data-toggle="tooltip"
+											title="Editar" ng-click="editar(emisor.id)">
+											<i class="glyphicon glyphicon-pencil"></i>
+										</button>
+										<button class="btn btn-danger" data-toggle="tooltip"
+											title="Eliminar" ng-click="eliminar(emisor.id)">
+											<i class="glyphicon glyphicon-remove"></i>
+										</button>
+										<button class="btn btn-primary" data-toggle="tooltip"
+											title="Activar" ng-click="activar(emisor.id)">
+											<i class="glyphicon glyphicon-check"></i>
+										</button></td>
+								</tr>
+
+							</tbody>
+						</table>
+						<!-- /.table-responsive -->
+						<button type="submit" value="enviar" class="btn btn-primary"
+							onclick="location='#/altaEmisor'">Registrar Emisor</button>
+					</div>
+					<!-- /.panel-body -->
+				</div>
+				<!-- /.panel -->
+			</div>
+			<!-- /.col-lg-12 -->
+		</div>
+	</div>
+</div ng-view>
+

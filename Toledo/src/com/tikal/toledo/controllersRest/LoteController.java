@@ -52,7 +52,7 @@ public class LoteController {
 			h.setExistencia(h.getExistencia() + l.getCantidad());
 			hdao.guardar(h);
 		} else {
-			Tornillo t = tdao.cargar(l.getId());
+			Tornillo t = tdao.cargar(l.getIdProducto());
 			if (t != null) {
 				t.setExistencia(t.getExistencia() + l.getCantidad());
 				tdao.guardar(t);

@@ -17,6 +17,7 @@ public class Producto {
 	private float precioMostrador;
 	private float precioMayoreo;
 	private float precioCredito;
+	private float precioReferencia;
 	
 	@Index
 	private String proveedor;
@@ -160,5 +161,24 @@ public class Producto {
 	public void setImpuesto(float impuesto) {
 		this.impuesto = impuesto;
 	}
+
+	public float getPrecioReferencia() {
+		return precioReferencia;
+	}
+
+	public void setPrecioReferencia(float precioReferencia) {
+		this.precioReferencia = precioReferencia;
+	}
 	
+	public void calculaPecios(){
+		float mostrador= this.precioReferencia+ (this.precioReferencia*this.impuesto)+ (this.precioReferencia*this.ganancia)-(this.precioReferencia*this.descuento);
+		int aux= (int) (mostrador*100);
+		this.precioMostrador=aux/100f;
+		this.precioMayoreo=mostrador*0.95f;
+		aux= (int) (this.precioMayoreo*100);
+		this.precioMayoreo= aux/100f;
+		this.precioCredito=mostrador* 1.10f;
+		aux=(int) (this.precioCredito*100);
+		this.precioCredito= aux/100f;
+	}
 }

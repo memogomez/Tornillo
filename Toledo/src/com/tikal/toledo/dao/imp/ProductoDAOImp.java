@@ -48,5 +48,10 @@ public class ProductoDAOImp implements ProductoDAO{
 	public int total() {
 		return ofy().load().type(Producto.class).count();
 	}
+
+	@Override
+	public void formula(float impuesto, float descuento, float ganancia) {
+		List<Producto> lista= ofy().load().type(Producto.class).list();
+	} 
 	
 }

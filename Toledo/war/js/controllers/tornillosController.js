@@ -87,9 +87,6 @@ app.controller("tornillosController",[
 	'$window',
 	'proveedoresService',
 	function($scope, tornillosService, $routeParams, $location, $window, proveedoresService){
-	
-		
-		$scope.paginaActual=1;
 		$scope.llenarPags=function(){
 			var inicio=0;
 			if($scope.paginaActual>3){
@@ -139,7 +136,7 @@ app.controller("tornillosController",[
 				console.log(data);
 			})
 	}
-	$scope.cargaTornillos(1);
+	$scope.cargarPagina(1);
 	
 	$scope.editar = function(id) {
 		$location.path("/tornillos/edit/" + id);

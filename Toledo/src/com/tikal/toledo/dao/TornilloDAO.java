@@ -21,4 +21,6 @@ public interface TornilloDAO {
 	public int total();
 	
 	public void alv();
+	
+	public void formula(float impuesto, float descuento, float ganancia);
 }

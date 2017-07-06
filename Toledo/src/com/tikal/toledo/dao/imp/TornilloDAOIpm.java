@@ -60,4 +60,16 @@ public class TornilloDAOIpm implements TornilloDAO {
 		return ofy().load().type(Tornillo.class).count();
 	}
 
+	@Override
+	public void formula(float impuesto, float descuento, float ganancia) {
+		List<Tornillo> lista= ofy().load().type(Tornillo.class).list();
+		for(Tornillo t:lista){
+			t.setDescuento(descuento);
+			t.setImpuesto(impuesto);
+			t.setGanancia(ganancia);
+			t.calculaPecios();
+		}
+		ofy().save().entities(lista).now();
+	}
+
 }
