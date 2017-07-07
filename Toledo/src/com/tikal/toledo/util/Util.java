@@ -274,6 +274,7 @@ public class Util {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,	
 				"http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd ");
 		
+			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			StringWriter sw = new StringWriter();
 			jaxbMarshaller.marshal(c, sw);
 			return sw.toString();
