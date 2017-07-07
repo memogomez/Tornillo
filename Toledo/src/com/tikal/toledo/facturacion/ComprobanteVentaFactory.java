@@ -45,7 +45,7 @@ public class ComprobanteVentaFactory {
 		construirConceptos(venta.getDetalles(), comprobante);
 		
 		//comprobante.setImpuestos(construirImuestos(comprobante.getSubTotal()));
-		BigDecimal total = comprobante.getSubTotal().subtract(comprobante.getImpuestos().getTotalImpuestosTrasladados());
+		BigDecimal total = comprobante.getSubTotal().add(comprobante.getImpuestos().getTotalImpuestosTrasladados());
 		comprobante.setTotal(total.setScale(2, RoundingMode.HALF_UP));
 		
 		
@@ -85,7 +85,7 @@ public class ComprobanteVentaFactory {
 			double importeIVA = valorUnitarioSinIVA * 0.16 * cantidad;
 			double importe = valorUnitarioSinIVA * cantidad;
 			
-			concepto.setValorUnitario( BigDecimal.valueOf( (double)detalle.getPrecioUnitario() ) );
+			concepto.setValorUnitario( BigDecimal.valueOf( (double)valorUnitarioSinIVA ) );
 			concepto.setImporte( BigDecimal.valueOf( (double)importe ).setScale(2, RoundingMode.HALF_UP) );
 			
 			conceptos.getConcepto().add(concepto);
