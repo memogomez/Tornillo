@@ -65,14 +65,14 @@
 											title="Facturar" ng-click="facturar(venta)">
 											<i class="glyphicon glyphicon-list-alt"></i>
 										</button>
-										<button class="btn btn-danger" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
-											title="Imprimir PDF" ng-click="imprimirPDF(venta)">
+										<a class="btn btn-danger" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
+											title="Imprimir PDF" href="ventas/pdfDescarga/{{venta.id}}">
 											<i class="glyphicon glyphicon-print"></i>
-										</button>	
-										<button class="btn btn-primary" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
-											title="Imprimir XML" ng-click="imprimirXML(venta)">
+										</a>	
+										<a class="btn btn-primary" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
+											title="Imprimir XML" href="ventas/xmlDescarga/{{venta.id}}">
 											<i class="glyphicon glyphicon-print"></i>
-										</button>	
+										</a>	
 										<button class="btn btn-danger" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
 											title="Cancelar" ng-click="cancelarFactura(venta)">
 											<i class="glyphicon glyphicon-ban-circle"></i>

@@ -2,6 +2,7 @@ package com.tikal.toledo.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;

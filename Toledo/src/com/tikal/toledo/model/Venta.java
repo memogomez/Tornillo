@@ -26,7 +26,7 @@ public class Venta {
 	
 	private List<Detalle> detalles;
 
-	private String xml;
+	private String uuid;
 	
 	private float monto;
 	
@@ -98,13 +98,12 @@ public class Venta {
 		this.detalles.add(detalle);
 	}
 
-	public String getXml() {
-		return xml;
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setXml(String xml) {
-		this.xml = xml;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
-	
-	
+
 }

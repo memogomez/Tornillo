@@ -3,6 +3,7 @@
  */
 package com.tikal.toledo.util;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,13 +19,16 @@ import java.util.TimeZone;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.transform.stream.StreamSource;
 
 import com.tikal.toledo.facturacion.FormatoFecha;
 import com.tikal.toledo.sat.cfd.Comprobante;
+import com.tikal.toledo.sat.timbrefiscaldigital.TimbreFiscalDigital;
 
 
 
@@ -284,5 +288,20 @@ public class Util {
 		}
 		return null;
 	}
+	
+	public static Comprobante unmarshallXML(String cadenaXML) {
+		try {
+			//TODO en el caso de nomina agregar al método newInstance la clase NominaElement.class
+			JAXBContext jaxbContext = JAXBContext.newInstance(Comprobante.class, TimbreFiscalDigital.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			StringBuffer xmlStr = new StringBuffer(cadenaXML);
+			Comprobante comprobante = (Comprobante) unmarshaller.unmarshal(new StreamSource( new StringReader(xmlStr.toString() ) ) );
+			return comprobante;
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	
 }

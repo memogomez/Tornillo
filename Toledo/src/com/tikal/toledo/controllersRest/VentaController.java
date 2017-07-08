@@ -20,6 +20,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfGState;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.tikal.cacao.factura.Estatus;
 import com.tikal.toledo.dao.ClienteDAO;
 import com.tikal.toledo.dao.LoteDAO;
 import com.tikal.toledo.dao.ProductoDAO;
@@ -33,8 +43,12 @@ import com.tikal.toledo.model.Lote;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.model.Venta;
+import com.tikal.toledo.sat.cfd.Comprobante;
+import com.tikal.toledo.sat.timbrefiscaldigital.TimbreFiscalDigital;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
+import com.tikal.toledo.util.PDFFactura;
+import com.tikal.toledo.util.Util;
 
 import localhost.TimbraCFDIResponse;
 
@@ -180,6 +194,61 @@ public class VentaController {
 		int totalt = tornillodao.total();
 		int pages= ((totalp+totalt-1)/50)+1;
 		rs.getWriter().print(ventadao.pages());
+	}
+	
+	@RequestMapping(value = {
+	"/pdfDescargar/{id}" }, method = RequestMethod.GET, produces = "application/pdf")
+	public void pdf(HttpServletRequest re, HttpServletResponse res, @PathVariable Long id) throws IOException{
+		res.setContentType("Application/Pdf");
+		Venta v = ventadao.cargar(id);
+		Comprobante cfdi = Util.unmarshallXML(v.getXml());
+		try {
+			TimbreFiscalDigital timbre= (TimbreFiscalDigital)cfdi.getComplemento().getAny().get(0);
+			String uuid= timbre.getUUID();
+			PDFFactura pdfFactura = new PDFFactura();
+			PdfWriter writer = PdfWriter.getInstance(pdfFactura.getDocument(), res.getOutputStream());
+			pdfFactura.getPieDePagina().setUuid(uuid);
+//			if (v.getEstatus().compareTo("CANCELADO")==0) {
+//				pdfFactura.getPieDePagina().setFechaCancel(factura.getFechaCancelacion());
+//				pdfFactura.getPieDePagina().setSelloCancel(factura.getSelloCancelacion());
+//				;
+//			}
+			writer.setPageEvent(pdfFactura.getPieDePagina());
+
+			pdfFactura.getDocument().open();
+//			if (factura.getEstatus().equals(Estatus.TIMBRADO))
+				pdfFactura.construirPdf(cfdi, cfdi.getSelloDigital(), v.getCodigoQR(), imagen,
+						factura.getEstatus());
+			else if (factura.getEstatus().equals(Estatus.GENERADO)) {
+				pdfFactura.construirPdf(cfdi, imagen, factura.getEstatus());
+
+				PdfContentByte fondo = writer.getDirectContent();
+				Font fuente = new Font(FontFamily.HELVETICA, 45);
+				Phrase frase = new Phrase("Pre-factura", fuente);
+				fondo.saveState();
+				PdfGState gs1 = new PdfGState();
+				gs1.setFillOpacity(0.5f);
+				fondo.setGState(gs1);
+				ColumnText.showTextAligned(fondo, Element.ALIGN_CENTER, frase, 297, 650, 45);
+				fondo.restoreState();
+			}
+
+			else if (factura.getEstatus().equals(Estatus.CANCELADO)) {
+				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(), imagen,
+						factura.getEstatus(), factura.getSelloCancelacion(), factura.getFechaCancelacion());
+
+				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
+			}
+
+			pdfFactura.getDocument().close();
+			res.getOutputStream().flush();
+			res.getOutputStream().close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping(value = {
