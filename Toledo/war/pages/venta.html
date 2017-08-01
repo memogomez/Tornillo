@@ -21,7 +21,7 @@
 						</button>
 						<button type="submit" class="btn btn-primary"
 							data-toggle="tooltip" title="Mostrar Todos"
-							ng-click="mostrarTornillos()">
+							ng-click="cargarPagina(1)">
 							<span class="glyphicon glyphicon-eye-open"></span>
 						</button>
 					</div>
@@ -47,7 +47,7 @@
 						<tr ng-repeat="producto in productos">
 							<td>{{producto.nombre}}</td>
 							<td>{{producto.medidas}}</td>
-							<td><select ng-model="producto.precio">
+							<td><select ng-model="producto.precio" ng-change="producto.importe= calculaImporte(producto)">
 									<option ng-value="producto.precioMostrador">Mostrador</option>
 									<option ng-value="producto.precioMayoreo">Mayoreo</option>
 									<option ng-value="producto.precioCredito">Cr&eacute;dito</option>

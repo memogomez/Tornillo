@@ -6,6 +6,7 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Ignore;
 import com.googlecode.objectify.annotation.Index;
+import com.tikal.toledo.factura.Estatus;
 import com.tikal.toledo.sat.cfd.Comprobante;
 
 /**
@@ -41,6 +42,8 @@ public class Factura {
 	private String selloCancelacion;
 	
 	private String selloDigital;
+	
+	private Estatus estatus;
 	
 	private byte[] codigoQR;
 	
@@ -206,5 +209,18 @@ public class Factura {
 		this.codigoQR = codigoQR;
 	}
 
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public Estatus getEstatus() {
+		return estatus;
+	}
+
+	public void setEstatus(Estatus estatus) {
+		this.estatus = estatus;
+	}
+
+	
 	
 }

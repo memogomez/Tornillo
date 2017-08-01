@@ -24,6 +24,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.sat.cfd.Comprobante;
 import com.tikal.toledo.sat.cfd.Comprobante.Conceptos.Concepto;
 import com.tikal.toledo.sat.cfd.Comprobante.Impuestos.Retenciones.Retencion;
@@ -42,22 +43,22 @@ public class PDFFactura {
 	private static String ISR = "ISR";
 	private NumberFormat formatter = NumberFormat.getCurrencyInstance();
 	private MyFooter pieDePagina = new MyFooter(null);
-	
+
 	private Font fontTituloSellos = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.BOLD);
 	private Font fontContenidoSellos = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.NORMAL);
 	private Font font2 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.BOLD);
 	private Font font3 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
 	private Font fontSerieYFolio = new Font(Font.FontFamily.HELVETICA, 9.5F, Font.BOLD);
 	private Font fontHead = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
-	//fontHead.setColor(BaseColor.WHITE);
+	// fontHead.setColor(BaseColor.WHITE);
 
 	private PdfPCell emptyCell = new PdfPCell();
-	//emptyCell.setBorderWidth(0);
+	// emptyCell.setBorderWidth(0);
 
 	public PDFFactura() {
 		fontHead.setColor(BaseColor.WHITE);
 		emptyCell.setBorderWidth(0);
-		
+
 		this.document = new Document();
 		this.document.setPageSize(PageSize.A4);
 		this.document.setMargins(40, 40, 40, 40); // Left Right Top Bottom
@@ -90,563 +91,567 @@ public class PDFFactura {
 	 */
 	public Document construirPdf(Comprobante comprobante, String selloDigital, byte[] bytesQRCode)
 			throws DocumentException, MalformedURLException, IOException {
-		List<Object> complemento = comprobante.getComplemento().getAny();
 		TimbreFiscalDigital tfd = null;
-		if (complemento.size() > 0) {
-			for (Object object : complemento) {
-				if (object instanceof TimbreFiscalDigital) {
-					tfd = (TimbreFiscalDigital) object;
+		if (comprobante.getComplemento() != null) {
+			List<Object> complemento = comprobante.getComplemento().getAny();
+
+			if (complemento.size() > 0) {
+				for (Object object : complemento) {
+					if (object instanceof TimbreFiscalDigital) {
+						tfd = (TimbreFiscalDigital) object;
+					}
 				}
 			}
 		}
-		
-		construirBoceto(comprobante, tfd);
+		construirBoceto(comprobante, tfd,1);
 
 		// si no hay timbre lanzar una excepción
 		/*
 		 * if (tfd == null) throw CFDIImpresoException
 		 */
-		/*Font fontTituloSellos = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.BOLD);
-		Font fontContenidoSellos = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.NORMAL);
-		Font font2 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.BOLD);
-		Font font3 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
-		Font fontSerieYFolio = new Font(Font.FontFamily.HELVETICA, 9.5F, Font.BOLD);
-		Font fontHead = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
-		fontHead.setColor(BaseColor.WHITE);
-
-		PdfPCell emptyCell = new PdfPCell();
-		emptyCell.setBorderWidth(0);
-
-		// BaseColor gris = new BaseColor(153, 153, 102);
-		// BaseColor otroGris = new BaseColor(235, 235, 224);
-
-		PdfPTable tablaEncabezado = new PdfPTable(3);
-		tablaEncabezado.setWidthPercentage(100);
-		tablaEncabezado.setWidths(new float[] { 30, 40, 30 });
-
-		// ENCABEZADO DEL COMPROBANTE
-		PdfPTable subTablaLogo = new PdfPTable(1);
-		PdfPCell celdaLogo = new PdfPCell();
-		celdaLogo.setBorder(PdfPCell.NO_BORDER);
-		if (imagen != null) {
-			Image imgLogo = Image.getInstance(new URL(imagen.getImage()));
-
-			Chunk chunkLogo = new Chunk(imgLogo, 0, -35);
-			celdaLogo.addElement(chunkLogo);
-		}
-		subTablaLogo.addCell(celdaLogo);
-		PdfPCell celdaTablaLogo = new PdfPCell();
-		celdaTablaLogo.addElement(subTablaLogo);
-		celdaTablaLogo.disableBorderSide(PdfPCell.RIGHT);
-		celdaTablaLogo.setBorderColor(BaseColor.GRAY);
-		tablaEncabezado.addCell(celdaTablaLogo);
-
-		PdfPCell celdaDatosEmisor = new PdfPCell();
-		celdaDatosEmisor.setHorizontalAlignment(Element.ALIGN_CENTER);
-		Phrase fraseDatosEmisor = new Phrase();
-		Chunk chunkNombreEmisor = new Chunk(comprobante.getEmisor().getNombre(), font2);
-		Chunk chunkRFCEmisor = new Chunk("R.F.C. ".concat(comprobante.getEmisor().getRfc()), font3);
-		Chunk chunkDomicilioEmisor = new Chunk(comprobante.getEmisor().getDomicilioFiscal().toString(), font3);
-		fraseDatosEmisor.add(chunkNombreEmisor);
-		fraseDatosEmisor.add(Chunk.NEWLINE);
-		fraseDatosEmisor.add(chunkRFCEmisor);
-		fraseDatosEmisor.add(Chunk.NEWLINE);
-		fraseDatosEmisor.add(chunkDomicilioEmisor);
-		celdaDatosEmisor.setBorderWidth(1);
-		celdaDatosEmisor.disableBorderSide(PdfPCell.LEFT);
-		celdaDatosEmisor.addElement(fraseDatosEmisor);
-
-		celdaDatosEmisor.setBorderColor(BaseColor.GRAY);
-		tablaEncabezado.addCell(celdaDatosEmisor);
-
-		PdfPCell celdaSubTablaEncabezado = new PdfPCell();
-		celdaSubTablaEncabezado.setBorderWidth(1);
-		PdfPTable subTablaEncabezado = new PdfPTable(1);
-		agregarCeldaSinBorde("FACTURA", fontSerieYFolio, subTablaEncabezado, true);
-		agregarCeldaSinBorde(getFolioYSerie(comprobante), fontSerieYFolio, subTablaEncabezado, true);
-		celdaSubTablaEncabezado.addElement(subTablaEncabezado);
-		celdaSubTablaEncabezado.setBorderColor(BaseColor.GRAY);
-		tablaEncabezado.addCell(celdaSubTablaEncabezado);
-		document.add(tablaEncabezado);
-
-		// INFORMACIÒN DEL RECEPTOR, LUGAR Y FECHA DE EMISIÓN / HORA DE
-		// CERTIFICACIÓN
-		PdfPTable tablaReceptorYHoraCert = new PdfPTable(3);
-		tablaReceptorYHoraCert.setWidthPercentage(100);
-		tablaReceptorYHoraCert.setWidths(new float[] { 40, 15, 45 });
-
-		agregarCeldaConFondo("Nombre o razón social", fontHead, tablaReceptorYHoraCert, false);
-		agregarCeldaConFondo("R.F.C.", fontHead, tablaReceptorYHoraCert, false);
-		agregarCeldaConFondo("Lugar y fecha de emisión / hora de certificación", fontHead, tablaReceptorYHoraCert,
-				false);
-
-		agregarCelda(comprobante.getReceptor().getNombre(), font3, tablaReceptorYHoraCert, false);
-		agregarCelda(comprobante.getReceptor().getRfc(), font3, tablaReceptorYHoraCert, false);
-		String lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ")
-				.concat(comprobante.getFecha().toString().concat(" / ").concat(tfd.getFechaTimbrado().toString()));
-		agregarCelda(lugarFechaEmiHoraCert, font3, tablaReceptorYHoraCert, false);
-
-		document.add(tablaReceptorYHoraCert);
-
-		// DIRECCIÓN Y OTROS DATOS FISCALES
-		PdfPTable tablaDirYOtrosDatosFis = new PdfPTable(2);
-		tablaDirYOtrosDatosFis.setWidthPercentage(100);
-		tablaDirYOtrosDatosFis.setWidths(new float[] { 40, 60 });
-
-		agregarCeldaConFondo("Dirección", fontHead, tablaDirYOtrosDatosFis, false);
-		agregarCeldaConFondo("Otros datos fiscales", fontHead, tablaDirYOtrosDatosFis, false);
-
-		agregarCelda(comprobante.getReceptor().getDomicilio().toString(), font3, tablaDirYOtrosDatosFis, false);
-
-		Phrase fraseDatosFiscales = new Phrase();
-		agregarChunkYNuevaLinea("Folio fiscal: ".concat(tfd.getUUID()), font3, fraseDatosFiscales);
-		agregarChunkYNuevaLinea("Serie del certificado de emisor: ".concat(comprobante.getNoCertificado()), font3,
-				fraseDatosFiscales);
-		agregarChunkYNuevaLinea("Serie del certificado del SAT: ".concat(tfd.getNoCertificadoSAT()), font3,
-				fraseDatosFiscales);
-		agregarChunkYNuevaLinea(
-				"Régimen fiscal: ".concat(comprobante.getEmisor().getRegimenFiscal().get(0).getRegimen()), font3,
-				fraseDatosFiscales);
-
-		PdfPCell celdaDatosFiscales = new PdfPCell();
-		celdaDatosFiscales.setMinimumHeight(45);
-		celdaDatosFiscales.setPhrase(fraseDatosFiscales);
-		celdaDatosFiscales.setBorderColor(BaseColor.GRAY);
-		tablaDirYOtrosDatosFis.addCell(celdaDatosFiscales);
-		document.add(tablaDirYOtrosDatosFis);
-
-		// TABLA CONCEPTOS
-		PdfPTable tablaConceptos = new PdfPTable(6);
-		tablaConceptos.setWidthPercentage(100);
-		tablaConceptos.setWidths(new float[] { 10, 10, 10, 40, 15, 15 });
-
-		agregarCeldaConFondo("Clave", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Cantidad", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Unidad", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Descripción", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Valor unitario", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Importe", fontHead, tablaConceptos, true);
-
-		List<Concepto> listaConceptos = comprobante.getConceptos().getConcepto();
-		for (Concepto concepto : listaConceptos) {
-			agregarCelda(concepto.getNoIdentificacion(), font3, tablaConceptos, true);
-			agregarCelda(concepto.getCantidad().toString(), font3, tablaConceptos, true);
-			agregarCelda(concepto.getUnidad(), font3, tablaConceptos, true);
-			agregarCelda(concepto.getDescripcion(), font3, tablaConceptos, false);
-			agregarCelda(formatter.format(concepto.getValorUnitario().doubleValue()), font3, tablaConceptos, true);
-			agregarCelda(formatter.format(concepto.getImporte().doubleValue()), font3, tablaConceptos, true);
-		}
-
-		tablaConceptos.setSpacingBefore(5);
-		tablaConceptos.setSpacingAfter(5);
-		document.add(tablaConceptos);
-
-		// IMPORTE CON LETRA
-		PdfPTable tablaImporteConLetra = new PdfPTable(3);
-		tablaImporteConLetra.setWidthPercentage(100);
-		tablaImporteConLetra.setWidths(new int[] { 20, 65, 15 });
-		agregarCeldaConFondo("Importe con letra ", fontHead, tablaImporteConLetra, true);
-
-		double importeTotal = Math.round(comprobante.getTotal().doubleValue() * 100.0) / 100.0;
-		String importeConLetra = NumberToLetterConverter.convertNumberToLetter(importeTotal);
-		Chunk chunkImporteConLetra = new Chunk(importeConLetra, font3);
-		Phrase fraseImporteConLetra = new Phrase(chunkImporteConLetra);
-		PdfPCell celdaImporteConLetra = new PdfPCell();
-		// celdaImporteConLetra.setVerticalAlignment(Element.ALIGN_CENTER);
-		celdaImporteConLetra.setBorder(PdfPCell.NO_BORDER);
-		celdaImporteConLetra.setPhrase(fraseImporteConLetra);
-		tablaImporteConLetra.addCell(celdaImporteConLetra);
-
-		emptyCell.setBackgroundColor(BaseColor.GRAY);
-		tablaImporteConLetra.addCell(emptyCell);
-		document.add(tablaImporteConLetra);
-
-		// LEYENDA Y, SUBTOTAL, IVA Y TOTAL
-		PdfPTable tablaLeyendaTotal = new PdfPTable(3);
-		tablaLeyendaTotal.setWidthPercentage(100);
-		tablaLeyendaTotal.setWidths(new float[] { 65, 20, 15 });
-
-		Phrase fraseLeyenda = new Phrase();
-		// fraseLeyenda.add(Chunk.NEWLINE);
-		Chunk chunkLeyenda = new Chunk("Este documento es una representación impresa de un CFDI", fontTituloSellos);
-		fraseLeyenda.add(Chunk.NEWLINE);
-		fraseLeyenda.add(chunkLeyenda);
-
-		fraseLeyenda.add(Chunk.NEWLINE);
-		String strMetodoPago = "Método de pago: ".concat(comprobante.getMetodoDePago())
-				.concat("                 Moneda: ").concat(comprobante.getMoneda());
-		Chunk chunkMetodoDePago = new Chunk(strMetodoPago, fontContenidoSellos);
-		fraseLeyenda.add(chunkMetodoDePago);
-
-		// se agrega la leyenda 'Efectos fiscales al pago'
-		String strFormaDePago = "Forma de pago: ".concat(comprobante.getFormaDePago())
-				.concat("                 Efectos fiscales al pago");
-		fraseLeyenda.add(Chunk.NEWLINE);
-		Chunk chunkFormaDePago = new Chunk(strFormaDePago, fontContenidoSellos);
-		fraseLeyenda.add(chunkFormaDePago);
-		fraseLeyenda.add(Chunk.NEWLINE);
-
-		PdfPCell celdaLeyenda = new PdfPCell(fraseLeyenda);
-		celdaLeyenda.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tablaLeyendaTotal.addCell(celdaLeyenda);
-
-		PdfPTable subTablaEtqTotal = new PdfPTable(1);
-		agregarCeldaConFondo("Subtotal", fontHead, subTablaEtqTotal, true);
-
-		List<Traslado> traslados = comprobante.getImpuestos().getTraslados().getTraslado();
-		boolean existeIVATraslado = false;
-		double importe = 0.0;
-		if (traslados.size() > 0) {
-			if (traslados.get(0).getImpuesto().equals(IVA)) {
-				existeIVATraslado = true;
-				importe = traslados.get(0).getImporte().doubleValue();
-				agregarCeldaConFondo("IVA 16%", fontHead, subTablaEtqTotal, true);
-			}
-		} else {
-			subTablaEtqTotal.addCell(emptyCell);
-		}
-
-		agregarCeldaConFondo("Total", fontHead, subTablaEtqTotal, true);
-		PdfPCell celdaTablaEtqTotal = new PdfPCell(subTablaEtqTotal);
-		celdaTablaEtqTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tablaLeyendaTotal.addCell(celdaTablaEtqTotal);
-
-		PdfPTable subTablaValoresTotal = new PdfPTable(1);
-		agregarCelda(formatter.format(comprobante.getSubTotal().doubleValue()), font3, subTablaValoresTotal, true);
-
-		if (existeIVATraslado)
-			agregarCelda(formatter.format(importe), font3, subTablaValoresTotal, true);
-		else
-			subTablaValoresTotal.addCell(emptyCell);
-
-		agregarCelda(formatter.format(comprobante.getTotal().doubleValue()), font3, subTablaValoresTotal, true);
-		PdfPCell celdaTablaValoresTotal = new PdfPCell(subTablaValoresTotal);
-		celdaTablaValoresTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tablaLeyendaTotal.addCell(celdaTablaValoresTotal);
-
-		document.add(tablaLeyendaTotal);*/
+		/*
+		 * Font fontTituloSellos = new Font(Font.FontFamily.HELVETICA, 7.5F,
+		 * Font.BOLD); Font fontContenidoSellos = new
+		 * Font(Font.FontFamily.HELVETICA, 7.5F, Font.NORMAL); Font font2 = new
+		 * Font(Font.FontFamily.HELVETICA, 8.5F, Font.BOLD); Font font3 = new
+		 * Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL); Font
+		 * fontSerieYFolio = new Font(Font.FontFamily.HELVETICA, 9.5F,
+		 * Font.BOLD); Font fontHead = new Font(Font.FontFamily.HELVETICA, 8.5F,
+		 * Font.NORMAL); fontHead.setColor(BaseColor.WHITE);
+		 * 
+		 * PdfPCell emptyCell = new PdfPCell(); emptyCell.setBorderWidth(0);
+		 * 
+		 * // BaseColor gris = new BaseColor(153, 153, 102); // BaseColor
+		 * otroGris = new BaseColor(235, 235, 224);
+		 * 
+		 * PdfPTable tablaEncabezado = new PdfPTable(3);
+		 * tablaEncabezado.setWidthPercentage(100);
+		 * tablaEncabezado.setWidths(new float[] { 30, 40, 30 });
+		 * 
+		 * // ENCABEZADO DEL COMPROBANTE PdfPTable subTablaLogo = new
+		 * PdfPTable(1); PdfPCell celdaLogo = new PdfPCell();
+		 * celdaLogo.setBorder(PdfPCell.NO_BORDER); if (imagen != null) { Image
+		 * imgLogo = Image.getInstance(new URL(imagen.getImage()));
+		 * 
+		 * Chunk chunkLogo = new Chunk(imgLogo, 0, -35);
+		 * celdaLogo.addElement(chunkLogo); } subTablaLogo.addCell(celdaLogo);
+		 * PdfPCell celdaTablaLogo = new PdfPCell();
+		 * celdaTablaLogo.addElement(subTablaLogo);
+		 * celdaTablaLogo.disableBorderSide(PdfPCell.RIGHT);
+		 * celdaTablaLogo.setBorderColor(BaseColor.GRAY);
+		 * tablaEncabezado.addCell(celdaTablaLogo);
+		 * 
+		 * PdfPCell celdaDatosEmisor = new PdfPCell();
+		 * celdaDatosEmisor.setHorizontalAlignment(Element.ALIGN_CENTER); Phrase
+		 * fraseDatosEmisor = new Phrase(); Chunk chunkNombreEmisor = new
+		 * Chunk(comprobante.getEmisor().getNombre(), font2); Chunk
+		 * chunkRFCEmisor = new
+		 * Chunk("R.F.C. ".concat(comprobante.getEmisor().getRfc()), font3);
+		 * Chunk chunkDomicilioEmisor = new
+		 * Chunk(comprobante.getEmisor().getDomicilioFiscal().toString(),
+		 * font3); fraseDatosEmisor.add(chunkNombreEmisor);
+		 * fraseDatosEmisor.add(Chunk.NEWLINE);
+		 * fraseDatosEmisor.add(chunkRFCEmisor);
+		 * fraseDatosEmisor.add(Chunk.NEWLINE);
+		 * fraseDatosEmisor.add(chunkDomicilioEmisor);
+		 * celdaDatosEmisor.setBorderWidth(1);
+		 * celdaDatosEmisor.disableBorderSide(PdfPCell.LEFT);
+		 * celdaDatosEmisor.addElement(fraseDatosEmisor);
+		 * 
+		 * celdaDatosEmisor.setBorderColor(BaseColor.GRAY);
+		 * tablaEncabezado.addCell(celdaDatosEmisor);
+		 * 
+		 * PdfPCell celdaSubTablaEncabezado = new PdfPCell();
+		 * celdaSubTablaEncabezado.setBorderWidth(1); PdfPTable
+		 * subTablaEncabezado = new PdfPTable(1);
+		 * agregarCeldaSinBorde("FACTURA", fontSerieYFolio, subTablaEncabezado,
+		 * true); agregarCeldaSinBorde(getFolioYSerie(comprobante),
+		 * fontSerieYFolio, subTablaEncabezado, true);
+		 * celdaSubTablaEncabezado.addElement(subTablaEncabezado);
+		 * celdaSubTablaEncabezado.setBorderColor(BaseColor.GRAY);
+		 * tablaEncabezado.addCell(celdaSubTablaEncabezado);
+		 * document.add(tablaEncabezado);
+		 * 
+		 * // INFORMACIÒN DEL RECEPTOR, LUGAR Y FECHA DE EMISIÓN / HORA DE //
+		 * CERTIFICACIÓN PdfPTable tablaReceptorYHoraCert = new PdfPTable(3);
+		 * tablaReceptorYHoraCert.setWidthPercentage(100);
+		 * tablaReceptorYHoraCert.setWidths(new float[] { 40, 15, 45 });
+		 * 
+		 * agregarCeldaConFondo("Nombre o razón social", fontHead,
+		 * tablaReceptorYHoraCert, false); agregarCeldaConFondo("R.F.C.",
+		 * fontHead, tablaReceptorYHoraCert, false);
+		 * agregarCeldaConFondo("Lugar y fecha de emisión / hora de certificación"
+		 * , fontHead, tablaReceptorYHoraCert, false);
+		 * 
+		 * agregarCelda(comprobante.getReceptor().getNombre(), font3,
+		 * tablaReceptorYHoraCert, false);
+		 * agregarCelda(comprobante.getReceptor().getRfc(), font3,
+		 * tablaReceptorYHoraCert, false); String lugarFechaEmiHoraCert =
+		 * comprobante.getLugarExpedicion().concat(" a ")
+		 * .concat(comprobante.getFecha().toString().concat(" / ").concat(tfd.
+		 * getFechaTimbrado().toString())); agregarCelda(lugarFechaEmiHoraCert,
+		 * font3, tablaReceptorYHoraCert, false);
+		 * 
+		 * document.add(tablaReceptorYHoraCert);
+		 * 
+		 * // DIRECCIÓN Y OTROS DATOS FISCALES PdfPTable tablaDirYOtrosDatosFis
+		 * = new PdfPTable(2); tablaDirYOtrosDatosFis.setWidthPercentage(100);
+		 * tablaDirYOtrosDatosFis.setWidths(new float[] { 40, 60 });
+		 * 
+		 * agregarCeldaConFondo("Dirección", fontHead, tablaDirYOtrosDatosFis,
+		 * false); agregarCeldaConFondo("Otros datos fiscales", fontHead,
+		 * tablaDirYOtrosDatosFis, false);
+		 * 
+		 * agregarCelda(comprobante.getReceptor().getDomicilio().toString(),
+		 * font3, tablaDirYOtrosDatosFis, false);
+		 * 
+		 * Phrase fraseDatosFiscales = new Phrase();
+		 * agregarChunkYNuevaLinea("Folio fiscal: ".concat(tfd.getUUID()),
+		 * font3, fraseDatosFiscales);
+		 * agregarChunkYNuevaLinea("Serie del certificado de emisor: ".concat(
+		 * comprobante.getNoCertificado()), font3, fraseDatosFiscales);
+		 * agregarChunkYNuevaLinea("Serie del certificado del SAT: ".concat(tfd.
+		 * getNoCertificadoSAT()), font3, fraseDatosFiscales);
+		 * agregarChunkYNuevaLinea(
+		 * "Régimen fiscal: ".concat(comprobante.getEmisor().getRegimenFiscal().
+		 * get(0).getRegimen()), font3, fraseDatosFiscales);
+		 * 
+		 * PdfPCell celdaDatosFiscales = new PdfPCell();
+		 * celdaDatosFiscales.setMinimumHeight(45);
+		 * celdaDatosFiscales.setPhrase(fraseDatosFiscales);
+		 * celdaDatosFiscales.setBorderColor(BaseColor.GRAY);
+		 * tablaDirYOtrosDatosFis.addCell(celdaDatosFiscales);
+		 * document.add(tablaDirYOtrosDatosFis);
+		 * 
+		 * // TABLA CONCEPTOS PdfPTable tablaConceptos = new PdfPTable(6);
+		 * tablaConceptos.setWidthPercentage(100); tablaConceptos.setWidths(new
+		 * float[] { 10, 10, 10, 40, 15, 15 });
+		 * 
+		 * agregarCeldaConFondo("Clave", fontHead, tablaConceptos, true);
+		 * 
+		 * agregarCeldaConFondo("Cantidad", fontHead, tablaConceptos, true);
+		 * 
+		 * agregarCeldaConFondo("Unidad", fontHead, tablaConceptos, true);
+		 * 
+		 * agregarCeldaConFondo("Descripción", fontHead, tablaConceptos, true);
+		 * 
+		 * agregarCeldaConFondo("Valor unitario", fontHead, tablaConceptos,
+		 * true);
+		 * 
+		 * agregarCeldaConFondo("Importe", fontHead, tablaConceptos, true);
+		 * 
+		 * List<Concepto> listaConceptos =
+		 * comprobante.getConceptos().getConcepto(); for (Concepto concepto :
+		 * listaConceptos) { agregarCelda(concepto.getNoIdentificacion(), font3,
+		 * tablaConceptos, true);
+		 * agregarCelda(concepto.getCantidad().toString(), font3,
+		 * tablaConceptos, true); agregarCelda(concepto.getUnidad(), font3,
+		 * tablaConceptos, true); agregarCelda(concepto.getDescripcion(), font3,
+		 * tablaConceptos, false);
+		 * agregarCelda(formatter.format(concepto.getValorUnitario().doubleValue
+		 * ()), font3, tablaConceptos, true);
+		 * agregarCelda(formatter.format(concepto.getImporte().doubleValue()),
+		 * font3, tablaConceptos, true); }
+		 * 
+		 * tablaConceptos.setSpacingBefore(5);
+		 * tablaConceptos.setSpacingAfter(5); document.add(tablaConceptos);
+		 * 
+		 * // IMPORTE CON LETRA PdfPTable tablaImporteConLetra = new
+		 * PdfPTable(3); tablaImporteConLetra.setWidthPercentage(100);
+		 * tablaImporteConLetra.setWidths(new int[] { 20, 65, 15 });
+		 * agregarCeldaConFondo("Importe con letra ", fontHead,
+		 * tablaImporteConLetra, true);
+		 * 
+		 * double importeTotal = Math.round(comprobante.getTotal().doubleValue()
+		 * * 100.0) / 100.0; String importeConLetra =
+		 * NumberToLetterConverter.convertNumberToLetter(importeTotal); Chunk
+		 * chunkImporteConLetra = new Chunk(importeConLetra, font3); Phrase
+		 * fraseImporteConLetra = new Phrase(chunkImporteConLetra); PdfPCell
+		 * celdaImporteConLetra = new PdfPCell(); //
+		 * celdaImporteConLetra.setVerticalAlignment(Element.ALIGN_CENTER);
+		 * celdaImporteConLetra.setBorder(PdfPCell.NO_BORDER);
+		 * celdaImporteConLetra.setPhrase(fraseImporteConLetra);
+		 * tablaImporteConLetra.addCell(celdaImporteConLetra);
+		 * 
+		 * emptyCell.setBackgroundColor(BaseColor.GRAY);
+		 * tablaImporteConLetra.addCell(emptyCell);
+		 * document.add(tablaImporteConLetra);
+		 * 
+		 * // LEYENDA Y, SUBTOTAL, IVA Y TOTAL PdfPTable tablaLeyendaTotal = new
+		 * PdfPTable(3); tablaLeyendaTotal.setWidthPercentage(100);
+		 * tablaLeyendaTotal.setWidths(new float[] { 65, 20, 15 });
+		 * 
+		 * Phrase fraseLeyenda = new Phrase(); //
+		 * fraseLeyenda.add(Chunk.NEWLINE); Chunk chunkLeyenda = new
+		 * Chunk("Este documento es una representación impresa de un CFDI",
+		 * fontTituloSellos); fraseLeyenda.add(Chunk.NEWLINE);
+		 * fraseLeyenda.add(chunkLeyenda);
+		 * 
+		 * fraseLeyenda.add(Chunk.NEWLINE); String strMetodoPago =
+		 * "Método de pago: ".concat(comprobante.getMetodoDePago())
+		 * .concat("                 Moneda: ").concat(comprobante.getMoneda());
+		 * Chunk chunkMetodoDePago = new Chunk(strMetodoPago,
+		 * fontContenidoSellos); fraseLeyenda.add(chunkMetodoDePago);
+		 * 
+		 * // se agrega la leyenda 'Efectos fiscales al pago' String
+		 * strFormaDePago =
+		 * "Forma de pago: ".concat(comprobante.getFormaDePago())
+		 * .concat("                 Efectos fiscales al pago");
+		 * fraseLeyenda.add(Chunk.NEWLINE); Chunk chunkFormaDePago = new
+		 * Chunk(strFormaDePago, fontContenidoSellos);
+		 * fraseLeyenda.add(chunkFormaDePago); fraseLeyenda.add(Chunk.NEWLINE);
+		 * 
+		 * PdfPCell celdaLeyenda = new PdfPCell(fraseLeyenda);
+		 * celdaLeyenda.setHorizontalAlignment(Element.ALIGN_CENTER);
+		 * tablaLeyendaTotal.addCell(celdaLeyenda);
+		 * 
+		 * PdfPTable subTablaEtqTotal = new PdfPTable(1);
+		 * agregarCeldaConFondo("Subtotal", fontHead, subTablaEtqTotal, true);
+		 * 
+		 * List<Traslado> traslados =
+		 * comprobante.getImpuestos().getTraslados().getTraslado(); boolean
+		 * existeIVATraslado = false; double importe = 0.0; if (traslados.size()
+		 * > 0) { if (traslados.get(0).getImpuesto().equals(IVA)) {
+		 * existeIVATraslado = true; importe =
+		 * traslados.get(0).getImporte().doubleValue();
+		 * agregarCeldaConFondo("IVA 16%", fontHead, subTablaEtqTotal, true); }
+		 * } else { subTablaEtqTotal.addCell(emptyCell); }
+		 * 
+		 * agregarCeldaConFondo("Total", fontHead, subTablaEtqTotal, true);
+		 * PdfPCell celdaTablaEtqTotal = new PdfPCell(subTablaEtqTotal);
+		 * celdaTablaEtqTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
+		 * tablaLeyendaTotal.addCell(celdaTablaEtqTotal);
+		 * 
+		 * PdfPTable subTablaValoresTotal = new PdfPTable(1);
+		 * agregarCelda(formatter.format(comprobante.getSubTotal().doubleValue()
+		 * ), font3, subTablaValoresTotal, true);
+		 * 
+		 * if (existeIVATraslado) agregarCelda(formatter.format(importe), font3,
+		 * subTablaValoresTotal, true); else
+		 * subTablaValoresTotal.addCell(emptyCell);
+		 * 
+		 * agregarCelda(formatter.format(comprobante.getTotal().doubleValue()),
+		 * font3, subTablaValoresTotal, true); PdfPCell celdaTablaValoresTotal =
+		 * new PdfPCell(subTablaValoresTotal);
+		 * celdaTablaValoresTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
+		 * tablaLeyendaTotal.addCell(celdaTablaValoresTotal);
+		 * 
+		 * document.add(tablaLeyendaTotal);
+		 */
 
 		construirTimbre(selloDigital, bytesQRCode, tfd);
 		// QRCode Y SELLOS DIGITALES
-		/*PdfPTable mainTable = new PdfPTable(2);
-		mainTable.setWidthPercentage(100.0f);
-		mainTable.setWidths(new float[] { 25, 75 });
-
-		PdfPCell primeraCeldaTabla = new PdfPCell();
-		primeraCeldaTabla.setBorderWidthTop(1);
-		primeraCeldaTabla.setBorderWidthBottom(1);
-		primeraCeldaTabla.setBorderWidthRight(1);
-
-		PdfPTable tablaQRCode = new PdfPTable(1);
-		Image imgQRCode = Image.getInstance(bytesQRCode);
-		// int dpi = imgQRCode.getDpiX();
-		// imgQRCode.scalePercent(100 * 72 / dpi - 20);
-		// el tercer parámetro en el constructor de Chunk (offsetY) controla el
-		// tamaño de la imagen
-		Chunk chunkQRCode = new Chunk(imgQRCode, 0, -70);
-		PdfPCell celdaQRCode = new PdfPCell();
-		celdaQRCode.setBorder(PdfPCell.NO_BORDER);
-		celdaQRCode.addElement(chunkQRCode);
-		tablaQRCode.addCell(celdaQRCode);
-		primeraCeldaTabla.addElement(tablaQRCode);
-		mainTable.addCell(primeraCeldaTabla);
-
-		PdfPCell segundaCeldaTabla = new PdfPCell();
-		segundaCeldaTabla.setBorderWidthTop(1);
-		segundaCeldaTabla.setBorderWidthBottom(1);
-		segundaCeldaTabla.setBorderWidthRight(1);
-		segundaCeldaTabla.setBorderColor(BaseColor.GRAY);
-
-		PdfPTable tablaTimbre = new PdfPTable(1);
-		tablaTimbre.setWidthPercentage(100);
-
-		// celdaQRCode = new PdfPCell(Image.getInstance(bytesQRCode));
-		// celdaQRCode.setBorderWidth(0);
-
-		PdfPCell cell1table7 = new PdfPCell();
-		cell1table7.setBorderWidth(0);
-
-		Phrase line3footer = new Phrase();
-		Chunk line3part1 = new Chunk("Sello digital del emisor ", fontTituloSellos);
-		Chunk line3part2 = new Chunk(tfd.getSelloCFD(), fontContenidoSellos);
-		line3footer.add(line3part1);
-		line3footer.add(Chunk.NEWLINE);
-		line3footer.add(line3part2);
-
-		PdfPCell cell4table7 = new PdfPCell(line3footer);
-		cell4table7.setBorderWidth(0);
-		// cell4table7.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
-
-		Phrase line4footer = new Phrase();
-		Chunk line4part1 = new Chunk("Sello digital del SAT ", fontTituloSellos);
-		Chunk line4part2 = new Chunk(tfd.getSelloSAT(), fontContenidoSellos);
-		line4footer.add(line4part1);
-		line4footer.add(Chunk.NEWLINE);
-		line4footer.add(line4part2);
-
-		PdfPCell cell5table7 = new PdfPCell(line4footer);
-		cell5table7.setBorderWidth(0);
-		// cell5table7.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
-
-		Phrase fraseCadenaOriginal = new Phrase();
-		Chunk chunkCadenaOriginalEtq = new Chunk("Cadena original del complemento de certificación digital del SAT ",
-				fontTituloSellos);
-		Chunk chunkCadenaOriginalValor = new Chunk(selloDigital, fontContenidoSellos);
-		fraseCadenaOriginal.add(chunkCadenaOriginalEtq);
-		fraseCadenaOriginal.add(Chunk.NEWLINE);
-		fraseCadenaOriginal.add(chunkCadenaOriginalValor);
-
-		PdfPCell celdaCadenaOriginal = new PdfPCell(fraseCadenaOriginal);
-		celdaCadenaOriginal.setBorderWidth(0);
-
-		tablaTimbre.addCell(cell4table7);
-
-		tablaTimbre.addCell(cell5table7);
-
-		tablaTimbre.addCell(celdaCadenaOriginal);
-
-		// tablaTimbre.addCell(cell6table7);
-
-		segundaCeldaTabla.addElement(tablaTimbre);
-		mainTable.addCell(segundaCeldaTabla);
-		mainTable.setSpacingBefore(2);
-
-		document.add(mainTable);
-*/
+		/*
+		 * PdfPTable mainTable = new PdfPTable(2);
+		 * mainTable.setWidthPercentage(100.0f); mainTable.setWidths(new float[]
+		 * { 25, 75 });
+		 * 
+		 * PdfPCell primeraCeldaTabla = new PdfPCell();
+		 * primeraCeldaTabla.setBorderWidthTop(1);
+		 * primeraCeldaTabla.setBorderWidthBottom(1);
+		 * primeraCeldaTabla.setBorderWidthRight(1);
+		 * 
+		 * PdfPTable tablaQRCode = new PdfPTable(1); Image imgQRCode =
+		 * Image.getInstance(bytesQRCode); // int dpi = imgQRCode.getDpiX(); //
+		 * imgQRCode.scalePercent(100 * 72 / dpi - 20); // el tercer parámetro
+		 * en el constructor de Chunk (offsetY) controla el // tamaño de la
+		 * imagen Chunk chunkQRCode = new Chunk(imgQRCode, 0, -70); PdfPCell
+		 * celdaQRCode = new PdfPCell();
+		 * celdaQRCode.setBorder(PdfPCell.NO_BORDER);
+		 * celdaQRCode.addElement(chunkQRCode);
+		 * tablaQRCode.addCell(celdaQRCode);
+		 * primeraCeldaTabla.addElement(tablaQRCode);
+		 * mainTable.addCell(primeraCeldaTabla);
+		 * 
+		 * PdfPCell segundaCeldaTabla = new PdfPCell();
+		 * segundaCeldaTabla.setBorderWidthTop(1);
+		 * segundaCeldaTabla.setBorderWidthBottom(1);
+		 * segundaCeldaTabla.setBorderWidthRight(1);
+		 * segundaCeldaTabla.setBorderColor(BaseColor.GRAY);
+		 * 
+		 * PdfPTable tablaTimbre = new PdfPTable(1);
+		 * tablaTimbre.setWidthPercentage(100);
+		 * 
+		 * // celdaQRCode = new PdfPCell(Image.getInstance(bytesQRCode)); //
+		 * celdaQRCode.setBorderWidth(0);
+		 * 
+		 * PdfPCell cell1table7 = new PdfPCell(); cell1table7.setBorderWidth(0);
+		 * 
+		 * Phrase line3footer = new Phrase(); Chunk line3part1 = new
+		 * Chunk("Sello digital del emisor ", fontTituloSellos); Chunk
+		 * line3part2 = new Chunk(tfd.getSelloCFD(), fontContenidoSellos);
+		 * line3footer.add(line3part1); line3footer.add(Chunk.NEWLINE);
+		 * line3footer.add(line3part2);
+		 * 
+		 * PdfPCell cell4table7 = new PdfPCell(line3footer);
+		 * cell4table7.setBorderWidth(0); //
+		 * cell4table7.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+		 * 
+		 * Phrase line4footer = new Phrase(); Chunk line4part1 = new
+		 * Chunk("Sello digital del SAT ", fontTituloSellos); Chunk line4part2 =
+		 * new Chunk(tfd.getSelloSAT(), fontContenidoSellos);
+		 * line4footer.add(line4part1); line4footer.add(Chunk.NEWLINE);
+		 * line4footer.add(line4part2);
+		 * 
+		 * PdfPCell cell5table7 = new PdfPCell(line4footer);
+		 * cell5table7.setBorderWidth(0); //
+		 * cell5table7.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+		 * 
+		 * Phrase fraseCadenaOriginal = new Phrase(); Chunk
+		 * chunkCadenaOriginalEtq = new
+		 * Chunk("Cadena original del complemento de certificación digital del SAT "
+		 * , fontTituloSellos); Chunk chunkCadenaOriginalValor = new
+		 * Chunk(selloDigital, fontContenidoSellos);
+		 * fraseCadenaOriginal.add(chunkCadenaOriginalEtq);
+		 * fraseCadenaOriginal.add(Chunk.NEWLINE);
+		 * fraseCadenaOriginal.add(chunkCadenaOriginalValor);
+		 * 
+		 * PdfPCell celdaCadenaOriginal = new PdfPCell(fraseCadenaOriginal);
+		 * celdaCadenaOriginal.setBorderWidth(0);
+		 * 
+		 * tablaTimbre.addCell(cell4table7);
+		 * 
+		 * tablaTimbre.addCell(cell5table7);
+		 * 
+		 * tablaTimbre.addCell(celdaCadenaOriginal);
+		 * 
+		 * // tablaTimbre.addCell(cell6table7);
+		 * 
+		 * segundaCeldaTabla.addElement(tablaTimbre);
+		 * mainTable.addCell(segundaCeldaTabla); mainTable.setSpacingBefore(2);
+		 * 
+		 * document.add(mainTable);
+		 */
 		return document;
 	}
 
-	public Document construirPdf(Comprobante comprobante)
-			throws DocumentException, MalformedURLException, IOException {
+	public Document construirPdf(Comprobante comprobante) throws DocumentException, MalformedURLException, IOException {
 
-		construirBoceto(comprobante, null);
-		
-		/*Font fontContenidoSellos = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.NORMAL);
-		Font font2 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.BOLD);
-		Font font3 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
-		Font fontSerieYFolio = new Font(Font.FontFamily.HELVETICA, 9.5F, Font.BOLD);
-		Font fontHead = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
-		fontHead.setColor(BaseColor.WHITE);
+		construirBoceto(comprobante, null,0);
 
-		PdfPCell emptyCell = new PdfPCell();
-		emptyCell.setBorderWidth(0);
-
-		// BaseColor gris = new BaseColor(153, 153, 102);
-		// BaseColor otroGris = new BaseColor(235, 235, 224);
-
-		PdfPTable tablaEncabezado = new PdfPTable(3);
-		tablaEncabezado.setWidthPercentage(100);
-		tablaEncabezado.setWidths(new float[] { 30, 40, 30 });
-
-		// ENCABEZADO DEL COMPROBANTE
-		PdfPTable subTablaLogo = new PdfPTable(1);
-		PdfPCell celdaLogo = new PdfPCell();
-		celdaLogo.setBorder(PdfPCell.NO_BORDER);
-		if (imagen != null) {
-			Image imgLogo = Image.getInstance(new URL(imagen.getImage()));
-
-			Chunk chunkLogo = new Chunk(imgLogo, 0, -35);
-			celdaLogo.addElement(chunkLogo);
-		}
-		subTablaLogo.addCell(celdaLogo);
-		PdfPCell celdaTablaLogo = new PdfPCell();
-		celdaTablaLogo.addElement(subTablaLogo);
-		celdaTablaLogo.disableBorderSide(PdfPCell.RIGHT);
-		celdaTablaLogo.setBorderColor(BaseColor.GRAY);
-		tablaEncabezado.addCell(celdaTablaLogo);
-
-		PdfPCell celdaDatosEmisor = new PdfPCell();
-		Phrase fraseDatosEmisor = new Phrase();
-		Chunk chunkNombreEmisor = new Chunk(comprobante.getEmisor().getNombre(), font2);
-		Chunk chunkRFCEmisor = new Chunk("R.F.C. ".concat(comprobante.getEmisor().getRfc()), font3);
-		Chunk chunkDomicilioEmisor = new Chunk(comprobante.getEmisor().getDomicilioFiscal().toString(), font3);
-		fraseDatosEmisor.add(chunkNombreEmisor);
-		fraseDatosEmisor.add(Chunk.NEWLINE);
-		fraseDatosEmisor.add(chunkRFCEmisor);
-		fraseDatosEmisor.add(Chunk.NEWLINE);
-		fraseDatosEmisor.add(chunkDomicilioEmisor);
-		celdaDatosEmisor.setBorderWidth(1);
-		celdaDatosEmisor.disableBorderSide(PdfPCell.LEFT);
-		celdaDatosEmisor.addElement(fraseDatosEmisor);
-		celdaDatosEmisor.setHorizontalAlignment(Element.ALIGN_CENTER);
-		celdaDatosEmisor.setBorderColor(BaseColor.GRAY);
-		tablaEncabezado.addCell(celdaDatosEmisor);
-
-		PdfPCell celdaSubTablaEncabezado = new PdfPCell();
-		celdaSubTablaEncabezado.setBorderWidth(1);
-		PdfPTable subTablaEncabezado = new PdfPTable(1);
-		agregarCeldaSinBorde("FACTURA", fontSerieYFolio, subTablaEncabezado, true);
-		agregarCeldaSinBorde(getFolioYSerie(comprobante), fontSerieYFolio, subTablaEncabezado, true);
-		celdaSubTablaEncabezado.addElement(subTablaEncabezado);
-		celdaSubTablaEncabezado.setBorderColor(BaseColor.GRAY);
-		tablaEncabezado.addCell(celdaSubTablaEncabezado);
-		document.add(tablaEncabezado);
-
-		// TODO continuar
-		// INFORMACIÒN DEL RECEPTOR, LUGAR Y FECHA DE EMISIÓN / HORA DE
-		// CERTIFICACIÓN
-		PdfPTable tablaReceptorYHoraCert = new PdfPTable(3);
-		tablaReceptorYHoraCert.setWidthPercentage(100);
-		tablaReceptorYHoraCert.setWidths(new float[] { 40, 15, 45 });
-
-		agregarCeldaConFondo("Nombre o razón social", fontHead, tablaReceptorYHoraCert, false);
-		agregarCeldaConFondo("R.F.C.", fontHead, tablaReceptorYHoraCert, false);
-		agregarCeldaConFondo("Lugar y fecha de emisión / hora de certificación", fontHead, tablaReceptorYHoraCert,
-				false);
-
-		agregarCelda(comprobante.getReceptor().getNombre(), font3, tablaReceptorYHoraCert, false);
-		agregarCelda(comprobante.getReceptor().getRfc(), font3, tablaReceptorYHoraCert, false);
-		String lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ")
-				.concat(comprobante.getFecha().toString());
-		agregarCelda(lugarFechaEmiHoraCert, font3, tablaReceptorYHoraCert, false);
-
-		document.add(tablaReceptorYHoraCert);
-
-		// DIRECCIÓN Y OTROS DATOS FISCALES
-		PdfPTable tablaDirYOtrosDatosFis = new PdfPTable(2);
-		tablaDirYOtrosDatosFis.setWidthPercentage(100);
-		tablaDirYOtrosDatosFis.setWidths(new float[] { 40, 60 });
-
-		agregarCeldaConFondo("Dirección", fontHead, tablaDirYOtrosDatosFis, false);
-		agregarCeldaConFondo("Otros datos fiscales", fontHead, tablaDirYOtrosDatosFis, false);
-
-		agregarCelda(comprobante.getReceptor().getDomicilio().toString(), font3, tablaDirYOtrosDatosFis, false);
-
-		Phrase fraseDatosFiscales = new Phrase();
-		// agregarChunkYNuevaLinea("Folio fiscal: ".concat(tfd.getUUID()),
-		// font3, fraseDatosFiscales);
-		// agregarChunkYNuevaLinea("Serie del certificado de emisor:
-		// ".concat(comprobante.getNoCertificado()), font3, fraseDatosFiscales);
-		// agregarChunkYNuevaLinea("Serie del certificado del SAT:
-		// ".concat(tfd.getNoCertificadoSAT()), font3, fraseDatosFiscales);
-		agregarChunkYNuevaLinea(
-				"Régimen fiscal: ".concat(comprobante.getEmisor().getRegimenFiscal().get(0).getRegimen()), font3,
-				fraseDatosFiscales);
-
-		PdfPCell celdaDatosFiscales = new PdfPCell();
-		celdaDatosFiscales.setMinimumHeight(45);
-		celdaDatosFiscales.setPhrase(fraseDatosFiscales);
-		celdaDatosFiscales.setBorderColor(BaseColor.GRAY);
-		tablaDirYOtrosDatosFis.addCell(celdaDatosFiscales);
-		document.add(tablaDirYOtrosDatosFis);
-
-		// TABLA CONCEPTOS
-		PdfPTable tablaConceptos = new PdfPTable(6);
-		tablaConceptos.setWidthPercentage(100);
-		tablaConceptos.setWidths(new float[] { 10, 10, 10, 40, 15, 15 });
-
-		agregarCeldaConFondo("Clave", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Cantidad", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Unidad", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Descripción", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Valor unitario", fontHead, tablaConceptos, true);
-
-		agregarCeldaConFondo("Importe", fontHead, tablaConceptos, true);
-
-		List<Concepto> listaConceptos = comprobante.getConceptos().getConcepto();
-		for (Concepto concepto : listaConceptos) {
-			agregarCelda(concepto.getNoIdentificacion(), font3, tablaConceptos, true);
-			agregarCelda(concepto.getCantidad().toString(), font3, tablaConceptos, true);
-			agregarCelda(concepto.getUnidad(), font3, tablaConceptos, true);
-			agregarCelda(concepto.getDescripcion(), font3, tablaConceptos, false);
-			agregarCelda(formatter.format(concepto.getValorUnitario().doubleValue()), font3, tablaConceptos, true);
-			agregarCelda(formatter.format(concepto.getImporte().doubleValue()), font3, tablaConceptos, true);
-		}
-
-		tablaConceptos.setSpacingBefore(5);
-		tablaConceptos.setSpacingAfter(5);
-		document.add(tablaConceptos);
-
-		// IMPORTE CON LETRA
-		PdfPTable tablaImporteConLetra = new PdfPTable(3);
-		tablaImporteConLetra.setWidthPercentage(100);
-		tablaImporteConLetra.setWidths(new int[] { 20, 65, 15 });
-		agregarCeldaConFondo("Importe con letra ", fontHead, tablaImporteConLetra, true);
-
-		double importeTotal = Math.round(comprobante.getTotal().doubleValue() * 100.0) / 100.0;
-		String importeConLetra = NumberToLetterConverter.convertNumberToLetter(importeTotal);
-		Chunk chunkImporteConLetra = new Chunk(importeConLetra, font3);
-		Phrase fraseImporteConLetra = new Phrase(chunkImporteConLetra);
-		PdfPCell celdaImporteConLetra = new PdfPCell();
-		// celdaImporteConLetra.setVerticalAlignment(Element.ALIGN_CENTER);
-		celdaImporteConLetra.setBorder(PdfPCell.NO_BORDER);
-		celdaImporteConLetra.setPhrase(fraseImporteConLetra);
-		tablaImporteConLetra.addCell(celdaImporteConLetra);
-
-		emptyCell.setBackgroundColor(BaseColor.GRAY);
-		tablaImporteConLetra.addCell(emptyCell);
-		document.add(tablaImporteConLetra);
-
-		// LEYENDA Y, SUBTOTAL, IVA Y TOTAL
-		PdfPTable tablaLeyendaTotal = new PdfPTable(3);
-		tablaLeyendaTotal.setWidthPercentage(100);
-		tablaLeyendaTotal.setWidths(new float[] { 65, 20, 15 });
-
-		Phrase fraseLeyenda = new Phrase();
-		// fraseLeyenda.add(Chunk.NEWLINE);
-
-		fraseLeyenda.add(Chunk.NEWLINE);
-		String strMetodoPago = "Método de pago: ".concat(comprobante.getMetodoDePago())
-				.concat("                 Moneda: ").concat(comprobante.getMoneda());
-		Chunk chunkMetodoDePago = new Chunk(strMetodoPago, fontContenidoSellos);
-		fraseLeyenda.add(chunkMetodoDePago);
-
-		// se agrega la leyenda 'Efectos fiscales al pago'
-		String strFormaDePago = "Forma de pago: ".concat(comprobante.getFormaDePago())
-				.concat("                 Efectos fiscales al pago");
-		fraseLeyenda.add(Chunk.NEWLINE);
-		Chunk chunkFormaDePago = new Chunk(strFormaDePago, fontContenidoSellos);
-		fraseLeyenda.add(chunkFormaDePago);
-		fraseLeyenda.add(Chunk.NEWLINE);
-
-		PdfPCell celdaLeyenda = new PdfPCell(fraseLeyenda);
-		celdaLeyenda.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tablaLeyendaTotal.addCell(celdaLeyenda);
-
-		PdfPTable subTablaEtqTotal = new PdfPTable(1);
-		agregarCeldaConFondo("Subtotal", fontHead, subTablaEtqTotal, true);
-
-		List<Traslado> traslados = comprobante.getImpuestos().getTraslados().getTraslado();
-		boolean existeIVATraslado = false;
-		double importe = 0.0;
-		if (traslados.size() > 0) {
-			if (traslados.get(0).getImpuesto().equals(IVA)) {
-				existeIVATraslado = true;
-				importe = traslados.get(0).getImporte().doubleValue();
-				agregarCeldaConFondo("IVA 16%", fontHead, subTablaEtqTotal, true);
-			}
-		} else {
-			subTablaEtqTotal.addCell(emptyCell);
-		}
-
-		agregarCeldaConFondo("Total", fontHead, subTablaEtqTotal, true);
-		PdfPCell celdaTablaEtqTotal = new PdfPCell(subTablaEtqTotal);
-		celdaTablaEtqTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tablaLeyendaTotal.addCell(celdaTablaEtqTotal);
-
-		PdfPTable subTablaValoresTotal = new PdfPTable(1);
-		agregarCelda(formatter.format(comprobante.getSubTotal().doubleValue()), font3, subTablaValoresTotal, true);
-
-		if (existeIVATraslado)
-			agregarCelda(formatter.format(importe), font3, subTablaValoresTotal, true);
-		else
-			subTablaValoresTotal.addCell(emptyCell);
-
-		agregarCelda(formatter.format(comprobante.getTotal().doubleValue()), font3, subTablaValoresTotal, true);
-		PdfPCell celdaTablaValoresTotal = new PdfPCell(subTablaValoresTotal);
-		celdaTablaValoresTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tablaLeyendaTotal.addCell(celdaTablaValoresTotal);
-
-		document.add(tablaLeyendaTotal);*/
+		/*
+		 * Font fontContenidoSellos = new Font(Font.FontFamily.HELVETICA, 7.5F,
+		 * Font.NORMAL); Font font2 = new Font(Font.FontFamily.HELVETICA, 8.5F,
+		 * Font.BOLD); Font font3 = new Font(Font.FontFamily.HELVETICA, 8.5F,
+		 * Font.NORMAL); Font fontSerieYFolio = new
+		 * Font(Font.FontFamily.HELVETICA, 9.5F, Font.BOLD); Font fontHead = new
+		 * Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
+		 * fontHead.setColor(BaseColor.WHITE);
+		 * 
+		 * PdfPCell emptyCell = new PdfPCell(); emptyCell.setBorderWidth(0);
+		 * 
+		 * // BaseColor gris = new BaseColor(153, 153, 102); // BaseColor
+		 * otroGris = new BaseColor(235, 235, 224);
+		 * 
+		 * PdfPTable tablaEncabezado = new PdfPTable(3);
+		 * tablaEncabezado.setWidthPercentage(100);
+		 * tablaEncabezado.setWidths(new float[] { 30, 40, 30 });
+		 * 
+		 * // ENCABEZADO DEL COMPROBANTE PdfPTable subTablaLogo = new
+		 * PdfPTable(1); PdfPCell celdaLogo = new PdfPCell();
+		 * celdaLogo.setBorder(PdfPCell.NO_BORDER); if (imagen != null) { Image
+		 * imgLogo = Image.getInstance(new URL(imagen.getImage()));
+		 * 
+		 * Chunk chunkLogo = new Chunk(imgLogo, 0, -35);
+		 * celdaLogo.addElement(chunkLogo); } subTablaLogo.addCell(celdaLogo);
+		 * PdfPCell celdaTablaLogo = new PdfPCell();
+		 * celdaTablaLogo.addElement(subTablaLogo);
+		 * celdaTablaLogo.disableBorderSide(PdfPCell.RIGHT);
+		 * celdaTablaLogo.setBorderColor(BaseColor.GRAY);
+		 * tablaEncabezado.addCell(celdaTablaLogo);
+		 * 
+		 * PdfPCell celdaDatosEmisor = new PdfPCell(); Phrase fraseDatosEmisor =
+		 * new Phrase(); Chunk chunkNombreEmisor = new
+		 * Chunk(comprobante.getEmisor().getNombre(), font2); Chunk
+		 * chunkRFCEmisor = new
+		 * Chunk("R.F.C. ".concat(comprobante.getEmisor().getRfc()), font3);
+		 * Chunk chunkDomicilioEmisor = new
+		 * Chunk(comprobante.getEmisor().getDomicilioFiscal().toString(),
+		 * font3); fraseDatosEmisor.add(chunkNombreEmisor);
+		 * fraseDatosEmisor.add(Chunk.NEWLINE);
+		 * fraseDatosEmisor.add(chunkRFCEmisor);
+		 * fraseDatosEmisor.add(Chunk.NEWLINE);
+		 * fraseDatosEmisor.add(chunkDomicilioEmisor);
+		 * celdaDatosEmisor.setBorderWidth(1);
+		 * celdaDatosEmisor.disableBorderSide(PdfPCell.LEFT);
+		 * celdaDatosEmisor.addElement(fraseDatosEmisor);
+		 * celdaDatosEmisor.setHorizontalAlignment(Element.ALIGN_CENTER);
+		 * celdaDatosEmisor.setBorderColor(BaseColor.GRAY);
+		 * tablaEncabezado.addCell(celdaDatosEmisor);
+		 * 
+		 * PdfPCell celdaSubTablaEncabezado = new PdfPCell();
+		 * celdaSubTablaEncabezado.setBorderWidth(1); PdfPTable
+		 * subTablaEncabezado = new PdfPTable(1);
+		 * agregarCeldaSinBorde("FACTURA", fontSerieYFolio, subTablaEncabezado,
+		 * true); agregarCeldaSinBorde(getFolioYSerie(comprobante),
+		 * fontSerieYFolio, subTablaEncabezado, true);
+		 * celdaSubTablaEncabezado.addElement(subTablaEncabezado);
+		 * celdaSubTablaEncabezado.setBorderColor(BaseColor.GRAY);
+		 * tablaEncabezado.addCell(celdaSubTablaEncabezado);
+		 * document.add(tablaEncabezado);
+		 * 
+		 * // TODO continuar // INFORMACIÒN DEL RECEPTOR, LUGAR Y FECHA DE
+		 * EMISIÓN / HORA DE // CERTIFICACIÓN PdfPTable tablaReceptorYHoraCert =
+		 * new PdfPTable(3); tablaReceptorYHoraCert.setWidthPercentage(100);
+		 * tablaReceptorYHoraCert.setWidths(new float[] { 40, 15, 45 });
+		 * 
+		 * agregarCeldaConFondo("Nombre o razón social", fontHead,
+		 * tablaReceptorYHoraCert, false); agregarCeldaConFondo("R.F.C.",
+		 * fontHead, tablaReceptorYHoraCert, false);
+		 * agregarCeldaConFondo("Lugar y fecha de emisión / hora de certificación"
+		 * , fontHead, tablaReceptorYHoraCert, false);
+		 * 
+		 * agregarCelda(comprobante.getReceptor().getNombre(), font3,
+		 * tablaReceptorYHoraCert, false);
+		 * agregarCelda(comprobante.getReceptor().getRfc(), font3,
+		 * tablaReceptorYHoraCert, false); String lugarFechaEmiHoraCert =
+		 * comprobante.getLugarExpedicion().concat(" a ")
+		 * .concat(comprobante.getFecha().toString());
+		 * agregarCelda(lugarFechaEmiHoraCert, font3, tablaReceptorYHoraCert,
+		 * false);
+		 * 
+		 * document.add(tablaReceptorYHoraCert);
+		 * 
+		 * // DIRECCIÓN Y OTROS DATOS FISCALES PdfPTable tablaDirYOtrosDatosFis
+		 * = new PdfPTable(2); tablaDirYOtrosDatosFis.setWidthPercentage(100);
+		 * tablaDirYOtrosDatosFis.setWidths(new float[] { 40, 60 });
+		 * 
+		 * agregarCeldaConFondo("Dirección", fontHead, tablaDirYOtrosDatosFis,
+		 * false); agregarCeldaConFondo("Otros datos fiscales", fontHead,
+		 * tablaDirYOtrosDatosFis, false);
+		 * 
+		 * agregarCelda(comprobante.getReceptor().getDomicilio().toString(),
+		 * font3, tablaDirYOtrosDatosFis, false);
+		 * 
+		 * Phrase fraseDatosFiscales = new Phrase(); //
+		 * agregarChunkYNuevaLinea("Folio fiscal: ".concat(tfd.getUUID()), //
+		 * font3, fraseDatosFiscales); // agregarChunkYNuevaLinea("Serie del
+		 * certificado de emisor: // ".concat(comprobante.getNoCertificado()),
+		 * font3, fraseDatosFiscales); // agregarChunkYNuevaLinea("Serie del
+		 * certificado del SAT: // ".concat(tfd.getNoCertificadoSAT()), font3,
+		 * fraseDatosFiscales); agregarChunkYNuevaLinea(
+		 * "Régimen fiscal: ".concat(comprobante.getEmisor().getRegimenFiscal().
+		 * get(0).getRegimen()), font3, fraseDatosFiscales);
+		 * 
+		 * PdfPCell celdaDatosFiscales = new PdfPCell();
+		 * celdaDatosFiscales.setMinimumHeight(45);
+		 * celdaDatosFiscales.setPhrase(fraseDatosFiscales);
+		 * celdaDatosFiscales.setBorderColor(BaseColor.GRAY);
+		 * tablaDirYOtrosDatosFis.addCell(celdaDatosFiscales);
+		 * document.add(tablaDirYOtrosDatosFis);
+		 * 
+		 * // TABLA CONCEPTOS PdfPTable tablaConceptos = new PdfPTable(6);
+		 * tablaConceptos.setWidthPercentage(100); tablaConceptos.setWidths(new
+		 * float[] { 10, 10, 10, 40, 15, 15 });
+		 * 
+		 * agregarCeldaConFondo("Clave", fontHead, tablaConceptos, true);
+		 * 
+		 * agregarCeldaConFondo("Cantidad", fontHead, tablaConceptos, true);
+		 * 
+		 * agregarCeldaConFondo("Unidad", fontHead, tablaConceptos, true);
+		 * 
+		 * agregarCeldaConFondo("Descripción", fontHead, tablaConceptos, true);
+		 * 
+		 * agregarCeldaConFondo("Valor unitario", fontHead, tablaConceptos,
+		 * true);
+		 * 
+		 * agregarCeldaConFondo("Importe", fontHead, tablaConceptos, true);
+		 * 
+		 * List<Concepto> listaConceptos =
+		 * comprobante.getConceptos().getConcepto(); for (Concepto concepto :
+		 * listaConceptos) { agregarCelda(concepto.getNoIdentificacion(), font3,
+		 * tablaConceptos, true);
+		 * agregarCelda(concepto.getCantidad().toString(), font3,
+		 * tablaConceptos, true); agregarCelda(concepto.getUnidad(), font3,
+		 * tablaConceptos, true); agregarCelda(concepto.getDescripcion(), font3,
+		 * tablaConceptos, false);
+		 * agregarCelda(formatter.format(concepto.getValorUnitario().doubleValue
+		 * ()), font3, tablaConceptos, true);
+		 * agregarCelda(formatter.format(concepto.getImporte().doubleValue()),
+		 * font3, tablaConceptos, true); }
+		 * 
+		 * tablaConceptos.setSpacingBefore(5);
+		 * tablaConceptos.setSpacingAfter(5); document.add(tablaConceptos);
+		 * 
+		 * // IMPORTE CON LETRA PdfPTable tablaImporteConLetra = new
+		 * PdfPTable(3); tablaImporteConLetra.setWidthPercentage(100);
+		 * tablaImporteConLetra.setWidths(new int[] { 20, 65, 15 });
+		 * agregarCeldaConFondo("Importe con letra ", fontHead,
+		 * tablaImporteConLetra, true);
+		 * 
+		 * double importeTotal = Math.round(comprobante.getTotal().doubleValue()
+		 * * 100.0) / 100.0; String importeConLetra =
+		 * NumberToLetterConverter.convertNumberToLetter(importeTotal); Chunk
+		 * chunkImporteConLetra = new Chunk(importeConLetra, font3); Phrase
+		 * fraseImporteConLetra = new Phrase(chunkImporteConLetra); PdfPCell
+		 * celdaImporteConLetra = new PdfPCell(); //
+		 * celdaImporteConLetra.setVerticalAlignment(Element.ALIGN_CENTER);
+		 * celdaImporteConLetra.setBorder(PdfPCell.NO_BORDER);
+		 * celdaImporteConLetra.setPhrase(fraseImporteConLetra);
+		 * tablaImporteConLetra.addCell(celdaImporteConLetra);
+		 * 
+		 * emptyCell.setBackgroundColor(BaseColor.GRAY);
+		 * tablaImporteConLetra.addCell(emptyCell);
+		 * document.add(tablaImporteConLetra);
+		 * 
+		 * // LEYENDA Y, SUBTOTAL, IVA Y TOTAL PdfPTable tablaLeyendaTotal = new
+		 * PdfPTable(3); tablaLeyendaTotal.setWidthPercentage(100);
+		 * tablaLeyendaTotal.setWidths(new float[] { 65, 20, 15 });
+		 * 
+		 * Phrase fraseLeyenda = new Phrase(); //
+		 * fraseLeyenda.add(Chunk.NEWLINE);
+		 * 
+		 * fraseLeyenda.add(Chunk.NEWLINE); String strMetodoPago =
+		 * "Método de pago: ".concat(comprobante.getMetodoDePago())
+		 * .concat("                 Moneda: ").concat(comprobante.getMoneda());
+		 * Chunk chunkMetodoDePago = new Chunk(strMetodoPago,
+		 * fontContenidoSellos); fraseLeyenda.add(chunkMetodoDePago);
+		 * 
+		 * // se agrega la leyenda 'Efectos fiscales al pago' String
+		 * strFormaDePago =
+		 * "Forma de pago: ".concat(comprobante.getFormaDePago())
+		 * .concat("                 Efectos fiscales al pago");
+		 * fraseLeyenda.add(Chunk.NEWLINE); Chunk chunkFormaDePago = new
+		 * Chunk(strFormaDePago, fontContenidoSellos);
+		 * fraseLeyenda.add(chunkFormaDePago); fraseLeyenda.add(Chunk.NEWLINE);
+		 * 
+		 * PdfPCell celdaLeyenda = new PdfPCell(fraseLeyenda);
+		 * celdaLeyenda.setHorizontalAlignment(Element.ALIGN_CENTER);
+		 * tablaLeyendaTotal.addCell(celdaLeyenda);
+		 * 
+		 * PdfPTable subTablaEtqTotal = new PdfPTable(1);
+		 * agregarCeldaConFondo("Subtotal", fontHead, subTablaEtqTotal, true);
+		 * 
+		 * List<Traslado> traslados =
+		 * comprobante.getImpuestos().getTraslados().getTraslado(); boolean
+		 * existeIVATraslado = false; double importe = 0.0; if (traslados.size()
+		 * > 0) { if (traslados.get(0).getImpuesto().equals(IVA)) {
+		 * existeIVATraslado = true; importe =
+		 * traslados.get(0).getImporte().doubleValue();
+		 * agregarCeldaConFondo("IVA 16%", fontHead, subTablaEtqTotal, true); }
+		 * } else { subTablaEtqTotal.addCell(emptyCell); }
+		 * 
+		 * agregarCeldaConFondo("Total", fontHead, subTablaEtqTotal, true);
+		 * PdfPCell celdaTablaEtqTotal = new PdfPCell(subTablaEtqTotal);
+		 * celdaTablaEtqTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
+		 * tablaLeyendaTotal.addCell(celdaTablaEtqTotal);
+		 * 
+		 * PdfPTable subTablaValoresTotal = new PdfPTable(1);
+		 * agregarCelda(formatter.format(comprobante.getSubTotal().doubleValue()
+		 * ), font3, subTablaValoresTotal, true);
+		 * 
+		 * if (existeIVATraslado) agregarCelda(formatter.format(importe), font3,
+		 * subTablaValoresTotal, true); else
+		 * subTablaValoresTotal.addCell(emptyCell);
+		 * 
+		 * agregarCelda(formatter.format(comprobante.getTotal().doubleValue()),
+		 * font3, subTablaValoresTotal, true); PdfPCell celdaTablaValoresTotal =
+		 * new PdfPCell(subTablaValoresTotal);
+		 * celdaTablaValoresTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
+		 * tablaLeyendaTotal.addCell(celdaTablaValoresTotal);
+		 * 
+		 * document.add(tablaLeyendaTotal);
+		 */
 
 		/*
 		 * //QRCode Y SELLOS DIGITALES PdfPTable mainTable = new PdfPTable(2);
@@ -733,10 +738,18 @@ public class PDFFactura {
 
 		return document;
 	}
-	
-	public Document construirPdfCancelado(Comprobante comprobante, String selloDigital,
-			byte[] bytesQRCode, String selloCancelacion, Date fechaCancelacion) throws MalformedURLException, DocumentException, IOException {
-		//this.document = construirPdf(comprobante, selloDigital, bytesQRCode, imagen, estatus);
+
+	public Document construirPdfNota(Venta v) throws MalformedURLException, DocumentException, IOException {
+
+		// Comprobante c=
+		return document;
+	}
+
+	public Document construirPdfCancelado(Comprobante comprobante, String selloDigital, byte[] bytesQRCode,
+			String selloCancelacion, Date fechaCancelacion)
+			throws MalformedURLException, DocumentException, IOException {
+		// this.document = construirPdf(comprobante, selloDigital, bytesQRCode,
+		// imagen, estatus);
 		List<Object> complemento = comprobante.getComplemento().getAny();
 		TimbreFiscalDigital tfd = null;
 		if (complemento.size() > 0) {
@@ -746,24 +759,27 @@ public class PDFFactura {
 				}
 			}
 		}
-		
-		construirBoceto(comprobante, tfd);
+
+		construirBoceto(comprobante, tfd,0);
 		construirTimbre(selloDigital, bytesQRCode, tfd);
-		
-		/*PdfPTable tablaSelloCancelacion = new PdfPTable(1);
-	
-		Phrase fraseSelloCancelacion = new Phrase();
-		Chunk chunkEtqSelloCancel = new Chunk("Sello digital SAT (Cancelación): ", fontTituloSellos);
-		Chunk chunkSelloCancel = new Chunk(selloCancelacion, fontContenidoSellos);
-		fraseSelloCancelacion.add(chunkEtqSelloCancel);
-		fraseSelloCancelacion.add(chunkSelloCancel);
-	
-		PdfPCell celdaSelloCancelacion = new PdfPCell(fraseSelloCancelacion);
-		celdaSelloCancelacion.setBorder(PdfPCell.NO_BORDER);
-		tablaSelloCancelacion.addCell(celdaSelloCancelacion);
-		tablaSelloCancelacion.setSpacingBefore(5);
-		document.add(tablaSelloCancelacion);*/
-		
+
+		/*
+		 * PdfPTable tablaSelloCancelacion = new PdfPTable(1);
+		 * 
+		 * Phrase fraseSelloCancelacion = new Phrase(); Chunk
+		 * chunkEtqSelloCancel = new Chunk("Sello digital SAT (Cancelación): ",
+		 * fontTituloSellos); Chunk chunkSelloCancel = new
+		 * Chunk(selloCancelacion, fontContenidoSellos);
+		 * fraseSelloCancelacion.add(chunkEtqSelloCancel);
+		 * fraseSelloCancelacion.add(chunkSelloCancel);
+		 * 
+		 * PdfPCell celdaSelloCancelacion = new PdfPCell(fraseSelloCancelacion);
+		 * celdaSelloCancelacion.setBorder(PdfPCell.NO_BORDER);
+		 * tablaSelloCancelacion.addCell(celdaSelloCancelacion);
+		 * tablaSelloCancelacion.setSpacingBefore(5);
+		 * document.add(tablaSelloCancelacion);
+		 */
+
 		return document;
 	}
 
@@ -898,7 +914,7 @@ public class PDFFactura {
 
 		return folioYSerie.toString();
 	}
-	
+
 	public void crearMarcaDeAgua(String contenido, PdfWriter writer) {
 		PdfContentByte fondo = writer.getDirectContent();
 		Font fuente = new Font(FontFamily.HELVETICA, 45);
@@ -910,18 +926,21 @@ public class PDFFactura {
 		ColumnText.showTextAligned(fondo, Element.ALIGN_CENTER, frase, 297, 650, 45);
 		fondo.restoreState();
 	}
-	
-	private void construirBoceto(Comprobante comprobante, TimbreFiscalDigital tfd) throws DocumentException, MalformedURLException, IOException {
-		/*Font fontTituloSellos = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.BOLD);
-		Font fontContenidoSellos = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.NORMAL);
-		Font font2 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.BOLD);
-		Font font3 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
-		Font fontSerieYFolio = new Font(Font.FontFamily.HELVETICA, 9.5F, Font.BOLD);
-		Font fontHead = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
-		fontHead.setColor(BaseColor.WHITE);
 
-		PdfPCell emptyCell = new PdfPCell();
-		emptyCell.setBorderWidth(0);*/
+	private void construirBoceto(Comprobante comprobante, TimbreFiscalDigital tfd,int encabezado)
+			throws DocumentException, MalformedURLException, IOException {
+		/*
+		 * Font fontTituloSellos = new Font(Font.FontFamily.HELVETICA, 7.5F,
+		 * Font.BOLD); Font fontContenidoSellos = new
+		 * Font(Font.FontFamily.HELVETICA, 7.5F, Font.NORMAL); Font font2 = new
+		 * Font(Font.FontFamily.HELVETICA, 8.5F, Font.BOLD); Font font3 = new
+		 * Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL); Font
+		 * fontSerieYFolio = new Font(Font.FontFamily.HELVETICA, 9.5F,
+		 * Font.BOLD); Font fontHead = new Font(Font.FontFamily.HELVETICA, 8.5F,
+		 * Font.NORMAL); fontHead.setColor(BaseColor.WHITE);
+		 * 
+		 * PdfPCell emptyCell = new PdfPCell(); emptyCell.setBorderWidth(0);
+		 */
 
 		// BaseColor gris = new BaseColor(153, 153, 102);
 		// BaseColor otroGris = new BaseColor(235, 235, 224);
@@ -934,12 +953,12 @@ public class PDFFactura {
 		PdfPTable subTablaLogo = new PdfPTable(1);
 		PdfPCell celdaLogo = new PdfPCell();
 		celdaLogo.setBorder(PdfPCell.NO_BORDER);
-//		if (imagen != null) {
-//			Image imgLogo = Image.getInstance(new URL(imagen.getImage()));
-//
-//			Chunk chunkLogo = new Chunk(imgLogo, 0, -35);
-//			celdaLogo.addElement(chunkLogo);
-//		}
+		// if (imagen != null) {
+		// Image imgLogo = Image.getInstance(new URL(imagen.getImage()));
+		//
+		// Chunk chunkLogo = new Chunk(imgLogo, 0, -35);
+		// celdaLogo.addElement(chunkLogo);
+		// }
 		subTablaLogo.addCell(celdaLogo);
 		PdfPCell celdaTablaLogo = new PdfPCell();
 		celdaTablaLogo.addElement(subTablaLogo);
@@ -951,7 +970,11 @@ public class PDFFactura {
 		Phrase fraseDatosEmisor = new Phrase();
 		Chunk chunkNombreEmisor = new Chunk(comprobante.getEmisor().getNombre(), font2);
 		Chunk chunkRFCEmisor = new Chunk("R.F.C. ".concat(comprobante.getEmisor().getRfc()), font3);
-		Chunk chunkDomicilioEmisor = new Chunk(comprobante.getEmisor().getDomicilioFiscal().toString(), font3);
+		String dom = "";
+		if (comprobante.getEmisor().getDomicilioFiscal() != null) {
+			dom = comprobante.getEmisor().getDomicilioFiscal().toString();
+		}
+		Chunk chunkDomicilioEmisor = new Chunk(dom, font3);
 		fraseDatosEmisor.add(chunkNombreEmisor);
 		fraseDatosEmisor.add(Chunk.NEWLINE);
 		fraseDatosEmisor.add(chunkRFCEmisor);
@@ -967,7 +990,11 @@ public class PDFFactura {
 		PdfPCell celdaSubTablaEncabezado = new PdfPCell();
 		celdaSubTablaEncabezado.setBorderWidth(1);
 		PdfPTable subTablaEncabezado = new PdfPTable(1);
+		if(encabezado==0){
 		agregarCeldaSinBorde("FACTURA", fontSerieYFolio, subTablaEncabezado, true);
+		}else{
+			agregarCeldaSinBorde("NOTA", fontSerieYFolio, subTablaEncabezado, true);
+		}
 		agregarCeldaSinBorde(getFolioYSerie(comprobante), fontSerieYFolio, subTablaEncabezado, true);
 		celdaSubTablaEncabezado.addElement(subTablaEncabezado);
 		celdaSubTablaEncabezado.setBorderColor(BaseColor.GRAY);
@@ -988,13 +1015,17 @@ public class PDFFactura {
 
 		agregarCelda(comprobante.getReceptor().getNombre(), font3, tablaReceptorYHoraCert, false);
 		agregarCelda(comprobante.getReceptor().getRfc(), font3, tablaReceptorYHoraCert, false);
-		
+
 		String lugarFechaEmiHoraCert = "";
-//		if (estatus.equals(Estatus.TIMBRADO) || estatus.equals(Estatus.CANCELADO)){
-//			lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ").concat(comprobante.getFecha().toString().concat(" / ").concat(tfd.getFechaTimbrado().toString()));
-//		}else if (estatus.equals(Estatus.GENERADO)){
-//			lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ").concat(comprobante.getFecha().toString());
-//		}
+		// if (estatus.equals(Estatus.TIMBRADO) ||
+		// estatus.equals(Estatus.CANCELADO)){
+		// lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a
+		// ").concat(comprobante.getFecha().toString().concat(" /
+		// ").concat(tfd.getFechaTimbrado().toString()));
+		// }else if (estatus.equals(Estatus.GENERADO)){
+		// lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a
+		// ").concat(comprobante.getFecha().toString());
+		// }
 		agregarCelda(lugarFechaEmiHoraCert, font3, tablaReceptorYHoraCert, false);
 
 		document.add(tablaReceptorYHoraCert);
@@ -1007,16 +1038,23 @@ public class PDFFactura {
 		agregarCeldaConFondo("Dirección", fontHead, tablaDirYOtrosDatosFis, false);
 		agregarCeldaConFondo("Otros datos fiscales", fontHead, tablaDirYOtrosDatosFis, false);
 
-		agregarCelda(comprobante.getReceptor().getDomicilio().toString(), font3, tablaDirYOtrosDatosFis, false);
+		String domr = "";
+		if (comprobante.getReceptor().getDomicilio() != null) {
+			domr = comprobante.getReceptor().getDomicilio().toString();
+		}
+		agregarCelda(domr, font3, tablaDirYOtrosDatosFis, false);
 
 		Phrase fraseDatosFiscales = new Phrase();
-//		if (estatus.equals(Estatus.TIMBRADO)) { //TODO agregar caso de cancelado
-			 agregarChunkYNuevaLinea("Folio fiscal: ".concat(tfd.getUUID()),
-			 font3, fraseDatosFiscales);
-			 agregarChunkYNuevaLinea("Serie del certificado de emisor:".concat(comprobante.getNoCertificado()), font3, fraseDatosFiscales);
-			 agregarChunkYNuevaLinea("Serie del certificado del SAT:".concat(tfd.getNoCertificadoSAT()), font3, fraseDatosFiscales);
-//		}
-		
+		// if (estatus.equals(Estatus.TIMBRADO)) { //TODO agregar caso de
+		// cancelado
+		if (tfd != null) {
+			agregarChunkYNuevaLinea("Folio fiscal: ".concat(tfd.getUUID()), font3, fraseDatosFiscales);
+			agregarChunkYNuevaLinea("Serie del certificado de emisor:".concat(comprobante.getNoCertificado()), font3,
+					fraseDatosFiscales);
+			agregarChunkYNuevaLinea("Serie del certificado del SAT:".concat(tfd.getNoCertificadoSAT()), font3,
+					fraseDatosFiscales);
+			// }
+		}
 		agregarChunkYNuevaLinea(
 				"Régimen fiscal: ".concat(comprobante.getEmisor().getRegimenFiscal().get(0).getRegimen()), font3,
 				fraseDatosFiscales);
@@ -1045,16 +1083,17 @@ public class PDFFactura {
 
 		agregarCeldaConFondo("Importe", fontHead, tablaConceptos, true);
 
-		List<Concepto> listaConceptos = comprobante.getConceptos().getConcepto();
-		for (Concepto concepto : listaConceptos) {
-			agregarCelda(concepto.getNoIdentificacion(), font3, tablaConceptos, true);
-			agregarCelda(concepto.getCantidad().toString(), font3, tablaConceptos, true);
-			agregarCelda(concepto.getUnidad(), font3, tablaConceptos, true);
-			agregarCelda(concepto.getDescripcion(), font3, tablaConceptos, false);
-			agregarCelda(formatter.format(concepto.getValorUnitario().doubleValue()), font3, tablaConceptos, true);
-			agregarCelda(formatter.format(concepto.getImporte().doubleValue()), font3, tablaConceptos, true);
+		if (comprobante.getConceptos() != null) {
+			List<Concepto> listaConceptos = comprobante.getConceptos().getConcepto();
+			for (Concepto concepto : listaConceptos) {
+				agregarCelda(concepto.getNoIdentificacion(), font3, tablaConceptos, true);
+				agregarCelda(concepto.getCantidad().toString(), font3, tablaConceptos, true);
+				agregarCelda(concepto.getUnidad(), font3, tablaConceptos, true);
+				agregarCelda(concepto.getDescripcion(), font3, tablaConceptos, false);
+				agregarCelda(formatter.format(concepto.getValorUnitario().doubleValue()), font3, tablaConceptos, true);
+				agregarCelda(formatter.format(concepto.getImporte().doubleValue()), font3, tablaConceptos, true);
+			}
 		}
-
 		tablaConceptos.setSpacingBefore(5);
 		tablaConceptos.setSpacingAfter(5);
 		document.add(tablaConceptos);
@@ -1085,59 +1124,62 @@ public class PDFFactura {
 		tablaLeyendaTotal.setWidths(new float[] { 65, 20, 15 });
 
 		Phrase fraseLeyenda = new Phrase();
-//		if (!estatus.equals(Estatus.GENERADO)) {
-			Chunk chunkLeyenda = new Chunk("Este documento es una representación impresa de un CFDI", fontTituloSellos);
-			//fraseLeyenda.add(Chunk.NEWLINE);
-			fraseLeyenda.add(chunkLeyenda);
-//		}
+		// if (!estatus.equals(Estatus.GENERADO)) {
+		Chunk chunkLeyenda = new Chunk("Este documento es una representación impresa de un CFDI", fontTituloSellos);
+		// fraseLeyenda.add(Chunk.NEWLINE);
+		fraseLeyenda.add(chunkLeyenda);
+		// }
 		// fraseLeyenda.add(Chunk.NEWLINE);
 
 		fraseLeyenda.add(Chunk.NEWLINE);
 		String strMetodoPago = "Método de pago: ".concat(comprobante.getMetodoDePago())
 				.concat("                 Moneda: ").concat(comprobante.getMoneda());
 		Chunk chunkMetodoDePago = new Chunk(strMetodoPago, fontContenidoSellos);
-		fraseLeyenda.add(chunkMetodoDePago);
+		
 
 		// se agrega la leyenda 'Efectos fiscales al pago'
 		String strFormaDePago = "Forma de pago: ".concat(comprobante.getFormaDePago())
 				.concat("                 Efectos fiscales al pago");
-		fraseLeyenda.add(Chunk.NEWLINE);
+		
 		Chunk chunkFormaDePago = new Chunk(strFormaDePago, fontContenidoSellos);
+		if(tfd != null){
+		fraseLeyenda.add(chunkMetodoDePago);
+		fraseLeyenda.add(Chunk.NEWLINE);
 		fraseLeyenda.add(chunkFormaDePago);
 		fraseLeyenda.add(Chunk.NEWLINE);
-		
+		}
 		String condicionesDePago = comprobante.getCondicionesDePago();
 		if (condicionesDePago != null) {
-			if ( !condicionesDePago.contentEquals("") ) {
-				String strCondicionesDePago = "Condiciones de pago: ".
-						concat(condicionesDePago).concat("      ");
+			if (!condicionesDePago.contentEquals("")) {
+				String strCondicionesDePago = "Condiciones de pago: ".concat(condicionesDePago).concat("      ");
 				Chunk chunkCondicionesDePago = new Chunk(strCondicionesDePago, fontContenidoSellos);
 				fraseLeyenda.add(chunkCondicionesDePago);
 				fraseLeyenda.add(Chunk.NEWLINE);
 			}
 		}
-		
+
 		String numCtaPago = comprobante.getNumCtaPago();
 		if (numCtaPago != null) {
-			if ( !numCtaPago.contentEquals("") ) {
-				String strNumCtaPago = "Número de cuenta de pago: ".
-						concat(numCtaPago);
+			if (!numCtaPago.contentEquals("")) {
+				String strNumCtaPago = "Número de cuenta de pago: ".concat(numCtaPago);
 				Chunk chunkCondicionesDePago = new Chunk(strNumCtaPago, fontContenidoSellos);
 				fraseLeyenda.add(chunkCondicionesDePago);
 				fraseLeyenda.add(Chunk.NEWLINE);
 			}
 		}
-		
+
 		PdfPCell celdaLeyenda = new PdfPCell(fraseLeyenda);
 		celdaLeyenda.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tablaLeyendaTotal.addCell(celdaLeyenda);
 
 		PdfPTable subTablaEtqTotal = new PdfPTable(1);
 		agregarCeldaConFondo("Subtotal", fontHead, subTablaEtqTotal, true);
-
-		List<Traslado> traslados = comprobante.getImpuestos().getTraslados().getTraslado();
 		boolean existeIVATraslado = false;
 		double importe = 0.0;
+		if(comprobante.getImpuestos()!=null){
+		List<Traslado> traslados = comprobante.getImpuestos().getTraslados().getTraslado();
+		
+		
 		if (traslados.size() > 0) {
 			if (traslados.get(0).getImpuesto().equals(IVA)) {
 				existeIVATraslado = true;
@@ -1147,15 +1189,15 @@ public class PDFFactura {
 		} else {
 			subTablaEtqTotal.addCell(emptyCell);
 		}
-
+		}
 		agregarCeldaConFondo("Total", fontHead, subTablaEtqTotal, true);
 		PdfPCell celdaTablaEtqTotal = new PdfPCell(subTablaEtqTotal);
 		celdaTablaEtqTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tablaLeyendaTotal.addCell(celdaTablaEtqTotal);
-
 		PdfPTable subTablaValoresTotal = new PdfPTable(1);
+		if(comprobante.getSubTotal()!=null){
 		agregarCelda(formatter.format(comprobante.getSubTotal().doubleValue()), font3, subTablaValoresTotal, true);
-
+		}
 		if (existeIVATraslado)
 			agregarCelda(formatter.format(importe), font3, subTablaValoresTotal, true);
 		else
@@ -1168,93 +1210,99 @@ public class PDFFactura {
 
 		document.add(tablaLeyendaTotal);
 	}
-	
-	public void construirTimbre(String selloDigital, byte[] bytesQRCode, TimbreFiscalDigital tfd) throws DocumentException, MalformedURLException, IOException {
+
+	public void construirTimbre(String selloDigital, byte[] bytesQRCode, TimbreFiscalDigital tfd)
+			throws DocumentException, MalformedURLException, IOException {
 		// QRCode Y SELLOS DIGITALES
-				PdfPTable mainTable = new PdfPTable(2);
-				mainTable.setWidthPercentage(100.0f);
-				mainTable.setWidths(new float[] { 25, 75 });
+		PdfPTable mainTable = new PdfPTable(2);
+		mainTable.setWidthPercentage(100.0f);
+		mainTable.setWidths(new float[] { 25, 75 });
 
-				PdfPCell primeraCeldaTabla = new PdfPCell();
-				primeraCeldaTabla.setBorderWidthTop(1);
-				primeraCeldaTabla.setBorderWidthBottom(1);
-				primeraCeldaTabla.setBorderWidthRight(1);
+		PdfPCell primeraCeldaTabla = new PdfPCell();
+		primeraCeldaTabla.setBorderWidthTop(1);
+		primeraCeldaTabla.setBorderWidthBottom(1);
+		primeraCeldaTabla.setBorderWidthRight(1);
 
-				PdfPTable tablaQRCode = new PdfPTable(1);
-				Image imgQRCode = Image.getInstance(bytesQRCode);
-				// int dpi = imgQRCode.getDpiX();
-				// imgQRCode.scalePercent(100 * 72 / dpi - 20);
-				// el tercer parámetro en el constructor de Chunk (offsetY) controla el
-				// tamaño de la imagen
-				Chunk chunkQRCode = new Chunk(imgQRCode, 0, -70);
-				PdfPCell celdaQRCode = new PdfPCell();
-				celdaQRCode.setBorder(PdfPCell.NO_BORDER);
-				celdaQRCode.addElement(chunkQRCode);
-				tablaQRCode.addCell(celdaQRCode);
-				primeraCeldaTabla.addElement(tablaQRCode);
-				mainTable.addCell(primeraCeldaTabla);
+		PdfPTable tablaQRCode = new PdfPTable(1);
+		if(bytesQRCode!=null){
+		Image imgQRCode = Image.getInstance(bytesQRCode);
+		// int dpi = imgQRCode.getDpiX();
+		// imgQRCode.scalePercent(100 * 72 / dpi - 20);
+		// el tercer parámetro en el constructor de Chunk (offsetY) controla el
+		// tamaño de la imagen
+		Chunk chunkQRCode = new Chunk(imgQRCode, 0, -70);
+		PdfPCell celdaQRCode = new PdfPCell();
+		celdaQRCode.setBorder(PdfPCell.NO_BORDER);
+		celdaQRCode.addElement(chunkQRCode);
+		tablaQRCode.addCell(celdaQRCode);
+		primeraCeldaTabla.addElement(tablaQRCode);
+		mainTable.addCell(primeraCeldaTabla);
+		}
+		
+		PdfPCell segundaCeldaTabla = new PdfPCell();
+		segundaCeldaTabla.setBorderWidthTop(1);
+		segundaCeldaTabla.setBorderWidthBottom(1);
+		segundaCeldaTabla.setBorderWidthRight(1);
+		segundaCeldaTabla.setBorderColor(BaseColor.GRAY);
 
-				PdfPCell segundaCeldaTabla = new PdfPCell();
-				segundaCeldaTabla.setBorderWidthTop(1);
-				segundaCeldaTabla.setBorderWidthBottom(1);
-				segundaCeldaTabla.setBorderWidthRight(1);
-				segundaCeldaTabla.setBorderColor(BaseColor.GRAY);
+		PdfPTable tablaTimbre = new PdfPTable(1);
+		tablaTimbre.setWidthPercentage(100);
 
-				PdfPTable tablaTimbre = new PdfPTable(1);
-				tablaTimbre.setWidthPercentage(100);
+		// celdaQRCode = new PdfPCell(Image.getInstance(bytesQRCode));
+		// celdaQRCode.setBorderWidth(0);
 
-				// celdaQRCode = new PdfPCell(Image.getInstance(bytesQRCode));
-				// celdaQRCode.setBorderWidth(0);
+		PdfPCell cell1table7 = new PdfPCell();
+		cell1table7.setBorderWidth(0);
 
-				PdfPCell cell1table7 = new PdfPCell();
-				cell1table7.setBorderWidth(0);
+		if(tfd!=null){
+		Phrase line3footer = new Phrase();
+		Chunk line3part1 = new Chunk("Sello digital del emisor ", fontTituloSellos);
+		Chunk line3part2 = new Chunk(tfd.getSelloCFD(), fontContenidoSellos);
+		line3footer.add(line3part1);
+		line3footer.add(Chunk.NEWLINE);
+		line3footer.add(line3part2);
 
-				Phrase line3footer = new Phrase();
-				Chunk line3part1 = new Chunk("Sello digital del emisor ", fontTituloSellos);
-				Chunk line3part2 = new Chunk(tfd.getSelloCFD(), fontContenidoSellos);
-				line3footer.add(line3part1);
-				line3footer.add(Chunk.NEWLINE);
-				line3footer.add(line3part2);
+		PdfPCell cell4table7 = new PdfPCell(line3footer);
+		
+		cell4table7.setBorderWidth(0);
+		// cell4table7.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
 
-				PdfPCell cell4table7 = new PdfPCell(line3footer);
-				cell4table7.setBorderWidth(0);
-				// cell4table7.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+		Phrase line4footer = new Phrase();
+		Chunk line4part1 = new Chunk("Sello digital del SAT ", fontTituloSellos);
+		Chunk line4part2 = new Chunk(tfd.getSelloSAT(), fontContenidoSellos);
+		line4footer.add(line4part1);
+		line4footer.add(Chunk.NEWLINE);
+		line4footer.add(line4part2);
 
-				Phrase line4footer = new Phrase();
-				Chunk line4part1 = new Chunk("Sello digital del SAT ", fontTituloSellos);
-				Chunk line4part2 = new Chunk(tfd.getSelloSAT(), fontContenidoSellos);
-				line4footer.add(line4part1);
-				line4footer.add(Chunk.NEWLINE);
-				line4footer.add(line4part2);
+		PdfPCell cell5table7 = new PdfPCell(line4footer);
+		cell5table7.setBorderWidth(0);
+		// cell5table7.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
 
-				PdfPCell cell5table7 = new PdfPCell(line4footer);
-				cell5table7.setBorderWidth(0);
-				// cell5table7.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+		Phrase fraseCadenaOriginal = new Phrase();
+		Chunk chunkCadenaOriginalEtq = new Chunk("Cadena original del complemento de certificación digital del SAT ",
+				fontTituloSellos);
+		Chunk chunkCadenaOriginalValor = new Chunk(selloDigital, fontContenidoSellos);
+		fraseCadenaOriginal.add(chunkCadenaOriginalEtq);
+		fraseCadenaOriginal.add(Chunk.NEWLINE);
+		fraseCadenaOriginal.add(chunkCadenaOriginalValor);
 
-				Phrase fraseCadenaOriginal = new Phrase();
-				Chunk chunkCadenaOriginalEtq = new Chunk("Cadena original del complemento de certificación digital del SAT ",
-						fontTituloSellos);
-				Chunk chunkCadenaOriginalValor = new Chunk(selloDigital, fontContenidoSellos);
-				fraseCadenaOriginal.add(chunkCadenaOriginalEtq);
-				fraseCadenaOriginal.add(Chunk.NEWLINE);
-				fraseCadenaOriginal.add(chunkCadenaOriginalValor);
+		PdfPCell celdaCadenaOriginal = new PdfPCell(fraseCadenaOriginal);
+		celdaCadenaOriginal.setBorderWidth(0);
 
-				PdfPCell celdaCadenaOriginal = new PdfPCell(fraseCadenaOriginal);
-				celdaCadenaOriginal.setBorderWidth(0);
+		tablaTimbre.addCell(cell4table7);
 
-				tablaTimbre.addCell(cell4table7);
+		tablaTimbre.addCell(cell5table7);
 
-				tablaTimbre.addCell(cell5table7);
+		tablaTimbre.addCell(celdaCadenaOriginal);
 
-				tablaTimbre.addCell(celdaCadenaOriginal);
+		// tablaTimbre.addCell(cell6table7);
 
-				// tablaTimbre.addCell(cell6table7);
+		segundaCeldaTabla.addElement(tablaTimbre);
+		}
+		mainTable.addCell(segundaCeldaTabla);
+		mainTable.setSpacingBefore(2);
 
-				segundaCeldaTabla.addElement(tablaTimbre);
-				mainTable.addCell(segundaCeldaTabla);
-				mainTable.setSpacingBefore(2);
-
-				document.add(mainTable);
+		document.add(mainTable);
 	}
 
 	public static class MyFooter extends PdfPageEventHelper {
@@ -1271,11 +1319,11 @@ public class PDFFactura {
 		public void setUuid(String uuid) {
 			this.uuid = uuid;
 		}
-		
+
 		public void setFechaCancel(Date fechaCancel) {
 			this.fechaCancel = fechaCancel;
 		}
-		
+
 		public void setSelloCancel(String selloCancel) {
 			this.selloCancel = selloCancel;
 		}
@@ -1285,33 +1333,38 @@ public class PDFFactura {
 			Phrase footer = new Phrase();
 			Phrase footerFecha = new Phrase();
 			Phrase footerSello = new Phrase();
-			/*Phrase footer = new Phrase("Hoja número ".concat(Integer.toString(document.getPageNumber())).concat(" de ")
-					.concat(Integer.toString(writer.getPageNumber())).concat(" del CFDi con UUID:").concat(uuid),
-					ffont);*/
-			Chunk chunkHojaNum = new Chunk("Hoja número ".concat(Integer.toString(document.getPageNumber())).concat(" de ")
-					.concat(Integer.toString(writer.getPageNumber())).concat(" del CFDi con UUID:").concat(uuid), ffont);
+			/*
+			 * Phrase footer = new
+			 * Phrase("Hoja número ".concat(Integer.toString(document.
+			 * getPageNumber())).concat(" de ")
+			 * .concat(Integer.toString(writer.getPageNumber())).
+			 * concat(" del CFDi con UUID:").concat(uuid), ffont);
+			 */
+			Chunk chunkHojaNum = new Chunk("Hoja número ".concat(Integer.toString(document.getPageNumber()))
+					.concat(" de ").concat(Integer.toString(writer.getPageNumber())).concat(" del CFDi con UUID:")
+					.concat(uuid), ffont);
 			footer.add(chunkHojaNum);
-			
+
 			if (fechaCancel != null) {
 				Chunk chunkFecha = new Chunk("Fecha de Cancelación: ".concat(fechaCancel.toString()), ffont);
-				//footer.add(Chunk.NEWLINE);
+				// footer.add(Chunk.NEWLINE);
 				footerFecha.add(chunkFecha);
-				
+
 				ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, footerFecha,
 						(document.right() - document.left()) / 2 + document.leftMargin(), document.bottom() - 30, 0);
 			}
-			
+
 			if (selloCancel != null) {
 				Chunk chunkEtqSelloCancel = new Chunk("Sello digital SAT (Cancelación): ", ffontBold);
 				Chunk chunkSelloCancel = new Chunk(selloCancel, ffont);
-				//footer.add(Chunk.NEWLINE);
+				// footer.add(Chunk.NEWLINE);
 				footerSello.add(chunkEtqSelloCancel);
 				footerSello.add(chunkSelloCancel);
-				
+
 				ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, footerSello,
 						(document.right() - document.left()) / 2 + document.leftMargin(), document.bottom() - 20, 0);
 			}
-			
+
 			ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, footer,
 					(document.right() - document.left()) / 2 + document.leftMargin(), document.bottom() - 10, 0);
 		}

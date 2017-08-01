@@ -30,6 +30,8 @@ public class Venta {
 	
 	private float monto;
 	
+	private String formaDePago;
+	
 	public float getMonto() {
 		return monto;
 	}
@@ -104,6 +106,14 @@ public class Venta {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public String getFormaDePago() {
+		return formaDePago;
+	}
+
+	public void setFormaDePago(String formaDePago) {
+		this.formaDePago = formaDePago;
 	}
 
 }

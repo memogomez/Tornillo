@@ -2,16 +2,6 @@
 	<div id="page-wrapper">
 		<div class="row">
 
-<!-- 		<div class="form-group col-md-6"> -->
-<!-- 			<label>Buscar:</label>  -->
-<!-- 			<input type="text" ng-model="busqueda.buscar"> -->
-<!-- 			<button type="submit" class="btn btn-primary" ng-click="buscar(busqueda.buscar)"> -->
-<!--       		  <span class="glyphicon glyphicon-search"></span> -->
-<!--       		</button> -->
-<!--       		<button type="submit" class="btn btn-primary" data-toggle="tooltip" title="Mostrar Todos" ng-click="mostrarHerramientas()"> -->
-<!--       		  <span class="glyphicon glyphicon-eye-open"></span> -->
-<!--       		</button> -->
-<!-- 		</div> -->
 			<div class="col-lg-12">
 				<h1 class="page-header">Historial de Ventas</h1>
 			</div>
@@ -20,22 +10,22 @@
 		<!-- /.row -->
 		<div class="row">
 			<div class="col-md-6">
-			<div class="col-md-10">
-				<div class="input-group input-daterange">
-					<input type="text" class="form-control" ng-model="fechaInicio">
-					<div class="input-group-addon">-</div>
-					<input type="text" class="form-control" ng-model="fechaFin">
+				<div class="col-md-10">
+					<div class="input-group input-daterange">
+						<input type="text" class="form-control" ng-model="fechaInicio">
+						<div class="input-group-addon">-</div>
+						<input type="text" class="form-control" ng-model="fechaFin">
+					</div>
+				</div>
+				<div class="col-md-2">
+					<button class="btn btn-small" ng-click="buscar()">
+						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="col-md-6">
+					<button class="btn" ng-click="cargarPagina(1)">Ver todos</button>
 				</div>
 			</div>
-			<div class="col-md-2">
-				<button class="btn btn-small" ng-click="buscar()">
-					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-				</button>
-			</div>
-			<div class="col-md-6">
-				<button class="btn" ng-click="cargarPagina(1)">Ver todos</button>
-			</div>
-		</div>
 		</div>
 		<div class="row">
 			<div class="col-lg-12">
@@ -61,30 +51,38 @@
 									<td>{{venta.cliente}}</td>
 									<td>{{venta.monto}}</td>
 									<td>{{venta.estatus}}</td>
-									<td><button class="btn btn-success" data-toggle="tooltip" ng-show="venta.estatus!='FACTURADO'"
-											title="Facturar" ng-click="facturar(venta)">
+									<td><a class="btn btn-info" data-toggle="tooltip"
+											ng-show="venta.estatus!='FACTURADO'" title="Imprimir nota"
+											href="ventas/descargaNota/{{venta.id}}" download>
+											<i class="glyphicon glyphicon-print"></i>
+										</a>
+										<button class="btn btn-success" data-toggle="tooltip"
+											ng-show="venta.estatus!='FACTURADO'" title="Facturar"
+											ng-click="facturar(venta)">
 											<i class="glyphicon glyphicon-list-alt"></i>
-										</button>
-										<a class="btn btn-danger" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
-											title="Imprimir PDF" href="ventas/pdfDescarga/{{venta.id}}">
-											<i class="glyphicon glyphicon-print"></i>
-										</a>	
-										<a class="btn btn-primary" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
-											title="Imprimir XML" href="ventas/xmlDescarga/{{venta.id}}">
-											<i class="glyphicon glyphicon-print"></i>
-										</a>	
-										<button class="btn btn-danger" data-toggle="tooltip" ng-show="venta.estatus=='FACTURADO'"
-											title="Cancelar" ng-click="cancelarFactura(venta)">
+										</button> <a class="btn btn-danger" data-toggle="tooltip"
+										ng-show="venta.estatus=='FACTURADO'" title="Imprimir PDF"
+										href="ventas/pdfDescarga/{{venta.uuid}}" download> <i
+											class="glyphicon glyphicon-print"></i>
+									</a> <a class="btn btn-primary" data-toggle="tooltip"
+										ng-show="venta.estatus=='FACTURADO'" title="Imprimir XML"
+										href="ventas/xmlDescarga/{{venta.uuid}}" download> <i
+											class="glyphicon glyphicon-print"></i>
+									</a>
+										<button class="btn btn-danger" data-toggle="tooltip"
+											ng-show="venta.estatus=='FACTURADO'" title="Cancelar"
+											ng-click="cancelarFactura(venta)">
 											<i class="glyphicon glyphicon-ban-circle"></i>
-										</button>										
+										</button>
 								</tr>
 							</tbody>
-						</table>						
+						</table>
 						<!-- /.table-responsive -->
 						<div>
 							<ul class="pagination .pagination-sm">
-								<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"><a ng-click="cargaPagina(abc)">{{abc}}</a></li>
-								
+								<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"><a
+									ng-click="cargaPagina(abc)">{{abc}}</a></li>
+
 							</ul>
 						</div>
 					</div>

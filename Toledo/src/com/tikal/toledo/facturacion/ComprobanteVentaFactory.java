@@ -11,6 +11,7 @@ import com.tikal.toledo.facturacion.FormatoFecha;
 import com.tikal.toledo.util.Util;
 import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.Detalle;
+import com.tikal.toledo.model.Factura;
 import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.sat.cfd.Comprobante;
 import com.tikal.toledo.sat.cfd.Comprobante.Conceptos;
@@ -30,7 +31,7 @@ import com.tikal.toledo.sat.cfd.Comprobante.Receptor;
 public class ComprobanteVentaFactory {
 	
 	
-	public void generarFactura(Venta venta, Cliente cliente) {
+	public Comprobante generarFactura(Venta venta, Cliente cliente) {
 		Comprobante comprobante = new Comprobante();
 		comprobante.setVersion("3.2");
 		comprobante.setFecha(Util.getXMLDate(new Date(), FormatoFecha.COMPROBANTE));
@@ -47,8 +48,32 @@ public class ComprobanteVentaFactory {
 		//comprobante.setImpuestos(construirImuestos(comprobante.getSubTotal()));
 		BigDecimal total = comprobante.getSubTotal().add(comprobante.getImpuestos().getTotalImpuestosTrasladados());
 		comprobante.setTotal(total.setScale(2, RoundingMode.HALF_UP));
+
+		return comprobante;
+//		venta.setXml();
+	}
+	
+	public Comprobante generarNota(Venta venta, Cliente cliente) {
+		Comprobante comprobante = new Comprobante();
+		comprobante.setVersion("3.2");
+		comprobante.setFecha(Util.getXMLDate(new Date(), FormatoFecha.COMPROBANTE));
+		comprobante.setMoneda("MXN");
+		comprobante.setLugarExpedicion("Toluca, México"); //TODO agregar ciudad
+		comprobante.setTipoDeComprobante("");
+		comprobante.setMetodoDePago(""); //hardcoded
+		comprobante.setFormaDePago(""); //hardcoded
 		
-		venta.setXml(Util.marshallComprobante(comprobante));
+		comprobante.setEmisor(construirEmisor());
+		comprobante.setReceptor(construirReceptor(cliente));
+		if(venta.getDetalles()!=null){
+			construirConceptos(venta.getDetalles(), comprobante);
+		}
+		//comprobante.setImpuestos(construirImuestos(comprobante.getSubTotal()));
+//		BigDecimal total = comprobante.getSubTotal().add(comprobante.getImpuestos().getTotalImpuestosTrasladados());
+		comprobante.setTotal(new BigDecimal(venta.getMonto()).setScale(2, RoundingMode.HALF_UP));
+
+		return comprobante;
+//		venta.setXml();
 	}
 	
 	private Emisor construirEmisor() {
@@ -63,8 +88,10 @@ public class ComprobanteVentaFactory {
 	
 	private Receptor construirReceptor(Cliente cliente) {
 		Receptor receptor = new Receptor();
+		if(cliente!=null){
 		receptor.setRfc(cliente.getRfc());
 		receptor.setNombre(cliente.getNombre());
+		}
 		return receptor;
 	}
 	

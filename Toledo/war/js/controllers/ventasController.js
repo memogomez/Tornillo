@@ -239,7 +239,7 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 	}
 	
 }]);
-app.controller("ventaListController",['clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function(clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
+app.controller("ventaListController",['clientesService','ventasService','tornillosService','herramientasService','$scope','$location','$window',function(clientesService,ventasService,tornillosService,herramientasService,$scope,$location,$window){
 	$scope.paginaActual=1;
 	$scope.url="/ventas/findAll/"
 	$scope.llenarPags=function(){
@@ -277,6 +277,8 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 					function(data){
 							$scope.factura = data;
 						console.log(data);	
+						alert("Facturado con éxito");
+						$windoy.location.reload();
 					})
 		}else{
 			alert('Esta Venta no tiene asociado un Cliente registrado');

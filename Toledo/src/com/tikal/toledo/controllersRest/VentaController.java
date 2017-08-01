@@ -1,6 +1,8 @@
 package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,24 +23,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Font.FontFamily;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.ColumnText;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfGState;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.tikal.cacao.factura.Estatus;
 import com.tikal.toledo.dao.ClienteDAO;
+import com.tikal.toledo.dao.FacturaDAO;
 import com.tikal.toledo.dao.LoteDAO;
 import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.dao.VentaDAO;
+import com.tikal.toledo.factura.Estatus;
 import com.tikal.toledo.facturacion.ComprobanteVentaFactory;
 import com.tikal.toledo.facturacion.ws.WSClient;
 import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.Detalle;
+import com.tikal.toledo.model.Factura;
 import com.tikal.toledo.model.Lote;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
@@ -52,6 +49,7 @@ import com.tikal.toledo.util.Util;
 
 import localhost.TimbraCFDIResponse;
 
+ 
 @Controller
 @RequestMapping(value={"/ventas"})
 public class VentaController {
@@ -73,6 +71,9 @@ public class VentaController {
 	
 	@Autowired
 	ComprobanteVentaFactory cvFactory;
+	
+	@Autowired
+	FacturaDAO facturadao;
 	
 	@Autowired
 	WSClient client;
@@ -116,16 +117,32 @@ public class VentaController {
 	"/facturar" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void facturar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
 			Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
-			cvFactory.generarFactura(venta, clientedao.cargar(venta.getIdCliente()));
+			Comprobante c=cvFactory.generarFactura(venta, clientedao.cargar(venta.getIdCliente()));
 			//facturar
-			TimbraCFDIResponse timbraCFDIResp = client.getTimbraCFDIResponse(venta.getXml());
+			TimbraCFDIResponse timbraCFDIResp = client.getTimbraCFDIResponse(Util.marshallComprobante(c));
 			List<Object> listaResultado = timbraCFDIResp.getTimbraCFDIResult().getAnyType();
 			int codigoError = (int) listaResultado.get(1);
 			if (codigoError == 0) {
+				
+			
 				String cfdiXML = (String) listaResultado.get(3);
-				venta.setXml(cfdiXML);
+				Factura f= new Factura();
+				f.setCfdiXML(cfdiXML);
+				f.setCodigoQR((byte[])listaResultado.get(4));
+				Comprobante cfdi= Util.unmarshallXML(cfdiXML);
+				
+				TimbreFiscalDigital timbreFD = (TimbreFiscalDigital) cfdi.getComplemento().getAny().get(0);
+				Date fechaCertificacion = timbreFD.getFechaTimbrado().toGregorianCalendar().getTime();
+				
+				f.setFechaCertificacion(fechaCertificacion);
+				f.setSelloDigital((String)listaResultado.get(5));
+				f.setUuid(timbreFD.getUUID());
+				f.setEstatus(Estatus.TIMBRADO);
+//				venta.setXml(cfdiXML);
 				venta.setEstatus("FACTURADO");
+				venta.setUuid(f.getUuid());
 				ventadao.guardar(venta);
+				facturadao.guardar(f);
 			}
 			
 			rs.getWriter().println(JsonConvertidor.toJson(venta));
@@ -148,24 +165,6 @@ public class VentaController {
 			// agregar serie en el @RequestMapping
 			List<Venta> listaR = ventadao.buscar(datei, datef);
 
-			/*
-			 * List<Factura> lista=facturaDAO.buscar(datei, datef,rfc);
-			 * List<FacturaVO> listaVO=new ArrayList<FacturaVO>(); for(Factura
-			 * f:lista){ Comprobante c= Util.unmarshallXML(f.getCfdiXML());
-			 * f.setCfdi(c); FacturaVO fVO = new FacturaVO();
-			 * fVO.setUuid(f.getUuid()); fVO.setEstatus(f.getEstatus());
-			 * fVO.setTotal(NumberFormat.getCurrencyInstance().format(f.getCfdi(
-			 * ).getTotal().doubleValue()));
-			 * fVO.setFechaCertificacion(f.getFechaCertificacion());
-			 * fVO.setRfcReceptor(f.getCfdi().getReceptor().getRfc());
-			 * listaVO.add(fVO);
-			 * 
-			 * if (f.getFechaCertificacion() == null &&
-			 * f.getEstatus().equals(Estatus.GENERADO)) {
-			 * f.setFechaCertificacion(c.getFecha().toGregorianCalendar().
-			 * getTime()); } }
-			 * res.getWriter().println(JsonConvertidor.toJson(listaVO));
-			 */
 			res.getWriter().println(JsonConvertidor.toJson(listaR));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -196,50 +195,31 @@ public class VentaController {
 		rs.getWriter().print(ventadao.pages());
 	}
 	
-	@RequestMapping(value = {
-	"/pdfDescargar/{id}" }, method = RequestMethod.GET, produces = "application/pdf")
-	public void pdf(HttpServletRequest re, HttpServletResponse res, @PathVariable Long id) throws IOException{
-		res.setContentType("Application/Pdf");
-		Venta v = ventadao.cargar(id);
-		Comprobante cfdi = Util.unmarshallXML(v.getXml());
+	@RequestMapping(value = {"/descargaNota/{id}" }, method = RequestMethod.GET)
+	public void pdfNota(HttpServletRequest re, HttpServletResponse res, @PathVariable Long id) throws IOException{
+		res.setContentType("Application/PDF");
+		Venta venta= ventadao.cargar(id);
+		Cliente c= null;
+		if(venta.getIdCliente()!=0){
+			c= clientedao.cargar(venta.getIdCliente());
+		}
+		Comprobante cfdi=cvFactory.generarNota(venta, c);
 		try {
-			TimbreFiscalDigital timbre= (TimbreFiscalDigital)cfdi.getComplemento().getAny().get(0);
-			String uuid= timbre.getUUID();
+//			TimbreFiscalDigital timbre= (TimbreFiscalDigital)cfdi.getComplemento().getAny().get(0);
+//			String uuid= timbre.getUUID();
 			PDFFactura pdfFactura = new PDFFactura();
 			PdfWriter writer = PdfWriter.getInstance(pdfFactura.getDocument(), res.getOutputStream());
-			pdfFactura.getPieDePagina().setUuid(uuid);
-//			if (v.getEstatus().compareTo("CANCELADO")==0) {
+			pdfFactura.getDocument().open();
+			pdfFactura.getPieDePagina().setUuid("Nota");
+			
+//			if (factura.getEstatus().equals(Estatus.CANCELADO)) {
 //				pdfFactura.getPieDePagina().setFechaCancel(factura.getFechaCancelacion());
 //				pdfFactura.getPieDePagina().setSelloCancel(factura.getSelloCancelacion());
-//				;
+//				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
+//				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
+//			}else{
+				pdfFactura.construirPdf(cfdi, "", null);
 //			}
-			writer.setPageEvent(pdfFactura.getPieDePagina());
-
-			pdfFactura.getDocument().open();
-//			if (factura.getEstatus().equals(Estatus.TIMBRADO))
-				pdfFactura.construirPdf(cfdi, cfdi.getSelloDigital(), v.getCodigoQR(), imagen,
-						factura.getEstatus());
-			else if (factura.getEstatus().equals(Estatus.GENERADO)) {
-				pdfFactura.construirPdf(cfdi, imagen, factura.getEstatus());
-
-				PdfContentByte fondo = writer.getDirectContent();
-				Font fuente = new Font(FontFamily.HELVETICA, 45);
-				Phrase frase = new Phrase("Pre-factura", fuente);
-				fondo.saveState();
-				PdfGState gs1 = new PdfGState();
-				gs1.setFillOpacity(0.5f);
-				fondo.setGState(gs1);
-				ColumnText.showTextAligned(fondo, Element.ALIGN_CENTER, frase, 297, 650, 45);
-				fondo.restoreState();
-			}
-
-			else if (factura.getEstatus().equals(Estatus.CANCELADO)) {
-				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(), imagen,
-						factura.getEstatus(), factura.getSelloCancelacion(), factura.getFechaCancelacion());
-
-				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
-			}
-
 			pdfFactura.getDocument().close();
 			res.getOutputStream().flush();
 			res.getOutputStream().close();
@@ -249,6 +229,52 @@ public class VentaController {
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@RequestMapping(value = {"/pdfDescarga/{id}" }, method = RequestMethod.GET)
+	public void pdf(HttpServletRequest re, HttpServletResponse res, @PathVariable String id) throws IOException{
+		res.setContentType("Application/PDF");
+		Factura factura=facturadao.consultar(id);
+		Comprobante cfdi = Util.unmarshallXML(factura.getCfdiXML());
+		try {
+			TimbreFiscalDigital timbre= (TimbreFiscalDigital)cfdi.getComplemento().getAny().get(0);
+			String uuid= timbre.getUUID();
+			PDFFactura pdfFactura = new PDFFactura();
+			PdfWriter writer = PdfWriter.getInstance(pdfFactura.getDocument(), res.getOutputStream());
+			pdfFactura.getDocument().open();
+			pdfFactura.getPieDePagina().setUuid(uuid);
+			
+			if (factura.getEstatus().equals(Estatus.CANCELADO)) {
+				pdfFactura.getPieDePagina().setFechaCancel(factura.getFechaCancelacion());
+				pdfFactura.getPieDePagina().setSelloCancel(factura.getSelloCancelacion());
+				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
+				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
+			}else{
+				pdfFactura.construirPdf(cfdi, factura.getSelloDigital(), factura.getCodigoQR());
+			}
+			pdfFactura.getDocument().close();
+			res.getOutputStream().flush();
+			res.getOutputStream().close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/xmlDescarga/{uuid}", method = RequestMethod.GET, produces = "text/xml")
+	public void obtenerXML(HttpServletRequest req, HttpServletResponse res, @PathVariable String uuid) throws IOException {
+			AsignadorDeCharset.asignar(req, res);
+			Factura factura = facturadao.consultar(uuid);
+			PrintWriter writer = res.getWriter();
+			if (factura != null) {
+				res.setContentType("text/xml");
+				writer.println(factura.getCfdiXML());
+			} else {
+				writer.println("La factuca con el folio fiscal (uuid) ".concat(uuid).concat(" no existe"));
+			}
+		
 	}
 	
 	@RequestMapping(value = {
