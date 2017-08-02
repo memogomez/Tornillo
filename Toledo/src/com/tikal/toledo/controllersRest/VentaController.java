@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -92,7 +93,9 @@ public class VentaController {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
 			Venta l= (Venta)JsonConvertidor.fromJson(json, Venta.class);
-			l.setFecha(new Date());
+			Calendar cal=Calendar.getInstance(TimeZone.getTimeZone("America/Mexico_City"));
+			cal.add(Calendar.HOUR, -5);
+			l.setFecha(cal.getTime());
 			l.setCliente("Otro");
 			if(l.getIdCliente()!=0){
 				Cliente c= clientedao.cargar(l.getIdCliente());
