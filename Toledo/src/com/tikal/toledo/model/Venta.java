@@ -3,6 +3,8 @@ package com.tikal.toledo.model;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
+
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -116,4 +118,14 @@ public class Venta {
 		this.formaDePago = formaDePago;
 	}
 
+	public void llenarRenglon(HSSFRow r){
+		for(int i=0;i<8;i++){
+			r.createCell(i);
+		}
+		
+		r.getCell(0).setCellValue(this.getCliente());
+		r.getCell(1).setCellValue(this.getEstatus());
+		r.getCell(2).setCellValue(this.getFormaDePago());
+		r.getCell(3).setCellValue(this.getMonto());
+	}
 }
