@@ -8,13 +8,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Controller;
@@ -44,6 +45,7 @@ import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.sat.cfd.Comprobante;
 import com.tikal.toledo.sat.timbrefiscaldigital.TimbreFiscalDigital;
 import com.tikal.toledo.util.AsignadorDeCharset;
+import com.tikal.toledo.util.CorteDeCaja;
 import com.tikal.toledo.util.JsonConvertidor;
 import com.tikal.toledo.util.PDFFactura;
 import com.tikal.toledo.util.Util;
@@ -304,6 +306,28 @@ public class VentaController {
 		rs.getWriter().println(JsonConvertidor.toJson(listaf));
 	}
 	
+	@RequestMapping(value = "/corteDeCaja", method = RequestMethod.GET, produces = "application/vnd.ms-excel")
+	public void corte(HttpServletRequest req, HttpServletResponse res) throws IOException {
+			AsignadorDeCharset.asignar(req, res);
+			Date datef;
+			Date datei;
+			Calendar c = Calendar.getInstance();
+			datei=c.getTime();
+			c.add(Calendar.DATE, 1);
+			datef = c.getTime();
+			datei.setHours(0);
+			datei.setMinutes(1);
+			int dia1=datei.getDate();
+			
+			int dia2=datef.getDate();
+//			List<Factura> lista = facturaDAO.buscar(datei, datef, rfc);
+//			Reporte rep = new Reporte(lista);
+			List<Venta> lista=ventadao.buscar(datei, datef);
+			CorteDeCaja corte= new CorteDeCaja();
+			corte.setVentas(lista);
+			HSSFWorkbook reporte=corte.getReporte();
+			reporte.write(res.getOutputStream());
+	}
 	
 	private float actualizarInventario(List<Detalle> detalles){
 		float monto=0;
