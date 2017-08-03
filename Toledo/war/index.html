@@ -33,13 +33,9 @@
 	<script src="js/controllers/archivoController.js"></script>
 	<script src="js/controllers/formulaController.js"></script>
 	<script src="js/controllers/emisorController.js"></script>
+	<script src="js/controllers/run.js"></script>
 	
-	<script>
-	if (location.protocol != 'https:')
-	{
-	 location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
-	}
-	</script>
+
 <!-- 	<script src="js/controllers/run.js"></script> -->
 </head>
 <body>
@@ -100,7 +96,7 @@
 <!--         <li ><a href="#/ventas"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-shopping-cart col-md-2 text-left"></i> Ventas</a></li> -->
         <!-- <li><a href="almacen.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon glyphicon-th-list col-md-2 text-left"></i> Almacen</a></li>-->
         <!--<li><a href="ventas.html"><i class="fa fa-dashboard fa-fw glyphicon glyphicon glyphicon-usd col-md-2 text-left"></i> Ventas</a></li>-->
-        <li><a><i class="fa fa-dashboard fa-fw glyphicon glyphicon-off col-md-2 text-left"></i> Cerrar Sesion</a></li>
+        <li><a href="" ng-click="CerrarSesion()"><i class="fa fa-dashboard fa-fw glyphicon glyphicon-off col-md-2 text-left"></i> Cerrar Sesion</a></li>
       </ul>
     </div>
   </div>

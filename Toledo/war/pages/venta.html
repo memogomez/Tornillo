@@ -94,7 +94,14 @@
 						</tr>
 					</tbody>
 				</table>
-				
+					Metodo de Pago:<select class="form-control"
+						ng-model="venta.pago" ng_hide="MetodoPago">
+						<option>Tarjeta de Cr&eacute;dito</option>
+						<option>Efectivo</option>
+						<option>Transferecia</option>
+						<option>Cheque</option>
+						<option>Cr&eacute;dito</option>						
+					</select><br>
 				<button class="btn btn-small" ng-click="guardarVenta()")>Guardar</button>
 			</div>
 		</div>

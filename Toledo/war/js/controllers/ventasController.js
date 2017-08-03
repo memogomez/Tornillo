@@ -86,6 +86,7 @@ app.service("ventasService",['$http','$q',function($http,$q){
 }]);
 
 app.controller("ventaController",['$window','clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function($window,clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
+	$scope.MetodoPago=true;
 	$scope.paginaActual=1;
 	$scope.llenarPags=function(){
 		var inicio=0;
@@ -152,6 +153,7 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 //	$scope.tornillos();
 	
 	$scope.agregarDetalle=function(producto){
+		$scope.MetodoPago=false;
 		var detalle={}
 		detalle.idProducto=producto.id;
 		detalle.descripcion= producto.nombre;
