@@ -3,9 +3,75 @@ package com.tikal.toledo.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
 
 public class Parseador {
+	
+	public static List<Producto> procesaHerramientas(String cadena){
+		List<Producto> lista = new ArrayList<Producto>();
+		String[] renglones= cadena.split("\n");
+		for(int i=1 ;i< renglones.length;i++){
+			String reng= renglones[i];
+			reng= reng.replaceAll("[$]", "");
+			reng= reng.replaceAll("\r", "");
+			Producto t= new Producto();
+			String[] values = reng.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+			if(values.length>4){
+			t.setNombre(values[0]);
+			if(values[1].length()>0){
+				t.setClave(values[1]);
+			}
+			if(values[2].length()>0)
+			t.setPrecioMayoreo(Float.parseFloat(values[2].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[3].length()>0)
+			t.setPrecioMostrador(Float.parseFloat(values[3].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[4].length()>0)
+			t.setPrecioCredito(Float.parseFloat(values[4].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[5].length()>0)
+			t.setMarca(values[5]);
+			if(values[6].length()>0)
+			t.setExistencia(Integer.parseInt(values[6]));
+			
+			
+			//llenar datos tornillos
+			
+			lista .add(t);
+			}
+		}
+		return lista;
+	}
+	
+	public static List<Tornillo> procesaTornillos(String cadena){
+		List<Tornillo> lista = new ArrayList<Tornillo>();
+		cadena= cadena.replaceAll("$", "");
+		String[] renglones= cadena.split("\n");
+		for(int i=1 ;i< renglones.length;i++){
+			String reng= renglones[i];
+			reng= reng.replaceAll("[$]", "");
+			reng= reng.replaceAll("\r", "");
+			Tornillo t= new Tornillo();
+			String[] values = reng.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+			if(values.length>4){
+			t.setNombre(values[0]);
+			t.setMedidas(values[1]);
+			if(values[2].length()>0)
+			t.setPrecioReferencia(Float.parseFloat(values[2].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[3].length()>0)
+			t.setPrecioMostrador(Float.parseFloat(values[3].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[4].length()>0)
+			t.setPrecioMayoreo(Float.parseFloat(values[4].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[5].length()>0)
+			t.setPrecioCredito(Float.parseFloat(values[5].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			
+			if(values[6].trim().length()>0){
+				t.setExistencia(Integer.parseInt(values[6].replaceAll(",", "").replace("\"", "")));
+				lista .add(t);
+			}
+			}
+		}
+		return lista;
+	}
 	
 	public static List<Tornillo> parsear(String cadena){
 		List<Tornillo> lista= new ArrayList<Tornillo>();

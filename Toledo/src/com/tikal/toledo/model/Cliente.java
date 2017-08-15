@@ -21,6 +21,8 @@ public class Cliente {
 	
 	private int credito;
 	
+	private int descuento;
+	
 	public Long getId() {
 		return id;
 	}
@@ -67,6 +69,14 @@ public class Cliente {
 
 	public void setDomicilio(TUbicacion domicilio) {
 		this.domicilio = domicilio;
+	}
+
+	public int getDescuento() {
+		return descuento;
+	}
+
+	public void setDescuento(int descuento) {
+		this.descuento = descuento;
 	}
 	
 	

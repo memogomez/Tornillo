@@ -1,6 +1,7 @@
 package com.tikal.toledo;
 
 import com.googlecode.objectify.ObjectifyService;
+import com.tikal.toledo.model.AlertaInventario;
 import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.DatosEmisor;
 import com.tikal.toledo.model.Factura;
@@ -11,6 +12,7 @@ import com.tikal.toledo.model.Proveedor;
 import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.model.Usuario;
 import com.tikal.toledo.model.Venta;
+
 public class Register {
 	public Register(){
 		ObjectifyService.register(Cliente.class);
@@ -23,6 +25,6 @@ public class Register {
 		ObjectifyService.register(Perfil.class);
 		ObjectifyService.register(DatosEmisor.class);
 		ObjectifyService.register(Factura.class);
-		
+		ObjectifyService.register(AlertaInventario.class);
 	}
 }

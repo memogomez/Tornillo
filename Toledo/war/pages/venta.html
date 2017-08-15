@@ -5,10 +5,10 @@
 				<form class="form-inline" style="text-align: left">
 					<div class="form-group col-md-6">
 						<label for="email">Cliente:</label> <select
-							class="form-control input-sm" ng-model="venta.idCliente"
+							class="form-control input-sm" ng-model="indice"
 							style="width: inherit;">
-							<option value="0">Otro...</option>
-							<option ng-repeat="cliente in clientes" value="{{cliente.id}}">{{cliente.nombre}}</option>
+							<option value="-1">Otro...</option>
+							<option ng-repeat="cliente in clientes" value="{{$index}}">{{cliente.nombre}}</option>
 						</select>
 					</div>
 					<div class="form-group col-md-6">
@@ -93,6 +93,11 @@
 							<td>{{det.cantidad}}</td>
 							<td>{{det.importe}}</td>
 						</tr>
+						<tr><td><b>Total</b></td>
+							<td></td>
+							<td>{{venta.total}}</td>
+						</tr>
+						<tr ng-show="venta.descuento>0"><td><input type="checkbox" ng-click="calculaDesc()" ng-model="descuento" >Aplicar Descuento</td></tr>
 					</tbody>
 				</table>
 				<label ng_hide="MetodoPago">Metodo de Pago:</label>
@@ -104,7 +109,9 @@
 						<option>Cheque</option>
 						<option>Cr&eacute;dito</option>						
 					</select><br>
-				<button class="btn btn-small" ng-click="guardarVenta()")>Guardar</button>
+				
+				
+				<button class="btn btn-small" ng-click="guardarVenta()">Guardar</button>
 			</div>
 		</div>
 	</div>

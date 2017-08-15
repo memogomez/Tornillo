@@ -1,0 +1,56 @@
+<div class="col-sm-10 text-left">
+	<div id="page-wrapper">
+		<div class="row">
+
+			<div class="col-lg-12">
+				<h1 class="page-header">Alertas de Inventario</h1>
+			</div>
+			<!-- /.col-lg-12 -->
+		</div>
+		<!-- /.row -->
+		<div class="row">
+			<div class="col-md-6">
+				<div class="col-md-6">
+					<button class="btn" ng-click="cargarPagina(1)">Ver todos</button>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Alertas de Inventario</div>
+					<!-- /.panel-heading -->
+					<div class="panel-body">
+						<table width="100%"
+							class="table table-striped table-bordered table-hover"
+							id="dataTables-example">
+							<thead>
+								<tr>
+									<th>Articulo</th>
+									<th>Alerta</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="alerta in alertas" class="odd gradeX">
+									<td>{{alerta.nombre}}</td>
+									<td>{{alerta.alerta}}</td>
+								</tr>
+							</tbody>
+						</table>
+						<!-- /.table-responsive -->
+						<div>
+							<ul class="pagination .pagination-sm">
+								<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"><a
+									ng-click="cargaPagina(abc)">{{abc}}</a></li>
+
+							</ul>
+						</div>
+					</div>
+					<!-- /.panel-body -->
+				</div>
+				<!-- /.panel -->
+			</div>
+			<!-- /.col-lg-12 -->
+		</div>
+	</div>
+</div ng-view>

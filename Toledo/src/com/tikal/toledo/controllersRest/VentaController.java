@@ -2,7 +2,6 @@ package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.tikal.toledo.dao.AlertaDAO;
 import com.tikal.toledo.dao.ClienteDAO;
 import com.tikal.toledo.dao.FacturaDAO;
 import com.tikal.toledo.dao.LoteDAO;
@@ -35,6 +35,7 @@ import com.tikal.toledo.dao.VentaDAO;
 import com.tikal.toledo.factura.Estatus;
 import com.tikal.toledo.facturacion.ComprobanteVentaFactory;
 import com.tikal.toledo.facturacion.ws.WSClient;
+import com.tikal.toledo.model.AlertaInventario;
 import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.Detalle;
 import com.tikal.toledo.model.Factura;
@@ -80,6 +81,9 @@ public class VentaController {
 	
 	@Autowired
 	WSClient client;
+	
+	@Autowired
+	AlertaDAO alertadao;
 	
 	@PostConstruct
 	public void init() {
@@ -350,6 +354,21 @@ public class VentaController {
 				}
 				lotedao.guardarLotes(lista);
 				productodao.guardar(p);
+				if(p.getMinimo()!=0){
+					if(p.getExistencia()< p.getMinimo()){
+						AlertaInventario a= new AlertaInventario();
+						a.idproducto=p.getId();
+						a.nombre=p.getNombre();
+						a.alerta="Inventario por debajo del mínimo";
+						alertadao.add(a);
+					}else{if(p.getExistencia() < (p.getMinimo()*1.10)){
+						AlertaInventario a= new AlertaInventario();
+						a.idproducto=p.getId();
+						a.nombre=p.getNombre();
+						a.alerta="Inventario a punto de llegar al mínimo";
+						alertadao.add(a);
+					}}
+				}
 			}else{
 				Tornillo p= tornillodao.cargar(d.getIdProducto());
 				int restante= p.getExistencia()-d.getCantidad();
@@ -368,7 +387,25 @@ public class VentaController {
 				}
 				lotedao.guardarLotes(lista);
 				tornillodao.guardar(p);
+				if(p.getMinimo()!=0){
+					if(p.getExistencia()< p.getMinimo()){
+						AlertaInventario a= new AlertaInventario();
+						a.idproducto=p.getId();
+						a.nombre=p.getNombre();
+						a.alerta="Inventario por debajo del mínimo";
+						alertadao.add(a);
+					}else{if(p.getExistencia() < (p.getMinimo()*1.10)){
+						AlertaInventario a= new AlertaInventario();
+						a.idproducto=p.getId();
+						a.nombre=p.getNombre()+" "+p.getMedidas();
+						a.alerta="Inventario a punto de llegar al mínimo";
+						alertadao.add(a);
+					}}
+				}
 			}
+			
+			
+			
 			monto+= d.getPrecioUnitario()* d.getCantidad();
 		}
 		return monto;

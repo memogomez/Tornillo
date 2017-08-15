@@ -52,6 +52,17 @@ public class ProductoDAOImp implements ProductoDAO{
 	@Override
 	public void formula(float impuesto, float descuento, float ganancia) {
 		List<Producto> lista= ofy().load().type(Producto.class).list();
+	}
+
+	@Override
+	public void guardar(List<Producto> lista) {
+		ofy().save().entities(lista);
+	}
+
+	@Override
+	public void alv() {
+		List<Producto> lista= ofy().load().type(Producto.class).list();
+		ofy().delete().entities(lista).now();
 	} 
 	
 }

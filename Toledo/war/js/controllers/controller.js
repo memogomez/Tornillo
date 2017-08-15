@@ -77,6 +77,13 @@ app.config([ '$routeProvider', function($routeProvider) {
 		
 		controller : "inventarioController"
 	});
+	
+	$routeProvider.when('/alertas', {
+		templateUrl : "pages/alertas.html",
+		
+		controller : "alertaController"
+	});
+	
 	$routeProvider.when('/login', {
 		templateUrl : "pages/login.html",
 		controller : "navigation"

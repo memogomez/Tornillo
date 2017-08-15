@@ -46,11 +46,42 @@ public class ProductoController {
 	"/addMultiple" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void addMultiple(HttpServletRequest re, HttpServletResponse rs,@RequestBody String cadena) throws IOException{
 		cadena = cadena.replace("<P>TOLEDO </P>", "");
-		List<Tornillo> lista=Parseador.parsear(cadena);
+		List<Tornillo> lista=Parseador.procesaTornillos(cadena);
 //			Producto c= (Producto) JsonConvertidor.fromJson(json, Producto.class);
 //			productodao.guardar(c);
+			for(int i=0;i<lista.size();i++){
+				Tornillo t= lista.get(i);
+				Tornillo b=tdao.buscarNombre(t);
+				if(b!=null){
+					b.setExistencia(b.getExistencia()+t.getExistencia());
+					b.setPrecioCredito(t.getPrecioCredito());
+					b.setPrecioMayoreo(t.getPrecioMayoreo());
+					b.setPrecioMostrador(t.getPrecioMostrador());
+					if(b.getClave()==null){
+						b.setClave(Parseador.getClave(b.getNombre()));
+					}
+					lista.set(i, b);
+					continue;
+				}
+				if(t.getClave()==null){
+					t.setClave(Parseador.getClave(t.getNombre()));
+				}
+				
+			}
+		
 			rs.getWriter().println(JsonConvertidor.toJson(lista));
 			tdao.guardar(lista);
+	}
+	
+	@RequestMapping(value = {
+	"/addMultipleH" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public void addMultipleH(HttpServletRequest re, HttpServletResponse rs,@RequestBody String cadena) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
+		cadena = cadena.replace("<P>TOLEDO </P>", "");
+		List<Producto> lista=Parseador.procesaHerramientas(cadena);
+		
+			rs.getWriter().println(JsonConvertidor.toJson(lista));
+			productodao.guardar(lista);
 	}
 	
 	@RequestMapping(value = {
@@ -88,6 +119,12 @@ public class ProductoController {
 		int pages = (lista.size()/50);
 		pages++;
 		rs.getWriter().println(pages);
+	}
+	
+	@RequestMapping(value = { "/alv" }, method = RequestMethod.GET, produces = "application/json")
+	public void alv(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+		productodao.alv();
+		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
 	}
 	
 	@RequestMapping(value = {

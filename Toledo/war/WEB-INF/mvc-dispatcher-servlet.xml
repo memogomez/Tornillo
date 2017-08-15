@@ -23,6 +23,7 @@
 	<bean class="com.tikal.toledo.security.UsuarioDAOImp"/>
 	<bean class="com.tikal.toledo.security.PerfilDAOImp"/>
 	<bean class="com.tikal.toledo.dao.imp.FacturaDAOImpl"/>
+	<bean class="com.tikal.toledo.dao.imp.AlertaDAOImp"/>
 
 	<!-- Register Bean for Objectify's Entities -->
 	<bean class="com.tikal.toledo.Register" scope="singleton" />

@@ -14,6 +14,8 @@ public interface TornilloDAO {
 
 	public List<Tornillo> buscar(String search);
 	
+	public Tornillo buscarNombre(Tornillo t);
+	
 	public List<Tornillo> todos();
 	
 	public List<Tornillo> page(int p);

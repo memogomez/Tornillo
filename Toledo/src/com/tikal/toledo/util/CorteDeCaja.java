@@ -58,7 +58,7 @@ public class CorteDeCaja {
         dataRow.createCell(1).setCellValue(totalCaja);
         sheet.setColumnWidth(0, 13*256);
         sheet.setColumnWidth(1, 35*256);
-        sheet.setColumnWidth(2, 10*256);
+        sheet.setColumnWidth(2, 20*256);
         sheet.setColumnWidth(3, 15*256);
 //        sheet.setColumnWidth(4, 25*256);
 //        sheet.setColumnWidth(5, 20*256);

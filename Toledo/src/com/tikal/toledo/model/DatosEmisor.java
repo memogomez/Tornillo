@@ -3,6 +3,7 @@ package com.tikal.toledo.model;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+import com.tikal.toledo.sat.cfd.TUbicacionFiscal;
 
 @Entity
 public class DatosEmisor {
@@ -18,13 +19,13 @@ public class DatosEmisor {
 	@Index
 	private boolean activo;
 	
-	private DomicilioFiscal domicilioFiscal;
+	private TUbicacionFiscal domicilioFiscal;
 
-	public DomicilioFiscal getDomicilioFiscal() {
+	public TUbicacionFiscal getDomicilioFiscal() {
 		return domicilioFiscal;
 	}
 
-	public void setDomicilioFiscal(DomicilioFiscal domicilioFiscal) {
+	public void setDomicilioFiscal(TUbicacionFiscal domicilioFiscal) {
 		this.domicilioFiscal = domicilioFiscal;
 	}
 

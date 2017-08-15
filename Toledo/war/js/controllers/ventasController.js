@@ -122,13 +122,43 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 	
 	$scope.venta={
 			fecha:new Date(),
-			detalles:[]
+			detalles:[],
+			formaDePago:"Efectivo"
 	};
 	clientesService.findClientes().then(function(data){
 		$scope.clientes=data;
 	})
 	
+	$scope.$watch('indice',function(){
+		if($scope.indice && $scope.indice!=-1){
+			$scope.clienteSelected=$scope.clientes[$scope.indice];
+			
+			$scope.venta.idCliente=$scope.clienteSelected.id;
+			$scope.venta.descuento=$scope.clienteSelected.descuento;
+		}
+		if($scope.indice && $scope.indice==-1){
+			$scope.venta.idCliente=0;
+			$scope.venta.descuento=0;
+		}
+	})
 	
+	$scope.calculaDesc=function(){
+		if($scope.descuento){
+			$scope.venta.total=0;
+			for(var i=0; i<$scope.venta.detalles.length; i++){
+				$scope.venta.detalles[i].importe =	$scope.venta.detalles[i].importe - ($scope.venta.detalles[i].importe * ($scope.venta.descuento/100));
+				$scope.venta.detalles[i].importe= $scope.venta.detalles[i].importe.toFixed(2);
+				$scope.venta.total+=	parseFloat($scope.venta.detalles[i].importe);
+			}
+		}else{
+			$scope.venta.total=0;
+			for(var i=0; i<$scope.venta.detalles.length; i++){ 
+				$scope.venta.detalles[i].importe =	($scope.venta.detalles[i].importe*100) / (100 - $scope.venta.descuento);
+				$scope.venta.detalles[i].importe= $scope.venta.detalles[i].importe.toFixed(2);
+				$scope.venta.total+=	parseFloat($scope.venta.detalles[i].importe);
+			}
+		}
+	}
 //	$scope.productos=[];
 //	$scope.herramientas = function() {
 //		herramientasService.findHerramientasAll().then(
@@ -163,8 +193,18 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 		detalle.cantidad=producto.cantidad;
 		detalle.precioUnitario=producto.precio;
 		detalle.importe= producto.importe;
+		if($scope.descuento){
+				detalle.importe =	producto.importe - (producto.importe * ($scope.venta.descuento/100));
+				detalle.importe= parseFloat(detalle.importe.toFixed(2));
+		}
+		
 		detalle.tipo=producto.tipo;
 		$scope.venta.detalles.push(detalle);
+		$scope.venta.total=0;
+		for(var i=0; i<$scope.venta.detalles.length; i++){
+			$scope.venta.total+=	parseFloat($scope.venta.detalles[i].importe);
+			$scope.venta.total=parseFloat($scope.venta.total.toFixed(2));
+		}
 	}
 	
 	$scope.busqueda=[];

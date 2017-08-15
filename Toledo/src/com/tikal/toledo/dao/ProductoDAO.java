@@ -8,6 +8,8 @@ public interface ProductoDAO {
 
 	public void guardar(Producto p);
 
+	public void guardar(List<Producto> lista);
+	
 	public Producto cargar(Long id);
 
 	public List<Producto> buscar(String search);
@@ -17,6 +19,8 @@ public interface ProductoDAO {
 	public List<Producto> todos(int page);
 
 	int total();
+	
+	public void alv();
 
 	public void formula(float impuesto, float descuento, float ganancia);
 }
