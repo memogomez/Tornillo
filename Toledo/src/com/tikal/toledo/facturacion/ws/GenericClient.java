@@ -34,8 +34,8 @@ public class GenericClient extends WSClient {
 
 	private ObjectFactory of = new ObjectFactory();
 	private EncodeBase64 base64 = new EncodeBase64();
-	private final String uri = "https://www.timbracfdipruebas.mx/serviciointegracionpruebas/Timbrado.asmx";
-	//private final String uri = "http://www.timbracfdi.mx/serviciointegracion/Timbrado.asmx";
+//	private final String uri = "https://www.timbracfdipruebas.mx/serviciointegracionpruebas/Timbrado.asmx";
+	private final String uri = "http://www.timbracfdi.mx/serviciointegracion/Timbrado.asmx";
 	
 	/* (non-Javadoc)
 	 * @see com.tikal.cacao.factura.ws.WSClient#getRegistraEmisorResponse()
@@ -185,8 +185,8 @@ public class GenericClient extends WSClient {
 	private String getUsuarioIntegrador(){
 		//Esto es Fijo para el ambito de pruebas "mvpNUXmQfK8="
 		
-		//return "SSaC3HanfgtTGP+gChvWNg==";
-		return "mvpNUXmQfK8=";
+		return "SSaC3HanfgtTGP+gChvWNg==";
+//		return "mvpNUXmQfK8=";
 	}
 	
 

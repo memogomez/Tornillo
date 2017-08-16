@@ -37,6 +37,7 @@ public class ProductoController {
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 			Producto c= (Producto) JsonConvertidor.fromJson(json, Producto.class);
 			productodao.guardar(c);
 			rs.getWriter().println(JsonConvertidor.toJson(c));
@@ -45,6 +46,7 @@ public class ProductoController {
 	@RequestMapping(value = {
 	"/addMultiple" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void addMultiple(HttpServletRequest re, HttpServletResponse rs,@RequestBody String cadena) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 		cadena = cadena.replace("<P>TOLEDO </P>", "");
 		List<Tornillo> lista=Parseador.procesaTornillos(cadena);
 //			Producto c= (Producto) JsonConvertidor.fromJson(json, Producto.class);
@@ -58,13 +60,13 @@ public class ProductoController {
 					b.setPrecioMayoreo(t.getPrecioMayoreo());
 					b.setPrecioMostrador(t.getPrecioMostrador());
 					if(b.getClave()==null){
-						b.setClave(Parseador.getClave(b.getNombre()));
+						b.setClave(Parseador.getClave(b.getNombre(),b.getMedidas()));
 					}
 					lista.set(i, b);
 					continue;
 				}
 				if(t.getClave()==null){
-					t.setClave(Parseador.getClave(t.getNombre()));
+					t.setClave(Parseador.getClave(t.getNombre(),t.getMedidas()));
 				}
 				
 			}
@@ -87,13 +89,14 @@ public class ProductoController {
 	@RequestMapping(value = {
 	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
-			
+			AsignadorDeCharset.asignar(re, rs);
 			rs.getWriter().println(JsonConvertidor.toJson(productodao.cargar(Long.parseLong(id))));
 	}
 	
 	@RequestMapping(value = {
 	"/search/{search}" }, method = RequestMethod.GET, produces = "application/json")
 	public void busca(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException{
+			AsignadorDeCharset.asignar(re, rs);
 			List<Producto> lista= productodao.buscar(search);
 			rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
@@ -101,6 +104,7 @@ public class ProductoController {
 	@RequestMapping(value = {
 	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
 	public void search(HttpServletRequest re, HttpServletResponse rs,@PathVariable int page) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 		List<Producto> lista= productodao.todos();
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}

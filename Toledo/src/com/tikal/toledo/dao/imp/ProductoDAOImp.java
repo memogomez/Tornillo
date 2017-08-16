@@ -27,8 +27,13 @@ public class ProductoDAOImp implements ProductoDAO{
 		List<Producto> lista= ofy().load().type(Producto.class).list();
 		List<Producto> result= new ArrayList<Producto>();
 		for(Producto p:lista){
+			if(p.getClave()!=null){
 			if(p.getId().toString().contains(search) || p.getNombre().toLowerCase().contains(search)|| p.getClave().toLowerCase().contains(search)){
 				result.add(p);
+			}}else{
+				if(p.getId().toString().contains(search) || p.getNombre().toLowerCase().contains(search)){
+					result.add(p);
+				}
 			}
 		}
 		return result;

@@ -26,12 +26,19 @@ public class TornilloDAOIpm implements TornilloDAO {
 		List<Tornillo> lista= ofy().load().type(Tornillo.class).list();
 		List<Tornillo> result= new ArrayList<Tornillo>();
 		for(Tornillo p:lista){
+			if(p.getMedidas()!=null){
+				if(p.getMedidas().toLowerCase().contains(search)){
+					result.add(p);
+					continue;
+				}
+			}
 			if(p.getClave()!=null){
-			if(p.getClave().toLowerCase().contains(search) ||p.getId().toString().contains(search) || p.getNombre().toLowerCase().contains(search)|| p.getMedidas().toLowerCase().contains(search)){
+			if(p.getClave().toLowerCase().contains(search) ||p.getId().toString().contains(search) || p.getNombre().toLowerCase().contains(search)){
 				result.add(p);
+				continue;
 			}
 			}else{
-				if(p.getId().toString().contains(search) || p.getNombre().toLowerCase().contains(search)|| p.getMedidas().toLowerCase().contains(search)){
+				if(p.getId().toString().contains(search) || p.getNombre().toLowerCase().contains(search)){
 					result.add(p);
 				}
 			}

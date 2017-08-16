@@ -124,8 +124,9 @@ public class Parseador {
 			String[] atts= el.split("<TD>");
 			if(atts.length>1){
 			t.setNombre(nombre.trim());
-			t.setClave(getClave(nombre));
+			
 			t.setMedidas(atts[2].trim());
+			t.setClave(getClave(nombre,t.getMedidas()));
 			t.setPrecioMostrador(Float.parseFloat(atts[3].replace("$", "").replace(",", "").replace("</Table>","").replace("</Sect>", "").replace("<Sect>", "").replace("<Table>", "")));
 			lista.add(t);
 			}
@@ -137,7 +138,7 @@ public class Parseador {
 		return lista;
 	}
 	
-	public static String getClave(String nombre){
+	public static String getClave(String nombre,String medidas){
 		String clave="";
 		nombre = nombre.replaceAll("\\."," ");
 		nombre = nombre.trim();
@@ -150,6 +151,14 @@ public class Parseador {
 				clave+= palabra.substring(0, 1);
 			}
 			}
+		}
+		if(medidas!=null){
+		for(int i=0; i<medidas.length();i++){
+			if(Character.isDigit(medidas.charAt(i))){
+				clave+=medidas.charAt(i);
+			}
+			
+		}
 		}
 		return clave;
 	}

@@ -80,7 +80,7 @@ public class TornilloController {
 				nombre=nombre.substring(nombre.indexOf(" ")+1);
 				nombre=nombre.substring(nombre.indexOf(" ")+1);
 			}
-			String clave=Parseador.getClave(nombre);
+			String clave=Parseador.getClave(nombre,t.getMedidas());
 			t.setClave(clave);
 			
 			System.out.println(clave);

@@ -73,7 +73,6 @@ public class ComprobanteVentaFactory {
 		comprobante.setTotal(new BigDecimal(venta.getMonto()).setScale(2, RoundingMode.HALF_UP));
 
 		return comprobante;
-//		venta.setXml();
 	}
 	
 	private Emisor construirEmisor() {

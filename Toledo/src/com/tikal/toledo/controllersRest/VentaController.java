@@ -2,6 +2,7 @@ package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -158,8 +159,7 @@ public class VentaController {
 	}
 	
 	@RequestMapping(value = "/buscar", method = RequestMethod.GET, produces = "application/json")
-	public void buscar(HttpServletRequest req, HttpServletResponse res) {
-		try {
+	public void buscar(HttpServletRequest req, HttpServletResponse res) throws ParseException, IOException {
 			AsignadorDeCharset.asignar(req, res);
 			String fi = (String) req.getParameter("fi");
 			String ff = (String) req.getParameter("ff");
@@ -175,11 +175,6 @@ public class VentaController {
 			List<Venta> listaR = ventadao.buscar(datei, datef);
 
 			res.getWriter().println(JsonConvertidor.toJson(listaR));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	@RequestMapping(value = {
@@ -304,6 +299,8 @@ public class VentaController {
 				lista.addAll(tornillodao.page(Math.abs(rest)).subList(offset, 49));
 			}
 			listaf.add(lista);
+		}else{
+			listaf.add(new ArrayList<Tornillo>());
 		}
 		
 		listaf.add(listap);
