@@ -12,11 +12,17 @@
 						</select>
 					</div>
 					<div class="form-group col-md-6">
+						<div class="row" style="padding-left: 60px">
+							<select class="form-control input-sm" ng-model="busqueda.buscar" style="width: inherit;">
+								<option>Herramientas</option>
+								<option>Tornillos</option>
+							</select>
+						</div>
 						<label for="email">Buscar:</label> <input type="text"
 							class="form-control input-sm" id="buscar"
 							ng-model="busqueda.buscar">
 						<button type="submit" class="btn btn-primary"
-							ng-click="buscar(busqueda.buscar)">
+							ng-click="buscar(busqueda)">
 							<span class="glyphicon glyphicon-search"></span>
 						</button>
 						<button type="submit" class="btn btn-primary"
