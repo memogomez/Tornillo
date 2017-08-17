@@ -7,21 +7,20 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.tikal.toledo.facturacion.FormatoFecha;
-import com.tikal.toledo.util.Util;
 import com.tikal.toledo.model.Cliente;
+import com.tikal.toledo.model.DatosEmisor;
 import com.tikal.toledo.model.Detalle;
-import com.tikal.toledo.model.Factura;
 import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.sat.cfd.Comprobante;
 import com.tikal.toledo.sat.cfd.Comprobante.Conceptos;
 import com.tikal.toledo.sat.cfd.Comprobante.Conceptos.Concepto;
+import com.tikal.toledo.sat.cfd.Comprobante.Emisor;
 import com.tikal.toledo.sat.cfd.Comprobante.Emisor.RegimenFiscal;
 import com.tikal.toledo.sat.cfd.Comprobante.Impuestos;
 import com.tikal.toledo.sat.cfd.Comprobante.Impuestos.Traslados;
 import com.tikal.toledo.sat.cfd.Comprobante.Impuestos.Traslados.Traslado;
-import com.tikal.toledo.sat.cfd.Comprobante.Emisor;
 import com.tikal.toledo.sat.cfd.Comprobante.Receptor;
+import com.tikal.toledo.util.Util;
 
 /**
  * @author Tikal
@@ -31,17 +30,17 @@ import com.tikal.toledo.sat.cfd.Comprobante.Receptor;
 public class ComprobanteVentaFactory {
 	
 	
-	public Comprobante generarFactura(Venta venta, Cliente cliente) {
+	public Comprobante generarFactura(Venta venta, Cliente cliente, DatosEmisor emisor) {
 		Comprobante comprobante = new Comprobante();
 		comprobante.setVersion("3.2");
 		comprobante.setFecha(Util.getXMLDate(new Date(), FormatoFecha.COMPROBANTE));
 		comprobante.setMoneda("MXN");
 		comprobante.setLugarExpedicion("Toluca, México"); //TODO agregar ciudad
 		comprobante.setTipoDeComprobante("ingreso");
-		comprobante.setMetodoDePago("01-Efectivo"); //hardcoded
+		comprobante.setMetodoDePago(venta.getFormaDePago()); //hardcoded
 		comprobante.setFormaDePago("Pago en una sola exhibición"); //hardcoded
 		
-		comprobante.setEmisor(construirEmisor());
+		comprobante.setEmisor(construirEmisor(emisor));
 		comprobante.setReceptor(construirReceptor(cliente));
 		construirConceptos(venta.getDetalles(), comprobante);
 		
@@ -53,7 +52,7 @@ public class ComprobanteVentaFactory {
 //		venta.setXml();
 	}
 	
-	public Comprobante generarNota(Venta venta, Cliente cliente) {
+	public Comprobante generarNota(Venta venta, Cliente cliente, DatosEmisor emisor) {
 		Comprobante comprobante = new Comprobante();
 		comprobante.setVersion("3.2");
 		comprobante.setFecha(Util.getXMLDate(new Date(), FormatoFecha.COMPROBANTE));
@@ -63,7 +62,7 @@ public class ComprobanteVentaFactory {
 		comprobante.setMetodoDePago(""); //hardcoded
 		comprobante.setFormaDePago(""); //hardcoded
 		
-		comprobante.setEmisor(construirEmisor());
+		comprobante.setEmisor(construirEmisor(emisor));
 		comprobante.setReceptor(construirReceptor(cliente));
 		if(venta.getDetalles()!=null){
 			construirConceptos(venta.getDetalles(), comprobante);
@@ -75,10 +74,10 @@ public class ComprobanteVentaFactory {
 		return comprobante;
 	}
 	
-	private Emisor construirEmisor() {
+	private Emisor construirEmisor(DatosEmisor de) {
 		Emisor emisor = new Emisor();
-		emisor.setRfc("AAA010101AAA");
-		emisor.setNombre("Emisor de Prueba");
+		emisor.setRfc(de.getRfc());
+		emisor.setNombre(de.getNombre());
 		RegimenFiscal regimenFiscal = new RegimenFiscal();
 		regimenFiscal.setRegimen("General de Ley Personas Morales");
 		emisor.getRegimenFiscal().add(regimenFiscal);

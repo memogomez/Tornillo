@@ -2,7 +2,6 @@ package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.tikal.toledo.dao.AlertaDAO;
 import com.tikal.toledo.dao.ClienteDAO;
+import com.tikal.toledo.dao.EmisorDAO;
 import com.tikal.toledo.dao.FacturaDAO;
 import com.tikal.toledo.dao.LoteDAO;
 import com.tikal.toledo.dao.ProductoDAO;
@@ -38,6 +38,7 @@ import com.tikal.toledo.facturacion.ComprobanteVentaFactory;
 import com.tikal.toledo.facturacion.ws.WSClient;
 import com.tikal.toledo.model.AlertaInventario;
 import com.tikal.toledo.model.Cliente;
+import com.tikal.toledo.model.DatosEmisor;
 import com.tikal.toledo.model.Detalle;
 import com.tikal.toledo.model.Factura;
 import com.tikal.toledo.model.Lote;
@@ -59,6 +60,9 @@ import localhost.TimbraCFDIResponse;
 @RequestMapping(value={"/ventas"})
 public class VentaController {
 
+	@Autowired
+	EmisorDAO emisordao;
+	
 	@Autowired
 	VentaDAO ventadao;
 	
@@ -127,7 +131,9 @@ public class VentaController {
 	"/facturar" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void facturar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
 			Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
-			Comprobante c=cvFactory.generarFactura(venta, clientedao.cargar(venta.getIdCliente()));
+			DatosEmisor emisor= emisordao.getActivo();
+			
+			Comprobante c=cvFactory.generarFactura(venta, clientedao.cargar(venta.getIdCliente()),emisor);
 			//facturar
 			TimbraCFDIResponse timbraCFDIResp = client.getTimbraCFDIResponse(Util.marshallComprobante(c));
 			List<Object> listaResultado = timbraCFDIResp.getTimbraCFDIResult().getAnyType();
@@ -207,7 +213,7 @@ public class VentaController {
 		if(venta.getIdCliente()!=0){
 			c= clientedao.cargar(venta.getIdCliente());
 		}
-		Comprobante cfdi=cvFactory.generarNota(venta, c);
+		Comprobante cfdi=cvFactory.generarNota(venta, c,emisordao.getActivo());
 		try {
 //			TimbreFiscalDigital timbre= (TimbreFiscalDigital)cfdi.getComplemento().getAny().get(0);
 //			String uuid= timbre.getUUID();
