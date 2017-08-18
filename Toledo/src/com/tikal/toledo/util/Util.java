@@ -30,6 +30,8 @@ import com.tikal.toledo.facturacion.FormatoFecha;
 import com.tikal.toledo.sat.cfd.Comprobante;
 import com.tikal.toledo.sat.timbrefiscaldigital.TimbreFiscalDigital;
 
+import mx.gob.sat.cancelacfd.Acuse;
+
 
 
 /**
@@ -54,7 +56,21 @@ public class Util {
 		}
 		return fechaIngreso;
 	}
-	
+	 
+	public static Acuse unmarshallAcuseXML(String acuseXML) {
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(Acuse.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			StringBuffer xmlStr = new StringBuffer(acuseXML);
+			Acuse acuse = (Acuse) unmarshaller.unmarshal(new StreamSource( new StringReader( xmlStr.toString() ) ) );
+			return acuse;
+		} catch (JAXBException e) {
+			
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 	/**
 	 * Convierte y regresa la cadena especificada en un objeto {@code java.util.Date} utilizando el formato
 	 * especificado

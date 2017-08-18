@@ -73,6 +73,17 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		return d.promise;
 	}
 	
+	this.cancelarFactura= function(venta){
+		var d = $q.defer();
+		$http.post("/ventas/cancelarAck/",venta).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
+	
 	this.numPages = function(){
 		var d = $q.defer();
 		$http.get("/ventas/numPages").then(function(response) {
@@ -83,11 +94,13 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		});
 		return d.promise;
 	}
+	//cancelarAck
 }]);
 
 app.controller("ventaController",['$window','clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function($window,clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
 	$scope.MetodoPago=true;
 	$scope.paginaActual=1;
+	
 	$scope.llenarPags=function(){
 		var inicio=0;
 		if($scope.paginaActual>3){
@@ -225,23 +238,27 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 	$scope.buscar = function(buscar){
 		$scope.todos=false;
 		$scope.busqueda=[];
-		herramientasService.busqueda(buscar).then(
-				function(data) {
+		$scope.paginaActual=-1;
+		if(buscar.tipo){
+			if(buscar.tipo=="Herramientas"){
+				herramientasService.busqueda(buscar.buscar).then(function(data) {
 //					$scope.herramientas = data;	
-					for(var i =0; i<data.length; i++){
-						$scope.busqueda.push(data[i]);
-					}
-					tornillosService.busqueda(buscar).then(
-							function(data) {
-//								$scope.productos = data;
-								for(var i =0; i<data.length; i++){
-									$scope.busqueda.push(data[i]);
-								}
-								$scope.busqueda.buscar="";
-								$scope.productos=$scope.busqueda;
-								console.log(data);
-							});
-				})
+					$scope.productos=data;
+				});
+			}else{
+				tornillosService.busqueda(buscar.buscar).then(
+						function(data) {
+							$scope.productos = data;
+//							for(var i =0; i<data.length; i++){
+//								$scope.busqueda.push(data[i]);
+//							}
+//							$scope.busqueda.buscar="";
+//							$scope.productos=$scope.busqueda;
+						});
+			}
+		}else{
+			alert("Especifique el tipo de Producto");
+		}
 	}
 	
 	$scope.cargaProductos=function(page){
@@ -279,7 +296,7 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 		});
 		}
 	}
-	
+	$scope.busquedas={tipo:"Herramientas"}
 }]);
 app.controller("ventaListController",['clientesService','ventasService','tornillosService','herramientasService','$scope','$location','$window',function(clientesService,ventasService,tornillosService,herramientasService,$scope,$location,$window){
 	$scope.paginaActual=1;
@@ -317,10 +334,13 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 		if(venta.idCliente!=0){
 			ventasService.facturarVenta(venta).then(
 					function(data){
-							$scope.factura = data;
-						console.log(data);	
-						alert("Facturado con éxito");
-						$windoy.location.reload();
+						console.log(data);
+						if(data[0]=="0"){
+							alert("Facturado con éxito");
+						}else{
+							alert(data[1]);
+						}
+						$window.location.reload();
 					})
 		}else{
 			alert('Esta Venta no tiene asociado un Cliente registrado');
@@ -359,6 +379,13 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 			$scope.ventas= data;
 			$scope.todos=false;
 		});
+	}
+	
+	$scope.cancelarFactura=function(venta){
+		ventasService.cancelarFactura(venta.id).then(function(data){
+			alert("La factura se canceló con éxito");
+			$window.location.reload();
+		})
 	}
 
 	

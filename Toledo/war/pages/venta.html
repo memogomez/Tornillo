@@ -13,16 +13,16 @@
 					</div>
 					<div class="form-group col-md-6">
 						<div class="row" style="padding-left: 60px">
-							<select class="form-control input-sm" ng-model="busqueda.buscar" style="width: inherit;">
-								<option>Herramientas</option>
+							<select class="form-control input-sm" ng-model="busquedas.tipo" style="width: inherit;">
+								<option selected>Herramientas</option>
 								<option>Tornillos</option>
 							</select>
 						</div>
 						<label for="email">Buscar:</label> <input type="text"
 							class="form-control input-sm" id="buscar"
-							ng-model="busqueda.buscar">
+							ng-model="busquedas.buscar">
 						<button type="submit" class="btn btn-primary"
-							ng-click="buscar(busqueda)">
+							ng-click="buscar(busquedas)">
 							<span class="glyphicon glyphicon-search"></span>
 						</button>
 						<button type="submit" class="btn btn-primary"
@@ -31,9 +31,7 @@
 							<span class="glyphicon glyphicon-eye-open"></span>
 						</button>
 					</div>
-
 				</form>
-
 			</div>
 			<div class="row">
 				<table class="table table-striped">
@@ -110,8 +108,9 @@
 				</table>
 				<label ng_hide="MetodoPago">Metodo de Pago:</label>
 					<select class="pago col-md-offset-4 "
-						ng-model="venta.pago" ng_hide="MetodoPago">
+						ng-model="venta.formaDePago" ng_hide="MetodoPago">
 						<option>Tarjeta de Cr&eacute;dito</option>
+						<option>Tarjeta de D&eacute;bito</option>
 						<option>Efectivo</option>
 						<option>Transferecia</option>
 						<option>Cheque</option>

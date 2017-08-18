@@ -11,4 +11,6 @@ public interface AlertaDAO {
 	List<AlertaInventario> consultar();
 	
 	void delete(AlertaInventario a);
+	
+	AlertaInventario consultar(Long id);
 }

@@ -39,7 +39,6 @@ public class ComprobanteVentaFactory {
 		comprobante.setTipoDeComprobante("ingreso");
 		comprobante.setMetodoDePago(venta.getFormaDePago()); //hardcoded
 		comprobante.setFormaDePago("Pago en una sola exhibición"); //hardcoded
-		
 		comprobante.setEmisor(construirEmisor(emisor));
 		comprobante.setReceptor(construirReceptor(cliente));
 		construirConceptos(venta.getDetalles(), comprobante);
@@ -78,8 +77,9 @@ public class ComprobanteVentaFactory {
 		Emisor emisor = new Emisor();
 		emisor.setRfc(de.getRfc());
 		emisor.setNombre(de.getNombre());
+		emisor.setDomicilioFiscal(de.getDomicilioFiscal());
 		RegimenFiscal regimenFiscal = new RegimenFiscal();
-		regimenFiscal.setRegimen("General de Ley Personas Morales");
+		regimenFiscal.setRegimen(de.getRegimen());
 		emisor.getRegimenFiscal().add(regimenFiscal);
 		return emisor;
 	}
@@ -89,6 +89,7 @@ public class ComprobanteVentaFactory {
 		if(cliente!=null){
 		receptor.setRfc(cliente.getRfc());
 		receptor.setNombre(cliente.getNombre());
+		receptor.setDomicilio(cliente.getDomicilio());
 		}
 		return receptor;
 	}
@@ -102,7 +103,7 @@ public class ComprobanteVentaFactory {
 			int cantidad = detalle.getCantidad();
 			concepto.setNoIdentificacion( Long.toString( detalle.getIdProducto() ) );
 			concepto.setCantidad( BigDecimal.valueOf( (long)cantidad ) );
-			concepto.setUnidad("NO APLICA"); //TODO que unidad se coloca
+			concepto.setUnidad("PZA");
 			concepto.setDescripcion(detalle.getDescripcion());
 			
 			double valorUnitarioSinIVA = detalle.getPrecioUnitario() / 1.16;

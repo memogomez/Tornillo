@@ -1055,17 +1055,18 @@ public class PDFFactura {
 					fraseDatosFiscales);
 			// }
 		}
+		if(comprobante.getEmisor().getRegimenFiscal().get(0).getRegimen()!=null){
 		agregarChunkYNuevaLinea(
 				"Régimen fiscal: ".concat(comprobante.getEmisor().getRegimenFiscal().get(0).getRegimen()), font3,
 				fraseDatosFiscales);
-
+		
 		PdfPCell celdaDatosFiscales = new PdfPCell();
 		celdaDatosFiscales.setMinimumHeight(45);
 		celdaDatosFiscales.setPhrase(fraseDatosFiscales);
 		celdaDatosFiscales.setBorderColor(BaseColor.GRAY);
 		tablaDirYOtrosDatosFis.addCell(celdaDatosFiscales);
 		document.add(tablaDirYOtrosDatosFis);
-
+		}
 		// TABLA CONCEPTOS
 		PdfPTable tablaConceptos = new PdfPTable(6);
 		tablaConceptos.setWidthPercentage(100);

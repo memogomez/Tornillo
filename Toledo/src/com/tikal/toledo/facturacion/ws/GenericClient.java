@@ -184,7 +184,7 @@ public class GenericClient extends WSClient {
 
 	private String getUsuarioIntegrador(){
 		//Esto es Fijo para el ambito de pruebas "mvpNUXmQfK8="
-		
+//		
 		return "SSaC3HanfgtTGP+gChvWNg==";
 //		return "mvpNUXmQfK8=";
 	}

@@ -16,6 +16,8 @@ public class DatosEmisor {
 	
 	private String nombre;
 	
+	private String regimen;
+	
 	@Index
 	private boolean activo;
 	
@@ -59,6 +61,14 @@ public class DatosEmisor {
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+	public String getRegimen() {
+		return regimen;
+	}
+
+	public void setRegimen(String regimen) {
+		this.regimen = regimen;
 	}
 	
 	

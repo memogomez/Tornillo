@@ -31,6 +31,7 @@ import com.tikal.toledo.dao.EmisorDAO;
 import com.tikal.toledo.dao.FacturaDAO;
 import com.tikal.toledo.dao.LoteDAO;
 import com.tikal.toledo.dao.ProductoDAO;
+import com.tikal.toledo.dao.SeriesDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.dao.VentaDAO;
 import com.tikal.toledo.factura.Estatus;
@@ -53,7 +54,10 @@ import com.tikal.toledo.util.JsonConvertidor;
 import com.tikal.toledo.util.PDFFactura;
 import com.tikal.toledo.util.Util;
 
+import localhost.CancelaCFDIAckResponse;
+import localhost.EncodeBase64;
 import localhost.TimbraCFDIResponse;
+import mx.gob.sat.cancelacfd.Acuse;
 
  
 @Controller
@@ -90,6 +94,9 @@ public class VentaController {
 	@Autowired
 	AlertaDAO alertadao;
 	
+	@Autowired
+	SeriesDAO seriesdao;
+	
 	@PostConstruct
 	public void init() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
@@ -103,6 +110,7 @@ public class VentaController {
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+			AsignadorDeCharset.asignar(re, rs);
 			Venta l= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 			Calendar cal=Calendar.getInstance(TimeZone.getTimeZone("America/Mexico_City"));
 			cal.add(Calendar.HOUR, -5);
@@ -116,6 +124,8 @@ public class VentaController {
 			
 			
 			l.setMonto(actualizarInventario(l.getDetalles()));
+			l.setFolio(seriesdao.getSerieVenta());
+			seriesdao.incSerieVenta();
 			ventadao.guardar(l);
 			rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
@@ -123,6 +133,7 @@ public class VentaController {
 	@RequestMapping(value = {
 	"/find/{id}" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void find(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 			Venta l= ventadao.cargar(Long.parseLong(id));
 			rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
@@ -130,23 +141,24 @@ public class VentaController {
 	@RequestMapping(value = {
 	"/facturar" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void facturar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 			Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 			DatosEmisor emisor= emisordao.getActivo();
-			
+			int folio = seriesdao.getSerieFactura();
 			Comprobante c=cvFactory.generarFactura(venta, clientedao.cargar(venta.getIdCliente()),emisor);
 			//facturar
+			c.setFolio(folio+"");
+			c.setSerie("FS");
 			TimbraCFDIResponse timbraCFDIResp = client.getTimbraCFDIResponse(Util.marshallComprobante(c));
 			List<Object> listaResultado = timbraCFDIResp.getTimbraCFDIResult().getAnyType();
 			int codigoError = (int) listaResultado.get(1);
+			String[] respuesta= new String[2];
 			if (codigoError == 0) {
-				
-			
 				String cfdiXML = (String) listaResultado.get(3);
 				Factura f= new Factura();
 				f.setCfdiXML(cfdiXML);
 				f.setCodigoQR((byte[])listaResultado.get(4));
 				Comprobante cfdi= Util.unmarshallXML(cfdiXML);
-				
 				TimbreFiscalDigital timbreFD = (TimbreFiscalDigital) cfdi.getComplemento().getAny().get(0);
 				Date fechaCertificacion = timbreFD.getFechaTimbrado().toGregorianCalendar().getTime();
 				
@@ -157,11 +169,75 @@ public class VentaController {
 //				venta.setXml(cfdiXML);
 				venta.setEstatus("FACTURADO");
 				venta.setUuid(f.getUuid());
+				venta.setFactura("FS"+folio);
+				seriesdao.incSerieFactura();
 				ventadao.guardar(venta);
 				facturadao.guardar(f);
+				respuesta[0]="0";
+			}else{
+				respuesta[0]="1";
+				String mensaje=(String)listaResultado.get(2);
+				respuesta[1]="Mensaje de respuesta: " +mensaje ;
 			}
 			
-			rs.getWriter().println(JsonConvertidor.toJson(venta));
+			rs.getWriter().println(JsonConvertidor.toJson(respuesta));
+	}
+	
+	@RequestMapping(value = "/cancelarAck", method = RequestMethod.POST)
+	public void cancelarAck(HttpServletRequest req, HttpServletResponse res, @RequestBody String json) {
+		Venta v= ventadao.cargar(Long.parseLong(json));
+		Factura factura = facturadao.consultar(v.getUuid());
+		Comprobante com= Util.unmarshallXML(factura.getCfdiXML());
+		String rfc= com.getEmisor().getRfc();
+		
+		CancelaCFDIAckResponse cancelaCFDIAckResponse = client.getCancelaCFDIAckResponse(json,rfc);
+		
+		try {
+			PrintWriter writer = res.getWriter();
+			List<Object> respuesta = cancelaCFDIAckResponse.getCancelaCFDIAckResult().getAnyType();
+			int codigoError = (int) respuesta.get(1);
+
+			if (codigoError == 0) {
+				String acuseXML = (String) respuesta.get(3);
+				StringBuilder stringBuilder = new StringBuilder(acuseXML);
+				stringBuilder.insert(99, " xmlns=\"http://cancelacfd.sat.gob.mx\" ");
+				String acuseXML2 = stringBuilder.toString();
+				factura.setAcuseCancelacionXML(acuseXML2);
+				Acuse acuse = Util.unmarshallAcuseXML(acuseXML2);
+				if (acuse != null) {
+					EncodeBase64 encodeBase64 = new EncodeBase64();
+					String sello = new String(acuse.getSignature().getSignatureValue(), "ISO-8859-1");
+					String selloBase64 = encodeBase64.encodeStringSelloCancelacion(sello);
+					factura.setFechaCancelacion(acuse.getFecha().toGregorianCalendar().getTime());
+					factura.setSelloCancelacion(selloBase64);
+				} else {
+					stringBuilder = new StringBuilder(acuseXML);
+					stringBuilder.insert(100, " xmlns=\"http://cancelacfd.sat.gob.mx\" ");
+					acuseXML2 = stringBuilder.toString();
+					factura.setAcuseCancelacionXML(acuseXML2);
+					acuse = Util.unmarshallAcuseXML(acuseXML2);
+					if (acuse != null) {
+						EncodeBase64 encodeBase64 = new EncodeBase64();
+						String sello = new String(acuse.getSignature().getSignatureValue(), "ISO-8859-1");
+						String selloBase64 = encodeBase64.encodeStringSelloCancelacion(sello);
+						factura.setFechaCancelacion(acuse.getFecha().toGregorianCalendar().getTime());
+						factura.setSelloCancelacion(selloBase64);
+					}
+				}
+				factura.setEstatus(Estatus.CANCELADO);
+				v.setEstatus(Estatus.CANCELADO.toString());
+				ventadao.guardar(v);
+				facturadao.guardar(factura);
+				String evento = "Se canceló la factura guardada con el id:"+factura.getUuid();
+//				RegistroBitacora registroBitacora = Util.crearRegistroBitacora(req.getSession(), "Operacional", evento);
+//				bitacoradao.addReg(registroBitacora);
+				
+			}
+			writer.println(JsonConvertidor.toJson(respuesta));
+			// escribirRespuesta(respuesta, writer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping(value = "/buscar", method = RequestMethod.GET, produces = "application/json")
@@ -186,6 +262,7 @@ public class VentaController {
 	@RequestMapping(value = {
 	"/findAll/{page}" }, method = RequestMethod.GET, produces = "application/json")
 	public void search(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 		List<Venta> lista= ventadao.todos(page);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
@@ -207,6 +284,7 @@ public class VentaController {
 	
 	@RequestMapping(value = {"/descargaNota/{id}" }, method = RequestMethod.GET)
 	public void pdfNota(HttpServletRequest re, HttpServletResponse res, @PathVariable Long id) throws IOException{
+		AsignadorDeCharset.asignar(re, res);
 		res.setContentType("Application/PDF");
 		Venta venta= ventadao.cargar(id);
 		Cliente c= null;
@@ -214,6 +292,7 @@ public class VentaController {
 			c= clientedao.cargar(venta.getIdCliente());
 		}
 		Comprobante cfdi=cvFactory.generarNota(venta, c,emisordao.getActivo());
+		cfdi.setFolio("Folio: "+venta.getFolio());
 		try {
 //			TimbreFiscalDigital timbre= (TimbreFiscalDigital)cfdi.getComplemento().getAny().get(0);
 //			String uuid= timbre.getUUID();
@@ -313,6 +392,11 @@ public class VentaController {
 		rs.getWriter().println(JsonConvertidor.toJson(listaf));
 	}
 	
+	@RequestMapping(value = "/crearFolios", method = RequestMethod.GET, produces = "application/vnd.ms-excel")
+	public void crearFolios(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		seriesdao.crear();
+	}
+	
 	@RequestMapping(value = "/corteDeCaja", method = RequestMethod.GET, produces = "application/vnd.ms-excel")
 	public void corte(HttpServletRequest req, HttpServletResponse res) throws IOException {
 			AsignadorDeCharset.asignar(req, res);
@@ -358,6 +442,8 @@ public class VentaController {
 				lotedao.guardarLotes(lista);
 				productodao.guardar(p);
 				if(p.getMinimo()!=0){
+					AlertaInventario c=alertadao.consultar(p.getId());
+					if(c==null){
 					if(p.getExistencia()< p.getMinimo()){
 						AlertaInventario a= new AlertaInventario();
 						a.idproducto=p.getId();
@@ -371,6 +457,7 @@ public class VentaController {
 						a.alerta="Inventario a punto de llegar al mínimo";
 						alertadao.add(a);
 					}}
+					}
 				}
 			}else{
 				Tornillo p= tornillodao.cargar(d.getIdProducto());
@@ -391,6 +478,8 @@ public class VentaController {
 				lotedao.guardarLotes(lista);
 				tornillodao.guardar(p);
 				if(p.getMinimo()!=0){
+					AlertaInventario c=alertadao.consultar(p.getId());
+					if(c==null){
 					if(p.getExistencia()< p.getMinimo()){
 						AlertaInventario a= new AlertaInventario();
 						a.idproducto=p.getId();
@@ -404,6 +493,7 @@ public class VentaController {
 						a.alerta="Inventario a punto de llegar al mínimo";
 						alertadao.add(a);
 					}}
+					}
 				}
 			}
 			

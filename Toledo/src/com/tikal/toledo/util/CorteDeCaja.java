@@ -28,7 +28,7 @@ public class CorteDeCaja {
 		HSSFSheet sheet = workbook.createSheet();
 		workbook.setSheetName(0, "Hoja excel");
 
-		String[] headers = new String[] { "Cliente", "Facturado", "Forma de Pago","Importe"};
+		String[] headers = new String[] { "Cliente", "Facturado", "Forma de Pago", "Folio", "Factura","Importe"};
 		CellStyle headerStyle = workbook.createCellStyle();
 		Font font = workbook.createFont();
 		font.setBoldweight(Font.BOLDWEIGHT_BOLD);

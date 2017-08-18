@@ -34,6 +34,10 @@ public class Venta {
 	
 	private String formaDePago;
 	
+	private int folio;
+	
+	private String factura;
+	
 	public float getMonto() {
 		return monto;
 	}
@@ -126,6 +130,28 @@ public class Venta {
 		r.getCell(0).setCellValue(this.getCliente());
 		r.getCell(1).setCellValue(this.getEstatus());
 		r.getCell(2).setCellValue(this.getFormaDePago());
-		r.getCell(3).setCellValue(this.getMonto());
+		r.getCell(5).setCellValue(this.getMonto());
+		r.getCell(3).setCellValue(this.getFolio());
+		if(this.factura!=null){
+		r.getCell(4).setCellValue(this.getFactura());
+		}else{
+			r.getCell(4).setCellValue("No facturado");
+		}
+	}
+
+	public int getFolio() {
+		return folio;
+	}
+
+	public void setFolio(int folio) {
+		this.folio = folio;
+	}
+
+	public String getFactura() {
+		return factura;
+	}
+
+	public void setFactura(String factura) {
+		this.factura = factura;
 	}
 }

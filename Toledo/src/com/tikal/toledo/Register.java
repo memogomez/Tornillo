@@ -9,6 +9,8 @@ import com.tikal.toledo.model.Lote;
 import com.tikal.toledo.model.Perfil;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Proveedor;
+import com.tikal.toledo.model.SerieFactura;
+import com.tikal.toledo.model.SerieVenta;
 import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.model.Usuario;
 import com.tikal.toledo.model.Venta;
@@ -26,5 +28,7 @@ public class Register {
 		ObjectifyService.register(DatosEmisor.class);
 		ObjectifyService.register(Factura.class);
 		ObjectifyService.register(AlertaInventario.class);
+		ObjectifyService.register(SerieFactura.class);
+		ObjectifyService.register(SerieVenta.class);
 	}
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tikal.toledo.dao.EmisorDAO;
 import com.tikal.toledo.model.DatosEmisor;
+import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
 
 @Controller
@@ -25,6 +26,7 @@ public class EmisorController {
 	@RequestMapping(value = {
 	"/registrar" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 		DatosEmisor de= (DatosEmisor) JsonConvertidor.fromJson(json, DatosEmisor.class);
 		emisordao.add(de);
 		rs.getWriter().print(JsonConvertidor.toJson(de));
@@ -33,6 +35,7 @@ public class EmisorController {
 	@RequestMapping(value = {
 	"/eliminar" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void eliminar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 		DatosEmisor de= emisordao.getById(Long.parseLong(json));
 		emisordao.eliminar(de);;
 		rs.getWriter().print(JsonConvertidor.toJson(de));
@@ -41,6 +44,7 @@ public class EmisorController {
 	@RequestMapping(value = {
 	"/activar" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void activar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 		DatosEmisor de= emisordao.getById(Long.parseLong(json));
 		emisordao.activar(de);;
 		rs.getWriter().print(JsonConvertidor.toJson(de));
@@ -49,12 +53,14 @@ public class EmisorController {
 	@RequestMapping(value = {
 	"/getAll" }, method = RequestMethod.GET, produces = "application/json")
 	public void getAll(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 		rs.getWriter().print(JsonConvertidor.toJson(emisordao.todos()));
 	}
 	
 	@RequestMapping(value = {
 	"/get/{id}" }, method = RequestMethod.GET, produces = "application/json")
 	public void getAll(HttpServletRequest re, HttpServletResponse rs, @PathVariable long id) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 		rs.getWriter().print(JsonConvertidor.toJson(emisordao.getById(id)));
 	}
 
