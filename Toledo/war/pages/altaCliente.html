@@ -14,14 +14,14 @@
 					<div class="panel-heading">Registro de Clientes</div>
 					<!-- /.panel-heading -->
 					<div class="panel-body">
-						<form>
+						<form id="forma" name="myForm">
 							<div class="col-md-6">
-								Nombre o Raz&oacute;n Social: <input type="text" class="form-control"
-									ng-model="newCliente.nombre"> <br>
+								*Nombre o Raz&oacute;n Social: <input type="text" class="form-control"
+									ng-model="newCliente.nombre" ng-required="true"> <br>
 							</div>
 							<div class="col-md-6">
-								RFC:<br> <input type="text" class="form-control"
-									ng-model="newCliente.rfc"> <br>
+								*RFC:<br> <input type="text" class="form-control"
+									ng-model="newCliente.rfc" ng-required="true" pattern="^([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1]))([A-Z\d]{3})?$"> <br>
 							</div>
 							<div class="col-md-6">
 								Correo Electronico:<br> <input type="email" class="form-control"
@@ -59,8 +59,8 @@
 								<br>
 							</div>
 							<div class="col-md-6">
-								Pa&iacute;s:<br> <select name="pais"
-									ng-model="newCliente.domicilio.pais"
+								*Pa&iacute;s:<br> <select name="pais"
+									ng-model="newCliente.domicilio.pais" ng-required="true"
 									ng-change="pais(newCliente)" class="form-control"
 									ng-required="true">
 									<option value="AF">Afganist&aacute;n</option>
@@ -357,7 +357,7 @@
 							<br>
 							<div class="col-md-12">
 								<button type="submit" value="Registrar" class="btn btn-primary"
-									ng-click="registraCliente(newCliente)">Registrar</button>
+									ng-click="myForm.$valid && registraCliente(newCliente)">Registrar</button>
 							</div>
 						</form>
 						<!-- /.table-responsive -->
