@@ -4,7 +4,8 @@
 		<div class="row">
 		<div class="form-group col-md-6">
 			<label>Buscar:</label> 
-			<input type="text" ng-model="search.busquedaAttr">
+			<input type="text" ng-model="search">
+			<button class="btn" ng-click="buscarInv()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
 		</div>
 		
 			<div class="col-lg-12">
@@ -33,7 +34,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="inv in inventario | filter:search:strict" class="odd gradeX">
+								<tr ng-repeat="inv in inventario" class="odd gradeX">
 									<td>{{inv.nombre}}</td>
 									<td>{{inv.clave}}</td>
 									<td>{{inv.medidas}}</td>

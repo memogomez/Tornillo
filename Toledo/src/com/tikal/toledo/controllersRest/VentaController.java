@@ -2,6 +2,7 @@ package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -109,7 +110,7 @@ public class VentaController {
 	
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, SQLException{
 			AsignadorDeCharset.asignar(re, rs);
 			Venta l= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 			Calendar cal=Calendar.getInstance(TimeZone.getTimeZone("America/Mexico_City"));
@@ -121,7 +122,6 @@ public class VentaController {
 				l.setCliente(c.getNombre());
 			}
 			l.setEstatus("VENDIDO");
-			
 			
 			l.setMonto(actualizarInventario(l.getDetalles()));
 			l.setFolio(seriesdao.getSerieVenta());
@@ -189,8 +189,8 @@ public class VentaController {
 		Factura factura = facturadao.consultar(v.getUuid());
 		Comprobante com= Util.unmarshallXML(factura.getCfdiXML());
 		String rfc= com.getEmisor().getRfc();
-		
-		CancelaCFDIAckResponse cancelaCFDIAckResponse = client.getCancelaCFDIAckResponse(json,rfc);
+		String[] resp= new String[2];
+		CancelaCFDIAckResponse cancelaCFDIAckResponse = client.getCancelaCFDIAckResponse(v.getUuid(),rfc);
 		
 		try {
 			PrintWriter writer = res.getWriter();
@@ -231,9 +231,13 @@ public class VentaController {
 				String evento = "Se canceló la factura guardada con el id:"+factura.getUuid();
 //				RegistroBitacora registroBitacora = Util.crearRegistroBitacora(req.getSession(), "Operacional", evento);
 //				bitacoradao.addReg(registroBitacora);
-				
+				resp[0]="0"; 
+			}else{
+				resp[0]="1";
+				String mensaje=(String)respuesta.get(2);
+				resp[1]="Mensaje de respuesta: " +mensaje ;
 			}
-			writer.println(JsonConvertidor.toJson(respuesta));
+			writer.println(JsonConvertidor.toJson(resp));
 			// escribirRespuesta(respuesta, writer);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -307,7 +311,7 @@ public class VentaController {
 //				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
 //				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
 //			}else{
-				pdfFactura.construirPdf(cfdi, "", null);
+				pdfFactura.construirPdf(cfdi, "", null, Estatus.valueOf(venta.getEstatus()));
 //			}
 			pdfFactura.getDocument().close();
 			res.getOutputStream().flush();
@@ -339,7 +343,7 @@ public class VentaController {
 				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
 				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
 			}else{
-				pdfFactura.construirPdf(cfdi, factura.getSelloDigital(), factura.getCodigoQR());
+				pdfFactura.construirPdf(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getEstatus());
 			}
 			pdfFactura.getDocument().close();
 			res.getOutputStream().flush();
@@ -368,7 +372,7 @@ public class VentaController {
 	
 	@RequestMapping(value = {
 	"/productos/{page}" }, method = RequestMethod.GET, produces = "application/json")
-	public void productos(HttpServletRequest re, HttpServletResponse rs,@PathVariable int page) throws IOException{
+	public void productos(HttpServletRequest re, HttpServletResponse rs,@PathVariable int page) throws IOException, SQLException{
 		AsignadorDeCharset.asignar(re, rs);
 		int totalp = productodao.total();
 		int nump = totalp / 50;
@@ -420,7 +424,7 @@ public class VentaController {
 			reporte.write(res.getOutputStream());
 	}
 	
-	private float actualizarInventario(List<Detalle> detalles){
+	private float actualizarInventario(List<Detalle> detalles) throws SQLException{
 		float monto=0;
 		for(Detalle d:detalles){
 			if(d.getTipo()==0){

@@ -7,7 +7,7 @@ import com.tikal.toledo.sat.cfd.TUbicacionFiscal;
 
 @Entity
 public class DatosEmisor {
-
+ 
 	@Id 
 	private Long id;
 	

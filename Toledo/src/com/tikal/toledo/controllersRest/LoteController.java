@@ -1,8 +1,12 @@
 package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,21 +48,26 @@ public class LoteController {
 
 	@RequestMapping(value = {
 			"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException {
+	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, SQLException {
 		Lote l = (Lote) JsonConvertidor.fromJson(json, Lote.class);
 		lotedao.guardar(l);
+		String s="";
+		if(l.getTipo()==0){
 		Producto h = hdao.cargar(l.getIdProducto());
 		if (h != null) {
 			h.setExistencia(h.getExistencia() + l.getCantidad());
-			hdao.guardar(h);
-		} else {
+			s=hdao.guardar(h);
+		}
+		}else {
 			Tornillo t = tdao.cargar(l.getIdProducto());
 			if (t != null) {
 				t.setExistencia(t.getExistencia() + l.getCantidad());
-				tdao.guardar(t);
+				s=tdao.guardar(t);
+				
 			}
 		}
-		rs.getWriter().println(JsonConvertidor.toJson(l));
+		rs.getWriter().print(s);
+//		rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
 
 	@RequestMapping(value = {
@@ -84,5 +93,6 @@ public class LoteController {
 		}
 		rs.getWriter().println(JsonConvertidor.toJson(lvos));
 	}
+
 
 }

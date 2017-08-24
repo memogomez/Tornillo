@@ -1,12 +1,13 @@
 package com.tikal.toledo.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.tikal.toledo.model.Tornillo;
 
 public interface TornilloDAO {
 
-	public void guardar(Tornillo t);
+	public String guardar(Tornillo t);
 	
 	public void guardar(List<Tornillo> lista);
 
@@ -16,13 +17,15 @@ public interface TornilloDAO {
 	
 	public Tornillo buscarNombre(Tornillo t);
 	
-	public List<Tornillo> todos();
+	public List<Tornillo> todos()throws SQLException;
 	
-	public List<Tornillo> page(int p);
+	public List<Tornillo> page(int p)throws SQLException;
 	
 	public int total();
 	
 	public void alv();
 	
 	public void formula(float impuesto, float descuento, float ganancia);
+	
+	public void eliminar(Tornillo t) throws SQLException;
 }

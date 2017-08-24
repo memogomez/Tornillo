@@ -1,6 +1,7 @@
 package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +33,16 @@ public class TornilloController {
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException {
 		AsignadorDeCharset.asignar(re, rs);
 		Tornillo c = (Tornillo) JsonConvertidor.fromJson(json, Tornillo.class);
-		tornillodao.guardar(c);
-		rs.getWriter().println(JsonConvertidor.toJson(c));
+		String ms=tornillodao.guardar(c);
+		rs.getWriter().println(ms);
+	}
+	
+	@RequestMapping(value = {
+	"/elimina" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public void elimina(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, SQLException {
+		AsignadorDeCharset.asignar(re, rs);
+		Tornillo c = (Tornillo) JsonConvertidor.fromJson(json, Tornillo.class);
+		tornillodao.eliminar(c);
 	}
 
 	@RequestMapping(value = { "/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
@@ -50,14 +59,14 @@ public class TornilloController {
 	}
 
 	@RequestMapping(value = { "/findAll" }, method = RequestMethod.GET, produces = "application/json")
-	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException, SQLException {
 		AsignadorDeCharset.asignar(re, rs);
 		List<Tornillo> lista = tornillodao.todos();
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
 
 	@RequestMapping(value = { "/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
-	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException {
+	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException, SQLException {
 		AsignadorDeCharset.asignar(re, rs);
 		List<Tornillo> lista = tornillodao.page(page);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
@@ -65,33 +74,35 @@ public class TornilloController {
 
 	@RequestMapping(value = { "/numPages" }, method = RequestMethod.GET, produces = "application/json")
 	public void numOfPages(HttpServletRequest re, HttpServletResponse rs) throws IOException {
-		List<Tornillo> lista = tornillodao.todos();
-		int pages = (lista.size() / 50);
+		int total = tornillodao.total();
+		int pages = (total / 50);
 		pages++;
 		rs.getWriter().println(pages);
 	}
 
 	@RequestMapping(value = { "/setClaves" }, method = RequestMethod.GET, produces = "application/json")
-	public void claves(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+	public void claves(HttpServletRequest re, HttpServletResponse rs) throws IOException, SQLException {
 		List<Tornillo> lista=tornillodao.todos();
+		String query="";
 		for(Tornillo t:lista){
 			String nombre= t.getNombre();
 			if(nombre.toLowerCase().contains("din")){
 				nombre=nombre.substring(nombre.indexOf(" ")+1);
 				nombre=nombre.substring(nombre.indexOf(" ")+1);
 			}
+			String q="";
 			String clave=Parseador.getClave(nombre,t.getMedidas());
 			t.setClave(clave);
-			
-			System.out.println(clave);
+			tornillodao.guardar(t);
+//			q="Update t_tornillo set clave='"+clave+"' where id="+t.getId()+"; ";
+//			query+=q;
 		}
-		tornillodao.guardar(lista);
 		
-//		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
+		rs.getWriter().println(JsonConvertidor.toJson(lista));
 	}
 	
 	@RequestMapping(value = { "/comillas" }, method = RequestMethod.GET, produces = "application/json")
-	public void comillas(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+	public void comillas(HttpServletRequest re, HttpServletResponse rs) throws IOException, SQLException {
 		List<Tornillo> lista=tornillodao.todos();
 		for(Tornillo t:lista){
 			t.setMedidas(t.getMedidas().replace("&quot;", "\""));
@@ -107,7 +118,7 @@ public class TornilloController {
 	}
 	
 	@RequestMapping(value = { "/cambio" }, method = RequestMethod.GET, produces = "application/json")
-	public void cambio(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+	public void cambio(HttpServletRequest re, HttpServletResponse rs) throws IOException, SQLException {
 		List<Tornillo> lista=tornillodao.todos();
 		List<Tornillo> lista2= new ArrayList<Tornillo>();
 		for(Tornillo t:lista){

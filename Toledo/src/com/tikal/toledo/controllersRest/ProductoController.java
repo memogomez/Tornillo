@@ -1,6 +1,7 @@
 package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class ProductoController {
 	
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, SQLException{
 		AsignadorDeCharset.asignar(re, rs);
 			Producto c= (Producto) JsonConvertidor.fromJson(json, Producto.class);
 			productodao.guardar(c);
@@ -77,7 +78,7 @@ public class ProductoController {
 	
 	@RequestMapping(value = {
 	"/addMultipleH" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public void addMultipleH(HttpServletRequest re, HttpServletResponse rs,@RequestBody String cadena) throws IOException{
+	public void addMultipleH(HttpServletRequest re, HttpServletResponse rs,@RequestBody String cadena) throws IOException, SQLException{
 		AsignadorDeCharset.asignar(re, rs);
 		cadena = cadena.replace("<P>TOLEDO </P>", "");
 		List<Producto> lista=Parseador.procesaHerramientas(cadena);
@@ -110,7 +111,7 @@ public class ProductoController {
 	}
 	
 	@RequestMapping(value = { "/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
-	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException {
+	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException, SQLException {
 		AsignadorDeCharset.asignar(re, rs);
 		List<Producto> lista = productodao.todos(page);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
@@ -119,8 +120,8 @@ public class ProductoController {
 	@RequestMapping(value = {
 	"/numPages" }, method = RequestMethod.GET, produces = "application/json")
 	public void numOfPages(HttpServletRequest re, HttpServletResponse rs) throws IOException{
-		List<Producto> lista= productodao.todos();
-		int pages = (lista.size()/50);
+		int total=productodao.total();
+		int pages = (total/50);
 		pages++;
 		rs.getWriter().println(pages);
 	}
@@ -129,6 +130,14 @@ public class ProductoController {
 	public void alv(HttpServletRequest re, HttpServletResponse rs) throws IOException {
 		productodao.alv();
 		rs.getWriter().println(JsonConvertidor.toJson("ALV"));
+	}
+	
+	@RequestMapping(value = {
+	"/elimina" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public void delete(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, SQLException{
+		AsignadorDeCharset.asignar(re, rs);	
+		Producto p= (Producto) JsonConvertidor.fromJson(json, Producto.class);
+		productodao.eliminar(p);
 	}
 	
 	@RequestMapping(value = {

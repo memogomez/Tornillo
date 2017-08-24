@@ -19,10 +19,12 @@
     <include path="**.cache.*" expiration="365d" />
     <exclude path="**.gwt.rpc" />
   </static-files>
-
+  <use-google-connector-j>true</use-google-connector-j>
   <!-- Configure java.util.logging -->
   <system-properties>
     <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+    <property name="ae-cloudsql.cloudsql-database-url" value="jdbc:google:mysql://tornillosfact:us-central1:tornillos-db/tornillos_db?user=root&amp;password=TodoPoderoso1" />
+    <property name="ae-cloudsql.local-database-url" value="jdbc:mysql://google/tornillos_dbcloudSqlInstance=${INSTANCE_CONNECTION_NAME}&amp;socketFactory=com.google.cloud.sql.mysql.SocketFactory&amp;user=${user}&amp;password=${password}&amp;useSSL=false" />
   </system-properties>
 
 <sessions-enabled>true</sessions-enabled>
@@ -41,5 +43,7 @@
     stale session data. For details, see
     https://cloud.google.com/appengine/docs/java/config/appconfig#Java_appengine_web_xml_Enabling_sessions
   -->
+<!--   <threadsafe>true</threadsafe>EW -->
+
 
 </appengine-web-app>

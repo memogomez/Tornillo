@@ -12,8 +12,9 @@ import com.tikal.toledo.model.Tornillo;
 public class ProductoDAOImp implements ProductoDAO{
 
 	@Override
-	public void guardar(Producto p) {
+	public String guardar(Producto p) {
 		ofy().save().entity(p).now();
+		return "ok";
 	}
 
 	@Override
@@ -68,6 +69,11 @@ public class ProductoDAOImp implements ProductoDAO{
 	public void alv() {
 		List<Producto> lista= ofy().load().type(Producto.class).list();
 		ofy().delete().entities(lista).now();
+	}
+
+	@Override
+	public void eliminar(Producto p) {
+		ofy().delete().entity(p).now();
 	} 
 	
 }

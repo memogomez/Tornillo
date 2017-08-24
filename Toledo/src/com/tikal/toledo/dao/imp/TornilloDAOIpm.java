@@ -11,8 +11,9 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class TornilloDAOIpm implements TornilloDAO {
 
 	@Override
-	public void guardar(Tornillo t) {
+	public String guardar(Tornillo t) {
 		ofy().save().entity(t).now();
+		return t.getNombre();
 	}
 
 	@Override
@@ -94,6 +95,11 @@ public class TornilloDAOIpm implements TornilloDAO {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void eliminar(Tornillo t) {
+		ofy().delete().entity(t);
 	}
 
 }

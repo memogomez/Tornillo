@@ -25,4 +25,9 @@ public class LoteDAOImp implements LoteDAO {
 		ofy().save().entities(lotes).now();
 	}
 
+	@Override
+	public List<Lote> todos() {
+		return ofy().load().type(Lote.class).list();
+	}
+
 }

@@ -24,6 +24,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.tikal.toledo.factura.Estatus;
 import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.sat.cfd.Comprobante;
 import com.tikal.toledo.sat.cfd.Comprobante.Conceptos.Concepto;
@@ -89,7 +90,7 @@ public class PDFFactura {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public Document construirPdf(Comprobante comprobante, String selloDigital, byte[] bytesQRCode)
+	public Document construirPdf(Comprobante comprobante, String selloDigital, byte[] bytesQRCode, Estatus estatus)
 			throws DocumentException, MalformedURLException, IOException {
 		TimbreFiscalDigital tfd = null;
 		if (comprobante.getComplemento() != null) {
@@ -103,7 +104,7 @@ public class PDFFactura {
 				}
 			}
 		}
-		construirBoceto(comprobante, tfd,1);
+		construirBoceto(comprobante, tfd,0, estatus);
 
 		// si no hay timbre lanzar una excepción
 		/*
@@ -425,9 +426,9 @@ public class PDFFactura {
 		return document;
 	}
 
-	public Document construirPdf(Comprobante comprobante) throws DocumentException, MalformedURLException, IOException {
+	public Document construirPdf(Comprobante comprobante, Estatus estatus) throws DocumentException, MalformedURLException, IOException {
 
-		construirBoceto(comprobante, null,0);
+		construirBoceto(comprobante, null,0, estatus);
 
 		/*
 		 * Font fontContenidoSellos = new Font(Font.FontFamily.HELVETICA, 7.5F,
@@ -760,7 +761,7 @@ public class PDFFactura {
 			}
 		}
 
-		construirBoceto(comprobante, tfd,0);
+		construirBoceto(comprobante, tfd,0, Estatus.CANCELADO);
 		construirTimbre(selloDigital, bytesQRCode, tfd);
 
 		/*
@@ -798,7 +799,7 @@ public class PDFFactura {
 	private void agregarCeldaConFondo(String contenidoCelda, Font fuente, PdfPTable tabla, boolean centrado) {
 		PdfPCell celda = new PdfPCell(new Paragraph(contenidoCelda, fuente));
 		celda.setBorderWidth(1);
-		celda.setBorderColor(BaseColor.WHITE);
+		celda.setBorderColor(BaseColor.GRAY);
 		celda.setPadding(5);
 		celda.setBackgroundColor(BaseColor.GRAY);
 
@@ -927,7 +928,7 @@ public class PDFFactura {
 		fondo.restoreState();
 	}
 
-	private void construirBoceto(Comprobante comprobante, TimbreFiscalDigital tfd,int encabezado)
+	private void construirBoceto(Comprobante comprobante, TimbreFiscalDigital tfd,int encabezado, Estatus estatus)
 			throws DocumentException, MalformedURLException, IOException {
 		/*
 		 * Font fontTituloSellos = new Font(Font.FontFamily.HELVETICA, 7.5F,
@@ -955,7 +956,6 @@ public class PDFFactura {
 		celdaLogo.setBorder(PdfPCell.NO_BORDER);
 		// if (imagen != null) {
 		// Image imgLogo = Image.getInstance(new URL(imagen.getImage()));
-		//
 		// Chunk chunkLogo = new Chunk(imgLogo, 0, -35);
 		// celdaLogo.addElement(chunkLogo);
 		// }
@@ -990,7 +990,7 @@ public class PDFFactura {
 		PdfPCell celdaSubTablaEncabezado = new PdfPCell();
 		celdaSubTablaEncabezado.setBorderWidth(1);
 		PdfPTable subTablaEncabezado = new PdfPTable(1);
-		if(encabezado==0){
+		if(estatus.equals(Estatus.CANCELADO)|| estatus.equals(Estatus.TIMBRADO)){
 		agregarCeldaSinBorde("FACTURA", fontSerieYFolio, subTablaEncabezado, true);
 		}else{
 			agregarCeldaSinBorde("NOTA", fontSerieYFolio, subTablaEncabezado, true);
@@ -1017,15 +1017,13 @@ public class PDFFactura {
 		agregarCelda(comprobante.getReceptor().getRfc(), font3, tablaReceptorYHoraCert, false);
 
 		String lugarFechaEmiHoraCert = "";
-		// if (estatus.equals(Estatus.TIMBRADO) ||
-		// estatus.equals(Estatus.CANCELADO)){
-		// lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a
-		// ").concat(comprobante.getFecha().toString().concat(" /
-		// ").concat(tfd.getFechaTimbrado().toString()));
-		// }else if (estatus.equals(Estatus.GENERADO)){
-		// lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a
-		// ").concat(comprobante.getFecha().toString());
-		// }
+		
+		 if (estatus.equals(Estatus.TIMBRADO) ||
+		 estatus.equals(Estatus.CANCELADO)){
+		 lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ").concat(comprobante.getFecha().toString().concat(" / ").concat(tfd.getFechaTimbrado().toString()));
+		 }else if (estatus.equals(Estatus.GENERADO)|| estatus.equals(Estatus.VENDIDO)){
+		 lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ").concat(comprobante.getFecha().toString());
+		 }
 		agregarCelda(lugarFechaEmiHoraCert, font3, tablaReceptorYHoraCert, false);
 
 		document.add(tablaReceptorYHoraCert);

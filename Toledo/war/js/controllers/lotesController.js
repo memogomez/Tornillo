@@ -73,7 +73,10 @@ app.controller("lotesController", [
 		'proveedoresService',
 		function($scope, lotesService, $routeParams, $location, $window,
 				herramientasService, tornillosService, proveedoresService) {
-			$scope.newLote = {};
+			$scope.newLote = {
+					tipo:$routeParams.tipo
+			};
+			if($routeParams.tipo==0){
 			herramientasService.findHerramienta($routeParams.id).then(
 					function(data) {
 						$scope.newHerramienta = data;
@@ -82,7 +85,8 @@ app.controller("lotesController", [
 							$scope.newLote.idProducto = data.id;
 							$scope.newLote.fecha = new Date();
 						}
-					})
+					});
+			}else{
 			tornillosService.findTornillo($routeParams.id).then(function(data) {
 				$scope.newTornillo = data;
 				if (!$scope.newLote.idProducto) {
@@ -91,6 +95,7 @@ app.controller("lotesController", [
 					$scope.newLote.fecha = new Date();
 				}
 			})
+			}
 			$scope.registraLote = function(newLote) {
 				console.log(newLote);
 				lotesService.registraLote(newLote).then(function(newLote) {

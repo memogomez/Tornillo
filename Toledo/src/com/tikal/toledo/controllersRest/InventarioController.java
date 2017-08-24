@@ -1,6 +1,7 @@
 package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class InventarioController {
 	ProductoDAO productodao;
 
 	@RequestMapping(value = { "/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
-	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException {
+	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException, SQLException {
 		AsignadorDeCharset.asignar(re, rs);
 
 		int totalp = productodao.total();
@@ -66,8 +67,22 @@ public class InventarioController {
 		rs.getWriter().print(pages);
 	}
 	
+	@RequestMapping(value = { "/buscar/{search}" }, method = RequestMethod.GET, produces = "application/json")
+	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException {
+		List<List> listaf= new ArrayList<List>();
+		List<Producto> listap = productodao.buscar(search);
+		List<Tornillo> listat= tornillodao.buscar(search);
+		if(listap.size()>0){
+			listaf.add(listap);
+		}
+		if(listat.size()>0){
+			listaf.add(listat);
+		}
+		rs.getWriter().print(JsonConvertidor.toJson(listaf));
+	}
+	
 	@RequestMapping(value = { "/descargarInventario" }, method = RequestMethod.GET, produces = "application/vnd.ms-excel")
-	public void descarga(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+	public void descarga(HttpServletRequest re, HttpServletResponse rs) throws IOException, SQLException {
 		List<Producto> productos= productodao.todos();
 		List<Tornillo> tornillos= tornillodao.todos();
 		ReporteInventario reporte= new ReporteInventario();

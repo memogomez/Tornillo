@@ -8,6 +8,23 @@
   <link rel="stylesheet" href="css/estilos.css">
   <script src="js/bootstrap.min.js"></script>
   <script src="js/jquery.js"></script>  
+  <script type="text/javascript">
+  function httpGet(theUrl)
+  {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.open( "GET", "/alertas/sql", true ); // false for synchronous request
+      xmlHttp.send( null );
+      return xmlHttp.responseText;
+      console.log(xmlHttp.responseText);
+  }
+  </script>
+  
+  
+  <script type="text/javascript">
+  setInterval('httpGet()',30000);
+  </script>
+  
+  
 </head>
 <body>
 

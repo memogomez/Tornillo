@@ -16,6 +16,17 @@ app.service('herramientasService', [
 			});
 		return d.promise;
 	}
+	
+	this.eliminaHerramienta = function(herramienta) {
+		var d = $q.defer();
+		$http.post("/productos/elimina/", herramienta).then(
+			function(response) {
+				console.log(response);
+				d.resolve(response.data);
+			});
+		return d.promise;
+	}
+	
 	this.findHerramientas = function(page) {
 		var d = $q.defer();
 		$http.get("/productos/pages/"+page).then(function(response) {
@@ -101,6 +112,9 @@ app.controller("herramientasController",[
 		for(var i = inicio; i< fin; i++){
 			$scope.paginas.push(i+1);
 		}
+		for(var i = inicio; i<= fin; i++){
+			$('#pag'+i).removeClass("active");
+		}
 		$('#pag'+$scope.paginaActual).addClass("active");
 	}
 	
@@ -123,7 +137,7 @@ app.controller("herramientasController",[
 					$location.path("/herramientas");
 				})
 	}
-	$scope.herramientas = function(page) {
+	$scope.herramientasload = function(page) {
 		herramientasService.findHerramientas(page).then(
 			function(data) {
 				$scope.herramientas = data;
@@ -131,7 +145,6 @@ app.controller("herramientasController",[
 				console.log(data);
 			})
 	}
-	$scope.herramientas(1);
 	
 	$scope.editar = function(id) {
 		$location.path("/herramientas/edit/" + id);
@@ -147,7 +160,7 @@ app.controller("herramientasController",[
 	$scope.proveedores();
 	
 	$scope.lotes = function(id) {			
-		$location.path("/altaLotes/" + id);
+		$location.path("/altaLotes/0/" + id);
 	}
 	
 	$scope.buscar = function(buscar){
@@ -168,6 +181,19 @@ app.controller("herramientasController",[
 					console.log(data);
 				})
 	}
+	$scope.cargaPagina=function(page){
+		$scope.paginaActual=page;
+		$scope.herramientasload(page);
+	}
+	$scope.cargaPagina(1);
+	
+	$scope.eliminar= function(herramienta){
+			herramientasService.eliminarHerramienta(herramienta).then(function(data){
+				alert("Artículo eliminado");
+				$window.location.reload();
+			});
+	}
+	
 }]);
 app.controller("herramientasEditController",[
 	'$scope',

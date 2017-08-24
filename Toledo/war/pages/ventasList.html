@@ -57,20 +57,20 @@
 									<td>{{venta.formaDePago}}</td>
 									<td>{{venta.estatus}}</td>
 									<td><a class="btn btn-info" data-toggle="tooltip"
-											ng-show="venta.estatus!='FACTURADO'" title="Imprimir nota"
+											ng-show="venta.estatus!='FACTURADO' && venta.estatus!='CANCELADO'" title="Imprimir nota"
 											href="ventas/descargaNota/{{venta.id}}" download>
 											<i class="glyphicon glyphicon-print"></i>
 										</a>
 										<button class="btn btn-success" data-toggle="tooltip"
-											ng-show="venta.estatus!='FACTURADO'" title="Facturar"
+											ng-show="venta.estatus!='FACTURADO' && venta.estatus!='CANCELADO'" title="Facturar"
 											ng-click="facturar(venta)">
 											<i class="glyphicon glyphicon-list-alt"></i>
 										</button> <a class="btn btn-danger" data-toggle="tooltip"
-										ng-show="venta.estatus=='FACTURADO'" title="Imprimir PDF"
+										ng-show="venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO'" title="Imprimir PDF"
 										href="ventas/pdfDescarga/{{venta.uuid}}" download> <i
 											class="glyphicon glyphicon-print"></i>
 									</a> <a class="btn btn-primary" data-toggle="tooltip"
-										ng-show="venta.estatus=='FACTURADO'" title="Imprimir XML"
+										ng-show="venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO'" title="Imprimir XML"
 										href="ventas/xmlDescarga/{{venta.uuid}}" download> <i
 											class="glyphicon glyphicon-print"></i>
 									</a>

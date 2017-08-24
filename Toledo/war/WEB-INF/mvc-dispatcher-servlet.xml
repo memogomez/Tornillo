@@ -15,17 +15,19 @@
 	<!-- Beans DAOs GAE storage implementation -->
 	<bean class="com.tikal.toledo.dao.imp.ClienteDAOImp"/>
 	<bean class="com.tikal.toledo.dao.imp.LoteDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.ProductoDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.TornilloDAOIpm"/>
+<!-- 	<bean class="com.tikal.toledo.dao.imp.ProductoDAOImp"/> -->
+<!-- 	<bean class="com.tikal.toledo.dao.imp.TornilloDAOIpm"/> -->
 	<bean class="com.tikal.toledo.dao.imp.VentaDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.ProveedorDAOImp"/>
 	<bean class="com.tikal.toledo.dao.imp.EmisorDAOImp"/>
 	<bean class="com.tikal.toledo.security.UsuarioDAOImp"/>
 	<bean class="com.tikal.toledo.security.PerfilDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.FacturaDAOImpl"/>
+	
 	<bean class="com.tikal.toledo.dao.imp.AlertaDAOImp"/>
 	<bean class="com.tikal.toledo.dao.imp.SeriesDAOImp"/>
 
+	
+	<bean class="com.tikal.toledo.dao.imp.ProveedorDAOImp"/>
+	<bean class="com.tikal.toledo.dao.imp.FacturaDAOImpl"/>
 	<!-- Register Bean for Objectify's Entities -->
 	<bean class="com.tikal.toledo.Register" scope="singleton" />
 	
@@ -33,8 +35,21 @@
 	
 	<bean class="com.tikal.toledo.facturacion.ws.GenericClient"/>
 	
+	<bean class="com.tikal.toledo.database.sql.Conexion" scope="singleton"/>
+	<bean class="com.tikal.toledo.dao.imp.sql.TornilloDAOImp"/>
+	<bean class="com.tikal.toledo.dao.imp.sql.ProductoDAOImp"/>
+	
+	<!-- Bean SQL -->
+<!-- 	<bean class="com.tikal.toledo.database.sql.Conexion" scope="singleton"> -->
+<!-- 			<constructor-arg type="java.lang.String" value="jdbc:google:mysql://tornillosfact:us-central1:tornillos-db/tornillos_db?user=root&amp;password=TodoPoderoso1" />  -->
+<!-- 		    <constructor-arg type="java.lang.String" value="jdbc:mysql://google/tornillos_db?cloudSqlInstance=tornillosfact:us-central1:tornillos-db&amp;socketFactory=com.google.cloud.sql.mysql.SocketFactory&amp;user=root&amp;password=TodoPoderoso1&amp;useSSL=false" /> -->
+<!-- 	</bean> -->
+	
+    
+	
+	
 <!-- 	<bean class="com.tikal.cacao.security.CustomUsuarioServicio"></bean> -->
-
+	
 	<!-- Beans Components -->
 	
 	<!-- <bean class="com.tikal.cacao.sat.calculos.MapaRecursos" scope="singleton"></bean> -->

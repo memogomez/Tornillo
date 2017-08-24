@@ -15,6 +15,6 @@ public interface EmisorDAO {
 	public List<DatosEmisor> todos();
 	
 	public void eliminar(DatosEmisor e);
-	
+	 
 	public DatosEmisor getById(Long id);
 }

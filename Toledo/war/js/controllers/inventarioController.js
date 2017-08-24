@@ -59,6 +59,16 @@ app.service('inventarioService', [
 			});
 			return d.promise;
 		};
+		this.buscar = function(search) {
+			var d = $q.defer();
+			$http.get("/inventario/buscar/"+search).then(function(response) {
+				console.log(response);
+				d.resolve(response.data);
+			}, function(response) {
+				d.reject(response);
+			});
+			return d.promise;
+		};
 }])
 app.controller("inventarioController",[
 	'$scope',
@@ -141,13 +151,14 @@ app.controller("inventarioController",[
 				console.log(data);
 				$scope.todos=true;
 				$scope.inventario=[];
-				for(var i =0; i<data[1].length;i++){
-					$scope.inventario.push(data[1][i]);
-				}
 				for(var i =0; i<data[0].length;i++){
 					$scope.inventario.push(data[0][i]);
 				}
-				
+				if(data[1]){
+				for(var i =0; i<data[1].length;i++){
+					$scope.inventario.push(data[1][i]);
+				}
+				}
 			})
 		}
 		
@@ -164,4 +175,21 @@ app.controller("inventarioController",[
 		})
 		$scope.cargaInventario(1);
 	
+		$scope.buscarInv=function(){
+			inventarioService.buscar($scope.search).then(function(data){
+				$scope.inventario=[];
+				if(data[0]){
+					for(var i =0; i<data[0].length;i++){
+						$scope.inventario.push(data[0][i]);
+					}
+					if(data[1]){
+						for(var i =0; i<data[1].length;i++){
+							$scope.inventario.push(data[1][i]);
+						}
+					}
+				}else{
+					alert("No se encontraron articulos")
+				}
+			})
+		}
 }]);

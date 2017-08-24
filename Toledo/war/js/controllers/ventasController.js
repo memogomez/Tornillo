@@ -383,7 +383,11 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 	
 	$scope.cancelarFactura=function(venta){
 		ventasService.cancelarFactura(venta.id).then(function(data){
-			alert("La factura se canceló con éxito");
+			if(data[0]=="0"){
+				alert("La factura se canceló con éxito");
+			}else{
+				alert(data[1]);
+			}
 			$window.location.reload();
 		})
 	}

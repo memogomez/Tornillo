@@ -23,6 +23,8 @@ public class Lote {
 	private float costo;
 	
 	private Long proveedor;
+	
+	private int tipo;
 
 	public Long getId() {
 		return id;
@@ -70,6 +72,14 @@ public class Lote {
 
 	public void setProveedor(Long proveedor) {
 		this.proveedor = proveedor;
+	}
+
+	public int getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(int tipo) {
+		this.tipo = tipo;
 	}
 	
 }

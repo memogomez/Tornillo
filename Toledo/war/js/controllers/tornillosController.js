@@ -16,6 +16,17 @@ app.service('tornillosService', [
 			});
 		return d.promise;
 	}
+	
+	this.eliminaTornillo = function(tornillo) {
+		var d = $q.defer();
+		$http.post("/tornillos/elimina/", tornillo).then(
+			function(response) {
+				console.log(response);
+				d.resolve(response.data);
+			});
+		return d.promise;
+	}
+	
 	this.findTornillos = function() {
 		var d = $q.defer();
 		$http.get("/tornillos/findAll/").then(function(response) {
@@ -125,7 +136,7 @@ app.controller("tornillosController",[
 		tornillosService.registraTornillos(newTornillo).then(function(newTornillo) {
 					alert("Tornillo Agregado");
 //					$window.location.reload();
-//					$location.path("/herramientas");
+//					$location.path("/tornillos");
 				})
 	}
 	$scope.cargaTornillos = function(page) {
@@ -151,7 +162,7 @@ app.controller("tornillosController",[
 	$scope.proveedores();
 	
 	$scope.lotes = function(id) {			
-		$location.path("/altaLotes/" + id);
+		$location.path("/altaLotes/1/" + id);
 	}
 	$scope.todos=true;
 	$scope.buscar = function(buscar){
@@ -162,6 +173,13 @@ app.controller("tornillosController",[
 					$scope.busqueda.buscar="";
 					console.log(data);
 				})
+	}
+	
+	$scope.eliminar= function(tornillo){
+		tornillosService.eliminaTornillo(tornillo).then(function(data){
+			alert("Artículo eliminado");
+			$window.location.reload();
+		})
 	}
 	
 	$scope.mostrarTornillos = function(){

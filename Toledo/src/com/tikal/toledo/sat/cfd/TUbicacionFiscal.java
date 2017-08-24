@@ -4,7 +4,7 @@
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
 // Generado el: 2016.11.09 a las 05:26:25 PM CST 
 //
-
+ 
 
 package com.tikal.toledo.sat.cfd;
 
