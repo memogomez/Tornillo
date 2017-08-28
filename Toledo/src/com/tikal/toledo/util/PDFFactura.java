@@ -90,9 +90,10 @@ public class PDFFactura {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public Document construirPdf(Comprobante comprobante, String selloDigital, byte[] bytesQRCode, Estatus estatus)
+	public Document construirPdf(Comprobante comprobante, String selloDigital, byte[] bytesQRCode, Estatus estatus, int tipo)
 			throws DocumentException, MalformedURLException, IOException {
 		TimbreFiscalDigital tfd = null;
+		if(tipo==1){
 		if (comprobante.getComplemento() != null) {
 			List<Object> complemento = comprobante.getComplemento().getAny();
 
@@ -104,7 +105,8 @@ public class PDFFactura {
 				}
 			}
 		}
-		construirBoceto(comprobante, tfd,0, estatus);
+		}
+		construirBoceto(comprobante, tfd,tipo, estatus);
 
 		// si no hay timbre lanzar una excepción
 		/*
@@ -1017,13 +1019,16 @@ public class PDFFactura {
 		agregarCelda(comprobante.getReceptor().getRfc(), font3, tablaReceptorYHoraCert, false);
 
 		String lugarFechaEmiHoraCert = "";
-		
+		if(encabezado==1){
 		 if (estatus.equals(Estatus.TIMBRADO) ||
 		 estatus.equals(Estatus.CANCELADO)){
 		 lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ").concat(comprobante.getFecha().toString().concat(" / ").concat(tfd.getFechaTimbrado().toString()));
 		 }else if (estatus.equals(Estatus.GENERADO)|| estatus.equals(Estatus.VENDIDO)){
 		 lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ").concat(comprobante.getFecha().toString());
 		 }
+		}else{
+			lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ").concat(comprobante.getFecha().toString());
+		}
 		agregarCelda(lugarFechaEmiHoraCert, font3, tablaReceptorYHoraCert, false);
 
 		document.add(tablaReceptorYHoraCert);

@@ -50,25 +50,34 @@ public class Parseador {
 			String reng= renglones[i];
 			reng= reng.replaceAll("[$]", "");
 			reng= reng.replaceAll("\r", "");
+			reng= reng.replaceAll("#", "");
 			Tornillo t= new Tornillo();
 			String[] values = reng.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-			if(values.length>4){
-			t.setNombre(values[0]);
-			t.setMedidas(values[1]);
-			if(values[2].length()>0)
-			t.setPrecioReferencia(Float.parseFloat(values[2].replaceAll(",", "").replace("\"", "").replace("-", "0")));
-			if(values[3].length()>0)
-			t.setPrecioMostrador(Float.parseFloat(values[3].replaceAll(",", "").replace("\"", "").replace("-", "0")));
-			if(values[4].length()>0)
-			t.setPrecioMayoreo(Float.parseFloat(values[4].replaceAll(",", "").replace("\"", "").replace("-", "0")));
-			if(values[5].length()>0)
-			t.setPrecioCredito(Float.parseFloat(values[5].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values.length>5){
 			
-			if(values[6].trim().length()>0){
-				t.setExistencia(Integer.parseInt(values[6].replaceAll(",", "").replace("\"", "")));
+			t.setNombre(values[1]);
+			t.setMedidas(values[2]);
+			if(values[3].length()>0)
+			t.setPrecioReferencia(Float.parseFloat(values[3].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[4].length()>0)
+			t.setPrecioMostrador(Float.parseFloat(values[4].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[5].length()>0)
+			t.setPrecioMayoreo(Float.parseFloat(values[5].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[6].length()>0)
+			t.setPrecioCredito(Float.parseFloat(values[6].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			
+			if(values[7].trim().length()>0){
+				t.setExistencia(Integer.parseInt(values[7].replaceAll(",", "").replace("\"", "")));
 				lista .add(t);
 			}
+			if(values[0].length()>0){
+				t.setClave(values[0]);
+			}else{
+				t.setClave(getClave(t.getNombre(),t.getMedidas()));
 			}
+			lista.add(t);
+			}
+			
 		}
 		return lista;
 	}
@@ -146,7 +155,8 @@ public class Parseador {
 		for(String palabra:palabras){
 			if(palabra.length()>0){
 			if(palabra.matches ("^.*\\d.*$")){
-				clave+=palabra;
+//				clave+=palabra;
+				continue;
 			}else{
 				clave+= palabra.substring(0, 1);
 			}
@@ -160,7 +170,7 @@ public class Parseador {
 			
 		}
 		}
-		return clave;
+		return clave.replace("/", "");
 	}
 
 }

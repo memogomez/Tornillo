@@ -23,6 +23,8 @@ public class Cliente {
 	
 	private int descuento;
 	
+	private String email;
+	
 	public Long getId() {
 		return id;
 	}
@@ -77,6 +79,14 @@ public class Cliente {
 
 	public void setDescuento(int descuento) {
 		this.descuento = descuento;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 	

@@ -15,8 +15,8 @@
 	<!-- Beans DAOs GAE storage implementation -->
 	<bean class="com.tikal.toledo.dao.imp.ClienteDAOImp"/>
 	<bean class="com.tikal.toledo.dao.imp.LoteDAOImp"/>
-<!-- 	<bean class="com.tikal.toledo.dao.imp.ProductoDAOImp"/> -->
-<!-- 	<bean class="com.tikal.toledo.dao.imp.TornilloDAOIpm"/> -->
+	<bean class="com.tikal.toledo.dao.imp.ProductoDAOImp"/>
+	<bean class="com.tikal.toledo.dao.imp.TornilloDAOIpm"/>
 	<bean class="com.tikal.toledo.dao.imp.VentaDAOImp"/>
 	<bean class="com.tikal.toledo.dao.imp.EmisorDAOImp"/>
 	<bean class="com.tikal.toledo.security.UsuarioDAOImp"/>
@@ -35,9 +35,9 @@
 	
 	<bean class="com.tikal.toledo.facturacion.ws.GenericClient"/>
 	
-	<bean class="com.tikal.toledo.database.sql.Conexion" scope="singleton"/>
-	<bean class="com.tikal.toledo.dao.imp.sql.TornilloDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.sql.ProductoDAOImp"/>
+<!-- 	<bean class="com.tikal.toledo.database.sql.Conexion" scope="singleton"/> -->
+<!-- 	<bean class="com.tikal.toledo.dao.imp.sql.TornilloDAOImp"/> -->
+<!-- 	<bean class="com.tikal.toledo.dao.imp.sql.ProductoDAOImp"/> -->
 	
 	<!-- Bean SQL -->
 <!-- 	<bean class="com.tikal.toledo.database.sql.Conexion" scope="singleton"> -->

@@ -57,7 +57,7 @@
 									<td>{{venta.formaDePago}}</td>
 									<td>{{venta.estatus}}</td>
 									<td><a class="btn btn-info" data-toggle="tooltip"
-											ng-show="venta.estatus!='FACTURADO' && venta.estatus!='CANCELADO'" title="Imprimir nota"
+											ng-show="venta.estatus!='FACTURADO'" title="Imprimir nota"
 											href="ventas/descargaNota/{{venta.id}}" download>
 											<i class="glyphicon glyphicon-print"></i>
 										</a>
@@ -71,9 +71,14 @@
 											class="glyphicon glyphicon-print"></i>
 									</a> <a class="btn btn-primary" data-toggle="tooltip"
 										ng-show="venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO'" title="Imprimir XML"
-										href="ventas/xmlDescarga/{{venta.uuid}}" download> <i
+										href="ventas/xmlDescarga/{{venta.uuid}}" download="{{venta.uuid+'.xml'}}"> <i
 											class="glyphicon glyphicon-print"></i>
 									</a>
+										<button class="btn btn-info" data-toggle="tooltip"
+											ng-show="(venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO')&&venta.cliente!='Otro' && venta.cliente!='Publico en general'" title="Enviar mail"
+											ng-click="mailFactura(venta)">
+											<i class="glyphicon glyphicon-envelope" ></i>
+										</button>
 										<button class="btn btn-danger" data-toggle="tooltip"
 											ng-show="venta.estatus=='FACTURADO'" title="Cancelar"
 											ng-click="cancelarFactura(venta)">

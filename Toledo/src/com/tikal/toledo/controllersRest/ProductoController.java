@@ -49,31 +49,34 @@ public class ProductoController {
 	public void addMultiple(HttpServletRequest re, HttpServletResponse rs,@RequestBody String cadena) throws IOException{
 		AsignadorDeCharset.asignar(re, rs);
 		cadena = cadena.replace("<P>TOLEDO </P>", "");
-		List<Tornillo> lista=Parseador.procesaTornillos(cadena);
+		List<Producto> lista=Parseador.procesaHerramientas(cadena);
 //			Producto c= (Producto) JsonConvertidor.fromJson(json, Producto.class);
 //			productodao.guardar(c);
+ 		String querysote="";
 			for(int i=0;i<lista.size();i++){
-				Tornillo t= lista.get(i);
-				Tornillo b=tdao.buscarNombre(t);
-				if(b!=null){
-					b.setExistencia(b.getExistencia()+t.getExistencia());
-					b.setPrecioCredito(t.getPrecioCredito());
-					b.setPrecioMayoreo(t.getPrecioMayoreo());
-					b.setPrecioMostrador(t.getPrecioMostrador());
-					if(b.getClave()==null){
-						b.setClave(Parseador.getClave(b.getNombre(),b.getMedidas()));
-					}
-					lista.set(i, b);
-					continue;
-				}
-				if(t.getClave()==null){
-					t.setClave(Parseador.getClave(t.getNombre(),t.getMedidas()));
-				}
-				
+				Producto t= lista.get(i);
+//				Tornillo b=tdao.buscarNombre(t);
+//				if(b!=null){
+//					b.setExistencia(b.getExistencia()+t.getExistencia());
+//					b.setPrecioCredito(t.getPrecioCredito());
+//					b.setPrecioMayoreo(t.getPrecioMayoreo());
+//					b.setPrecioMostrador(t.getPrecioMostrador());
+//					if(b.getClave()==null){
+//						b.setClave(Parseador.getClave(b.getNombre(),b.getMedidas()));
+//					}
+//					lista.set(i, b);
+//					continue;
+//				}
+//				if(t.getClave()==null){
+//					t.setClave(Parseador.getClave(t.getNombre(),t.getMedidas()));
+//				}
+				querysote+=this.hazqueryp(t)+"\n";
 			}
-		
-			rs.getWriter().println(JsonConvertidor.toJson(lista));
-			tdao.guardar(lista);
+			
+			rs.getWriter().println(querysote);
+//			rs.getWriter().println(JsonConvertidor.toJson(lista));
+//			tdao.guardar(lista);
+			
 	}
 	
 	@RequestMapping(value = {
@@ -150,5 +153,68 @@ public class ProductoController {
 			productodao.formula(impuesto, descuento, ganancia);
 			tornillodao.formula(impuesto, descuento, ganancia);
 			rs.getWriter().println(JsonConvertidor.toJson(args));
+	}
+	
+	private String hazqueryt(Tornillo t){
+		String query= "INSERT INTO t_tornillo (descuento, existencia, ganancia, impuesto, marca, maximo, minimo, mayoreo, medidas, nombre, precioCredito, PrecioMayoreo, precioMostrador, precioReferencia, proveedor, tipo, clave) VALUES (";
+		
+		query+=t.getDescuento()+", ";
+		query+=t.getExistencia()+", ";
+		query+=t.getGanancia()+", ";
+		query+= t.getImpuesto()+", ";
+		if(t.getMarca()!=null){
+		query+= "'"+t.getMarca()+"', ";
+		}else{
+			query+= "NULL, ";
+		}
+		query+= t.getMaximo()+", ";
+		query+= t.getMinimo()+", ";
+		query+= t.getMayoreo()+", ";
+		query+= "'"+t.getMedidas()+"', ";
+		query+= "'"+t.getNombre()+"', ";
+		query+= t.getPrecioCredito()+", ";
+		query+= t.getPrecioMayoreo()+", ";
+		query+= t.getPrecioMostrador()+", ";
+		query+= t.getPrecioReferencia()+", ";
+		if(t.getProveedor()!=null){
+			query+="'"+t.getProveedor()+"', ";
+		}else{
+			query+="NULL, ";
+		}
+		query+="1, ";
+		query+= "'"+t.getClave()+"');";
+			
+		
+		return query;
+	}
+	private String hazqueryp(Producto t){
+		String query= "INSERT INTO t_producto (descuento, existencia, ganancia, impuesto, marca, maximo, minimo, nombre, precioCredito, PrecioMayoreo, precioMostrador, precioReferencia, proveedor, tipo, clave) VALUES (";
+		
+		query+=t.getDescuento()+", ";
+		query+=t.getExistencia()+", ";
+		query+=t.getGanancia()+", ";
+		query+= t.getImpuesto()+", ";
+		if(t.getMarca()!=null){
+		query+= "'"+t.getMarca()+"', ";
+		}else{
+			query+= "NULL, ";
+		}
+		query+= t.getMaximo()+", ";
+		query+= t.getMinimo()+", ";
+		query+= "'"+t.getNombre()+"', ";
+		query+= t.getPrecioCredito()+", ";
+		query+= t.getPrecioMayoreo()+", ";
+		query+= t.getPrecioMostrador()+", ";
+		query+= t.getPrecioReferencia()+", ";
+		if(t.getProveedor()!=null){
+			query+="'"+t.getProveedor()+"', ";
+		}else{
+			query+="NULL, ";
+		}
+		query+="0, ";
+		query+= "'"+t.getClave()+"');";
+			
+		
+		return query;
 	}
 }

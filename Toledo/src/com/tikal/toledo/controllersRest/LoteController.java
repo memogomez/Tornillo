@@ -3,11 +3,9 @@ package com.tikal.toledo.controllersRest;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +26,7 @@ import com.tikal.toledo.model.Lote;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Proveedor;
 import com.tikal.toledo.model.Tornillo;
+import com.tikal.toledo.util.EmailSender;
 import com.tikal.toledo.util.JsonConvertidor;
 
 @Controller
@@ -94,5 +93,9 @@ public class LoteController {
 		rs.getWriter().println(JsonConvertidor.toJson(lvos));
 	}
 
-
+	@RequestMapping(value = { "/emailTest" }, method = RequestMethod.GET)
+	public void emailtest(HttpServletRequest re, HttpServletResponse rs) throws IOException, MessagingException {
+		EmailSender mail= new EmailSender();
+		mail.mailprueba();
+	}
 }

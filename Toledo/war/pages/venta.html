@@ -94,10 +94,12 @@
 <!-- 							<td>{{venta.fecha}}</td> -->
 
 						</tr>
+						
 						<tr ng-repeat="det in venta.detalles">
 							<td>{{det.descripcion}}</td>
 							<td>{{det.cantidad}}</td>
 							<td>{{det.importe}}</td>
+							<td><a ng-click="quitaConcepto($index)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
 						</tr>
 						<tr><td><b>Total</b></td>
 							<td></td>

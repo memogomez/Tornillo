@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -51,6 +52,7 @@ import com.tikal.toledo.sat.cfd.Comprobante;
 import com.tikal.toledo.sat.timbrefiscaldigital.TimbreFiscalDigital;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.CorteDeCaja;
+import com.tikal.toledo.util.EmailSender;
 import com.tikal.toledo.util.JsonConvertidor;
 import com.tikal.toledo.util.PDFFactura;
 import com.tikal.toledo.util.Util;
@@ -140,12 +142,13 @@ public class VentaController {
 	
 	@RequestMapping(value = {
 	"/facturar" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public void facturar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+	public void facturar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, MessagingException, DocumentException{
 		AsignadorDeCharset.asignar(re, rs);
 			Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 			DatosEmisor emisor= emisordao.getActivo();
 			int folio = seriesdao.getSerieFactura();
-			Comprobante c=cvFactory.generarFactura(venta, clientedao.cargar(venta.getIdCliente()),emisor);
+			Cliente cliente= clientedao.cargar(venta.getIdCliente());
+			Comprobante c=cvFactory.generarFactura(venta, cliente,emisor);
 			//facturar
 			c.setFolio(folio+"");
 			c.setSerie("FS");
@@ -174,6 +177,10 @@ public class VentaController {
 				ventadao.guardar(venta);
 				facturadao.guardar(f);
 				respuesta[0]="0";
+				EmailSender mailero = new EmailSender();
+				if(cliente.getEmail()!=null){
+					mailero.enviaFactura(cliente.getEmail(), f, "", cfdi.getComplemento().getAny().get(0).toString());
+				}
 			}else{
 				respuesta[0]="1";
 				String mensaje=(String)listaResultado.get(2);
@@ -311,7 +318,7 @@ public class VentaController {
 //				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
 //				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
 //			}else{
-				pdfFactura.construirPdf(cfdi, "", null, Estatus.valueOf(venta.getEstatus()));
+				pdfFactura.construirPdf(cfdi, "", null, Estatus.valueOf(venta.getEstatus()),0);
 //			}
 			pdfFactura.getDocument().close();
 			res.getOutputStream().flush();
@@ -343,7 +350,7 @@ public class VentaController {
 				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
 				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
 			}else{
-				pdfFactura.construirPdf(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getEstatus());
+				pdfFactura.construirPdf(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getEstatus(),1);
 			}
 			pdfFactura.getDocument().close();
 			res.getOutputStream().flush();
@@ -353,6 +360,21 @@ public class VentaController {
 			e.printStackTrace();
 		} catch (DocumentException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = {"/sendmail" }, method = RequestMethod.POST,consumes= "application/json")
+	public void mail(HttpServletRequest re, HttpServletResponse res, @RequestBody String json) throws IOException, MessagingException, DocumentException{
+		Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
+		Cliente c= clientedao.cargar(venta.getIdCliente());
+		Factura f= facturadao.consultar(venta.getUuid());
+		EmailSender mailero = new EmailSender();
+		if(f!=null){
+			if(c.getEmail()!=null){
+				Comprobante cfdi= Util.unmarshallXML(f.getCfdiXML());
+				mailero.enviaFactura(c.getEmail(), f, "", cfdi.getComplemento().getAny().get(0).toString());
+				res.getWriter().print("Se envió");
+			}
 		}
 	}
 	

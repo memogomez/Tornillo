@@ -83,6 +83,16 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		});
 		return d.promise;
 	}
+	this.enviarFactura= function(venta){
+		var d = $q.defer();
+		$http.post("/ventas/sendmail/",venta).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
 	
 	this.numPages = function(){
 		var d = $q.defer();
@@ -120,6 +130,16 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 		$('#pag'+$scope.paginaActual).addClass("active");
 	}
 	
+	$scope.quitaConcepto=function(index){
+		$scope.venta.detalles.splice(index, 1);
+		$scope.venta.total=0;
+		for(var i=0; i<$scope.venta.detalles.length; i++){
+			$scope.venta.total+=	parseFloat($scope.venta.detalles[i].importe);
+			$scope.venta.total=parseFloat($scope.venta.total.toFixed(2));
+		}
+		
+	}
+	
 	$scope.cargarPagina=function(pag){
 		if($scope.paginaActual!=pag){
 			$scope.paginaActual=pag;
@@ -131,7 +151,6 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 		$scope.llenarPags();
 		
 	})
-	
 	
 	$scope.venta={
 			fecha:new Date(),
@@ -196,6 +215,8 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 //	$scope.tornillos();
 	
 	$scope.agregarDetalle=function(producto){
+		if(producto.precio){
+			if(producto.cantidad){
 		$scope.MetodoPago=false;
 		var detalle={}
 		detalle.idProducto=producto.id;
@@ -217,6 +238,12 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 		for(var i=0; i<$scope.venta.detalles.length; i++){
 			$scope.venta.total+=	parseFloat($scope.venta.detalles[i].importe);
 			$scope.venta.total=parseFloat($scope.venta.total.toFixed(2));
+		}
+			}else{
+				alert("Indique la cantida");
+			}
+		}else{
+			alert("Seleccione un precio para el producto");
 		}
 	}
 	
@@ -328,6 +355,11 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 			})
 	}
 
+	$scope.mailFactura=function(venta){
+		ventasService.enviarFactura(venta).then(function(venta){
+			alert("Factura enviada");
+		})
+	}
 	
 
 	$scope.facturar = function(venta){
