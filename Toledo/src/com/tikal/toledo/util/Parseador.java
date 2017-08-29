@@ -68,7 +68,6 @@ public class Parseador {
 			
 			if(values[7].trim().length()>0){
 				t.setExistencia(Integer.parseInt(values[7].replaceAll(",", "").replace("\"", "")));
-				lista .add(t);
 			}
 			if(values[0].length()>0){
 				t.setClave(values[0]+getClave2(t.getMedidas()));
