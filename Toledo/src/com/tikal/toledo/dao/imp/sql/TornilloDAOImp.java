@@ -314,7 +314,11 @@ public class TornilloDAOImp implements TornilloDAO {
 			statementCreate.setString(5, marca);
 			statementCreate.setInt(6, t.getMaximo());
 			statementCreate.setInt(7, t.getMinimo());
-			statementCreate.setInt(8, Integer.parseInt(t.getMayoreo()));	
+			if(t.getMayoreo()!=null){
+				statementCreate.setInt(8, Integer.parseInt(t.getMayoreo()));
+			}else{
+				statementCreate.setInt(8, 0);
+			}
 			statementCreate.setString(9, t.getMedidas());
 			statementCreate.setString(10, t.getNombre());
 			statementCreate.setFloat(11, t.getPrecioCredito());

@@ -180,7 +180,7 @@ public class Parseador {
 			if(medidas.contains("x")){
 				String[] pals= medidas.split("x"); 
 				if(pals[0].contains("-")){
-					pals[0]= pals[0].substring(pals[0].indexOf("-"));
+					pals[0]= pals[0].substring(0,pals[0].indexOf("-"));
 					pals[0]= pals[0].replace("-","");
 				}
 				medidas= pals[0]+pals[1];
