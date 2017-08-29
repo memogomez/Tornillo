@@ -71,9 +71,9 @@ public class Parseador {
 				lista .add(t);
 			}
 			if(values[0].length()>0){
-				t.setClave(values[0]);
+				t.setClave(values[0]+getClave2(t.getMedidas()));
 			}else{
-				t.setClave(getClave(t.getNombre(),t.getMedidas()));
+				t.setClave(getClave2(t.getMedidas()));
 			}
 			lista.add(t);
 			}
@@ -173,4 +173,26 @@ public class Parseador {
 		return clave.replace("/", "");
 	}
 
+	public static String getClave2(String medidas){
+		String clave="";
+		
+		if(medidas!=null){
+			medidas = medidas.toLowerCase();
+			if(medidas.contains("x")){
+				String[] pals= medidas.split("x"); 
+				if(pals[0].contains("-")){
+					pals[0]= pals[0].substring(pals[0].indexOf("-"));
+					pals[0]= pals[0].replace("-","");
+				}
+				medidas= pals[0]+pals[1];
+			}
+			for(int i=0; i<medidas.length();i++){
+				if(Character.isDigit(medidas.charAt(i))){
+					clave+=medidas.charAt(i);
+				}
+			
+			}
+		}
+		return clave.replace("/", "");
+	}
 }
