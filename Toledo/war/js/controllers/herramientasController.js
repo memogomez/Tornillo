@@ -17,7 +17,7 @@ app.service('herramientasService', [
 		return d.promise;
 	}
 	
-	this.eliminaHerramienta = function(herramienta) {
+	this.eliminarHerramienta = function(herramienta) {
 		var d = $q.defer();
 		$http.post("/productos/elimina/", herramienta).then(
 			function(response) {
@@ -188,10 +188,12 @@ app.controller("herramientasController",[
 	$scope.cargaPagina(1);
 	
 	$scope.eliminar= function(herramienta){
+			if(confirm("¿Desea eliminar el producto?")){
 			herramientasService.eliminarHerramienta(herramienta).then(function(data){
 				alert("Artículo eliminado");
 				$window.location.reload();
 			});
+			}
 	}
 	
 }]);

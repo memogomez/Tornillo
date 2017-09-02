@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -27,8 +29,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.stream.StreamSource;
 
 import com.tikal.toledo.facturacion.FormatoFecha;
+import com.tikal.toledo.model.Perfil;
+import com.tikal.toledo.model.Usuario;
 import com.tikal.toledo.sat.cfd.Comprobante;
 import com.tikal.toledo.sat.timbrefiscaldigital.TimbreFiscalDigital;
+import com.tikal.toledo.security.PerfilDAO;
+import com.tikal.toledo.security.UsuarioDAO;
 
 import mx.gob.sat.cancelacfd.Acuse;
 
@@ -318,6 +324,33 @@ public class Util {
 		}
 		return null;
 	}
+	
+	
+	public static boolean verificarPermiso(HttpServletRequest request, UsuarioDAO usuariodao, PerfilDAO  perfildao, int... per){
+		HttpSession s = request.getSession();
+		String nombreUsuario = (String) s.getAttribute("userName");
+		if(nombreUsuario == null){
+			return false;
+		}else{
+			Usuario usuario = usuariodao.consultarUsuario(nombreUsuario);
+			Perfil perfil = perfildao.consultarPerfil(usuario.getPerfil());
+			for(int p: per)
+			if(perfil.getPermisos()[p]==true){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean verificarsesion(HttpServletRequest request){
+		HttpSession s = request.getSession();
+		String nombreUsuario = (String) s.getAttribute("userName");
+		if(nombreUsuario == null){
+			return false;
+		}
+		return true;
+	}
+	
 	
 	
 }

@@ -18,14 +18,18 @@ public class Parseador {
 			Producto t= new Producto();
 			String[] values = reng.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 			if(values.length>4){
-			t.setNombre(values[0]);
+				String nombre= values[0];
+				if( nombre.startsWith("\"") && nombre.endsWith("\"")){
+					nombre= nombre.substring(1, nombre.length()-2);
+				}
+			t.setNombre(nombre);
 			if(values[1].length()>0){
 				t.setClave(values[1]);
 			}
-			if(values[2].length()>0)
-			t.setPrecioMayoreo(Float.parseFloat(values[2].replaceAll(",", "").replace("\"", "").replace("-", "0")));
 			if(values[3].length()>0)
-			t.setPrecioMostrador(Float.parseFloat(values[3].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			t.setPrecioMayoreo(Float.parseFloat(values[3].replaceAll(",", "").replace("\"", "").replace("-", "0")));
+			if(values[2].length()>0)
+			t.setPrecioMostrador(Float.parseFloat(values[2].replaceAll(",", "").replace("\"", "").replace("-", "0")));
 			if(values[4].length()>0)
 			t.setPrecioCredito(Float.parseFloat(values[4].replaceAll(",", "").replace("\"", "").replace("-", "0")));
 			if(values[5].length()>0)
@@ -55,7 +59,13 @@ public class Parseador {
 			String[] values = reng.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 			if(values.length>5){
 			
-			t.setNombre(values[1]);
+				
+				String nombre= values[1];
+				if( nombre.startsWith("\"") && nombre.endsWith("\"")){
+					nombre= nombre.substring(1, nombre.length()-2);
+				}
+			t.setNombre(nombre);
+			
 			t.setMedidas(values[2]);
 			if(values[3].length()>0)
 			t.setPrecioReferencia(Float.parseFloat(values[3].replaceAll(",", "").replace("\"", "").replace("-", "0")));
@@ -66,14 +76,23 @@ public class Parseador {
 			if(values[6].length()>0)
 			t.setPrecioCredito(Float.parseFloat(values[6].replaceAll(",", "").replace("\"", "").replace("-", "0")));
 			
-			if(values[7].trim().length()>0){
-				t.setExistencia(Integer.parseInt(values[7].replaceAll(",", "").replace("\"", "")));
+			if(values.length==8){
+				if(values[7].trim().length()>0){
+					t.setExistencia(Integer.parseInt(values[7].replaceAll(",", "").replace("\"", "")));
+				}
 			}
 			if(values[0].length()>0){
 				t.setClave(values[0]+getClave2(t.getMedidas()));
 			}else{
 				t.setClave(getClave2(t.getMedidas()));
 			}
+			
+//			if(values[0].length()>0){
+//				t.setClave(values[0]);
+//			}else{
+//				t.setClave(getClave(t.getNombre(),t.getMedidas()));
+//			}
+			
 			lista.add(t);
 			}
 			

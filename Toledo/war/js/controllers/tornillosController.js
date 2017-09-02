@@ -176,10 +176,12 @@ app.controller("tornillosController",[
 	}
 	
 	$scope.eliminar= function(tornillo){
+		if(confirm("¿Desea eliminar el producto?")){
 		tornillosService.eliminaTornillo(tornillo).then(function(data){
 			alert("Artículo eliminado");
 			$window.location.reload();
-		})
+		});
+		}
 	}
 	
 	$scope.mostrarTornillos = function(){

@@ -38,7 +38,7 @@ app.directive('multipleFileModel', function (fileService) {
 app.service('archivoService',['$http','$q',function($http,$q){
 	this.sendfile=function(cadena){
 		var d = $q.defer();
-		$http.post("/productos/addMultiple/",cadena).then(
+		$http.post("/productos/addMultipleH/",cadena).then(
 				function(response) {
 					console.log(response);
 					d.resolve(response.data);

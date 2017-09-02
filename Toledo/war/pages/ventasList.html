@@ -58,7 +58,7 @@
 									<td>{{venta.estatus}}</td>
 									<td><a class="btn btn-info" data-toggle="tooltip"
 											ng-show="venta.estatus!='FACTURADO'" title="Imprimir nota"
-											href="ventas/descargaNota/{{venta.id}}" download>
+											href="ventas/descargaNota/{{venta.id}}" download="{{venta.folio+'.pdf'}}">
 											<i class="glyphicon glyphicon-print"></i>
 										</a>
 										<button class="btn btn-success" data-toggle="tooltip"
@@ -67,7 +67,7 @@
 											<i class="glyphicon glyphicon-list-alt"></i>
 										</button> <a class="btn btn-danger" data-toggle="tooltip"
 										ng-show="venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO'" title="Imprimir PDF"
-										href="ventas/pdfDescarga/{{venta.uuid}}" download> <i
+										href="ventas/pdfDescarga/{{venta.uuid}}" download="{{venta.uuid+'.pdf'}}"> <i
 											class="glyphicon glyphicon-print"></i>
 									</a> <a class="btn btn-primary" data-toggle="tooltip"
 										ng-show="venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO'" title="Imprimir XML"
@@ -75,7 +75,7 @@
 											class="glyphicon glyphicon-print"></i>
 									</a>
 										<button class="btn btn-info" data-toggle="tooltip"
-											ng-show="(venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO')&&venta.cliente!='Otro' && venta.cliente!='Publico en general'" title="Enviar mail"
+											ng-show="(venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO')&&venta.cliente!='Otro'" title="Enviar mail"
 											ng-click="mailFactura(venta)">
 											<i class="glyphicon glyphicon-envelope" ></i>
 										</button>

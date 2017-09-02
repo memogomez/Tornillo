@@ -363,7 +363,10 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 	
 
 	$scope.facturar = function(venta){
+		
 		if(venta.idCliente!=0){
+			var r = confirm("¿Seguro que desea facturar?");
+			if(r==true){
 			ventasService.facturarVenta(venta).then(
 					function(data){
 						console.log(data);
@@ -374,6 +377,7 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 						}
 						$window.location.reload();
 					})
+			}
 		}else{
 			alert('Esta Venta no tiene asociado un Cliente registrado');
 		}

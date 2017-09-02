@@ -90,6 +90,10 @@
 							<td>Editar Clientes</td>
 							<td ng-repeat="perfil in perfilesLista" ng-if="perfil.tipo!='AdministradorRoot'"><input type="checkbox" ng-model="perfil.permisos[11]"></td>
 						</tr>
+						<tr>
+							<td>Datos Fiscales</td>
+							<td ng-repeat="perfil in perfilesLista" ng-if="perfil.tipo!='AdministradorRoot'"><input type="checkbox" ng-model="perfil.permisos[12]"></td>
+						</tr>
 					</tbody>
 					</table>
                       <!-- /.table-responsive -->
