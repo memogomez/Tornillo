@@ -28,15 +28,15 @@ import com.tikal.toledo.util.Util;
 public class UsuarioController {
 
 	@Autowired
-	UsuarioDAO usuarioImp;
+	UsuarioDAO usuariodao;
 	
 	@Autowired
-	PerfilDAO perfilImp;
+	PerfilDAO perfildao;
 
 	@RequestMapping(value = { "/registro" }, method = RequestMethod.POST, consumes = "Application/Json")
 	public void crearUsuario(HttpServletRequest request, HttpServletResponse response, @RequestBody String json)
 			throws IOException {
-		if(ServicioSesion.verificarPermiso(request, usuarioImp, perfilImp, 7)){
+		if(ServicioSesion.verificarPermiso(request, usuariodao, perfildao, 4)){
 			AsignadorDeCharset.asignar(request, response);
 			Usuario usuario = (Usuario) JsonConvertidor.fromJson(json, Usuario.class);
 			usuario.setPass(UsuarioController.otroMetodo(usuario.getPass()));
@@ -44,7 +44,7 @@ public class UsuarioController {
 				response.sendError(400);
 			} else {
 				// System.out.println(usuario.getUsername()+"YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYy");
-				if (!usuarioImp.crearUsuario(usuario)) {
+				if (!usuariodao.crearUsuario(usuario)) {
 					response.sendError(400);
 				}
 			}
@@ -55,9 +55,9 @@ public class UsuarioController {
 
 	@RequestMapping(value = { "/consultarTodos" }, method = RequestMethod.GET, produces = "application/json")
 	public void consultarUsuarios(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		if(ServicioSesion.verificarPermiso(request, usuarioImp, perfilImp, 8)){
+		if(Util.verificarPermiso(request, usuariodao, perfildao, 4,5)){
 			AsignadorDeCharset.asignar(request, response);
-			List<Usuario> lista = usuarioImp.consultarUsuarios();
+			List<Usuario> lista = usuariodao.consultarUsuarios();
 			response.getWriter().println(JsonConvertidor.toJson(lista));
 		}else{
 			response.sendError(403);
@@ -67,25 +67,34 @@ public class UsuarioController {
 	@RequestMapping(value = { "/actualiza" }, method = RequestMethod.POST, consumes = "Application/Json")
 	public void actualizarUsuario(HttpServletRequest request, HttpServletResponse response, @RequestBody String json)
 			throws IOException {
+		if(Util.verificarPermiso(request, usuariodao, perfildao, 5)){
 		AsignadorDeCharset.asignar(request, response);
 		Usuario usuario = (Usuario) JsonConvertidor.fromJson(json, Usuario.class);
-		usuarioImp.actualizarUsuario(usuario);
+		usuariodao.actualizarUsuario(usuario);
+		}else{
+			response.sendError(403);
+		}
 	}
 
 	@RequestMapping(value = { "/elimina" }, method = RequestMethod.POST, consumes = "Application/Json")
 	public void eliminarUsuario(HttpServletRequest request, HttpServletResponse response, @RequestBody String json)
 			throws IOException {
+		if(Util.verificarPermiso(request, usuariodao, perfildao, 4, 5)){
 		AsignadorDeCharset.asignar(request, response);
 		Usuario usuario = (Usuario) JsonConvertidor.fromJson(json, Usuario.class);
-		usuarioImp.eliminarUsuario(usuario);
+		usuariodao.eliminarUsuario(usuario);
+		}else{
+			response.sendError(403);
+		}
 	}
 
 	@RequestMapping(value = { "/reset" }, method = RequestMethod.POST, consumes = "Application/Json")
 	public void resetearPass(HttpServletRequest request, HttpServletResponse response, @RequestBody String email)
 			throws IOException {
+		
 		AsignadorDeCharset.asignar(request, response);
 		String correo = (String) JsonConvertidor.fromJson(email, String.class);
-		Usuario usuario = usuarioImp.consultarPorEmail(correo);
+		Usuario usuario = usuariodao.consultarPorEmail(correo);
 		//System.out.println("Printf de UsuarioController = " + usuario.getUsername());
 		String user= usuario.getUsername();
 		String mail= usuario.getEmail();
@@ -96,7 +105,7 @@ public class UsuarioController {
 			String nuevoPass = Util.randomString(10);
 			sender.enviaEmail(mail, user, nuevoPass);
 			usuario.setPass(nuevoPass);
-			usuarioImp.actualizarUsuario(usuario);
+			usuariodao.actualizarUsuario(usuario);
 			//System.out.println("Si mando el correo :*");
 			
 		}
@@ -162,7 +171,7 @@ public class UsuarioController {
 				usuario.setPerfil("Administrador");
 				usuario.setUsername("root");
 				
-				usuarioImp.crearUsuario(usuario);
+				usuariodao.crearUsuario(usuario);
 				
 				Perfil perfil = new Perfil();
 				perfil.setTipo("Administrador");
@@ -172,7 +181,7 @@ public class UsuarioController {
 				}
 				
 				perfil.setPermisos(arreglo);
-				perfilImp.crearPerfil(perfil);
+				perfildao.crearPerfil(perfil);
 						
 		}
 

@@ -26,8 +26,11 @@ import com.tikal.toledo.model.Lote;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Proveedor;
 import com.tikal.toledo.model.Tornillo;
+import com.tikal.toledo.security.PerfilDAO;
+import com.tikal.toledo.security.UsuarioDAO;
 import com.tikal.toledo.util.EmailSender;
 import com.tikal.toledo.util.JsonConvertidor;
+import com.tikal.toledo.util.Util;
 
 @Controller
 @RequestMapping(value = { "/lotes" })
@@ -44,10 +47,17 @@ public class LoteController {
 
 	@Autowired
 	TornilloDAO tdao;
+	
+	@Autowired
+	UsuarioDAO usuariodao;
+	
+	@Autowired
+	PerfilDAO perfildao;
 
 	@RequestMapping(value = {
 			"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, SQLException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 2)){
 		Lote l = (Lote) JsonConvertidor.fromJson(json, Lote.class);
 		lotedao.guardar(l);
 		String s="";
@@ -66,19 +76,25 @@ public class LoteController {
 			}
 		}
 		rs.getWriter().print(s);
+		}else{
+			rs.sendError(403);
+		}
 //		rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
 
 	@RequestMapping(value = {
 			"/save" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void guardar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 2)){
 		ListaLotesVO listavo = (ListaLotesVO) JsonConvertidor.fromJson(json, ListaLotesVO.class);
 		lotedao.guardarLotes(listavo.getLista());
 		rs.getWriter().println(JsonConvertidor.toJson(listavo));
+		}else{rs.sendError(403);}
 	}
 
 	@RequestMapping(value = { "/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 2,0)){
 		List<Lote> lotes = lotedao.porProducto(Long.parseLong(id));
 		List<LoteVO> lvos = new ArrayList<LoteVO>();
 
@@ -91,11 +107,9 @@ public class LoteController {
 			lvos.add(lvo);
 		}
 		rs.getWriter().println(JsonConvertidor.toJson(lvos));
+		}else{
+			rs.sendError(403);
+		}
 	}
 
-	@RequestMapping(value = { "/emailTest" }, method = RequestMethod.GET)
-	public void emailtest(HttpServletRequest re, HttpServletResponse rs) throws IOException, MessagingException {
-		EmailSender mail= new EmailSender();
-		mail.mailprueba();
-	}
 }

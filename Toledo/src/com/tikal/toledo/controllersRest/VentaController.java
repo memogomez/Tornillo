@@ -50,6 +50,8 @@ import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.sat.cfd.Comprobante;
 import com.tikal.toledo.sat.timbrefiscaldigital.TimbreFiscalDigital;
+import com.tikal.toledo.security.PerfilDAO;
+import com.tikal.toledo.security.UsuarioDAO;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.CorteDeCaja;
 import com.tikal.toledo.util.EmailSender;
@@ -100,6 +102,12 @@ public class VentaController {
 	@Autowired
 	SeriesDAO seriesdao;
 	
+	@Autowired
+	UsuarioDAO usuariodao;
+	
+	@Autowired
+	PerfilDAO perfildao;
+	
 	@PostConstruct
 	public void init() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
@@ -143,6 +151,7 @@ public class VentaController {
 	@RequestMapping(value = {
 	"/facturar" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void facturar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, MessagingException, DocumentException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 3)){
 		AsignadorDeCharset.asignar(re, rs);
 			Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 			DatosEmisor emisor= emisordao.getActivo();
@@ -188,10 +197,14 @@ public class VentaController {
 			}
 			
 			rs.getWriter().println(JsonConvertidor.toJson(respuesta));
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = "/cancelarAck", method = RequestMethod.POST)
-	public void cancelarAck(HttpServletRequest req, HttpServletResponse res, @RequestBody String json) {
+	public void cancelarAck(HttpServletRequest req, HttpServletResponse res, @RequestBody String json) throws IOException {
+		if(Util.verificarPermiso(req, usuariodao, perfildao, 3)){
 		Venta v= ventadao.cargar(Long.parseLong(json));
 		Factura factura = facturadao.consultar(v.getUuid());
 		Comprobante com= Util.unmarshallXML(factura.getCfdiXML());
@@ -249,10 +262,14 @@ public class VentaController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		}else{
+			res.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = "/buscar", method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest req, HttpServletResponse res) throws ParseException, IOException {
+		if(Util.verificarPermiso(req, usuariodao, perfildao, 1)){
 			AsignadorDeCharset.asignar(req, res);
 			String fi = (String) req.getParameter("fi");
 			String ff = (String) req.getParameter("ff");
@@ -268,14 +285,21 @@ public class VentaController {
 			List<Venta> listaR = ventadao.buscar(datei, datef);
 
 			res.getWriter().println(JsonConvertidor.toJson(listaR));
+		}else{
+			res.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {
 	"/findAll/{page}" }, method = RequestMethod.GET, produces = "application/json")
 	public void search(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 1,3)){
 		AsignadorDeCharset.asignar(re, rs);
 		List<Venta> lista= ventadao.todos(page);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {
@@ -287,14 +311,19 @@ public class VentaController {
 	@RequestMapping(value = {
 	"/numPagesProductos" }, method = RequestMethod.GET, produces = "application/json")
 	public void pagesProductos(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 1)){
 		int totalp= productodao.total();
 		int totalt = tornillodao.total();
 		int pages= ((totalp+totalt-1)/50)+1;
 		rs.getWriter().print(ventadao.pages());
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {"/descargaNota/{id}" }, method = RequestMethod.GET)
 	public void pdfNota(HttpServletRequest re, HttpServletResponse res, @PathVariable Long id) throws IOException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 1,3)){
 		AsignadorDeCharset.asignar(re, res);
 		res.setContentType("Application/PDF");
 		Venta venta= ventadao.cargar(id);
@@ -329,10 +358,14 @@ public class VentaController {
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
+		}else{
+			res.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {"/pdfDescarga/{id}" }, method = RequestMethod.GET)
 	public void pdf(HttpServletRequest re, HttpServletResponse res, @PathVariable String id) throws IOException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 1,3)){
 		res.setContentType("Application/PDF");
 		Factura factura=facturadao.consultar(id);
 		Comprobante cfdi = Util.unmarshallXML(factura.getCfdiXML());
@@ -361,10 +394,14 @@ public class VentaController {
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
+		}else{
+			res.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {"/sendmail" }, method = RequestMethod.POST,consumes= "application/json")
 	public void mail(HttpServletRequest re, HttpServletResponse res, @RequestBody String json) throws IOException, MessagingException, DocumentException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 1,3)){
 		Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 		Cliente c= clientedao.cargar(venta.getIdCliente());
 		Factura f= facturadao.consultar(venta.getUuid());
@@ -376,10 +413,14 @@ public class VentaController {
 				res.getWriter().print("Se envió");
 			}
 		}
+		}else{
+			res.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = "/xmlDescarga/{uuid}", method = RequestMethod.GET, produces = "text/xml")
 	public void obtenerXML(HttpServletRequest req, HttpServletResponse res, @PathVariable String uuid) throws IOException {
+		if(Util.verificarPermiso(req, usuariodao, perfildao, 1,3)){
 			AsignadorDeCharset.asignar(req, res);
 			Factura factura = facturadao.consultar(uuid);
 			PrintWriter writer = res.getWriter();
@@ -389,7 +430,9 @@ public class VentaController {
 			} else {
 				writer.println("La factuca con el folio fiscal (uuid) ".concat(uuid).concat(" no existe"));
 			}
-		
+		}else{
+			res.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {
@@ -425,6 +468,7 @@ public class VentaController {
 	
 	@RequestMapping(value = "/corteDeCaja", method = RequestMethod.GET, produces = "application/vnd.ms-excel")
 	public void corte(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		if(Util.verificarPermiso(req, usuariodao, perfildao, 1,3)){
 			AsignadorDeCharset.asignar(req, res);
 			Date datef;
 			Date datei;
@@ -444,6 +488,7 @@ public class VentaController {
 			corte.setVentas(lista);
 			HSSFWorkbook reporte=corte.getReporte();
 			reporte.write(res.getOutputStream());
+		}
 	}
 	
 	private float actualizarInventario(List<Detalle> detalles) throws SQLException{

@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.model.Tornillo;
+import com.tikal.toledo.security.PerfilDAO;
+import com.tikal.toledo.security.UsuarioDAO;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
 import com.tikal.toledo.util.Parseador;
+import com.tikal.toledo.util.Util;
 
 @Controller
 @RequestMapping(value = { "/tornillos" })
@@ -28,48 +31,80 @@ public class TornilloController {
 	@Autowired
 	TornilloDAO tornillodao;
 
+	@Autowired
+	UsuarioDAO usuariodao;
+	
+	@Autowired
+	PerfilDAO perfildao;
+	
 	@RequestMapping(value = {
 			"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0)){
 		AsignadorDeCharset.asignar(re, rs);
 		Tornillo c = (Tornillo) JsonConvertidor.fromJson(json, Tornillo.class);
 		String ms=tornillodao.guardar(c);
 		rs.getWriter().println(ms);
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {
 	"/elimina" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void elimina(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, SQLException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0)){
 		AsignadorDeCharset.asignar(re, rs);
 		Tornillo c = (Tornillo) JsonConvertidor.fromJson(json, Tornillo.class);
 		tornillodao.eliminar(c);
+		}else{
+			rs.sendError(403);
+		}
 	}
 
 	@RequestMapping(value = { "/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0,1,2)){
 		AsignadorDeCharset.asignar(re, rs);
 		rs.getWriter().println(JsonConvertidor.toJson(tornillodao.cargar(Long.parseLong(id))));
+		}else{
+			rs.sendError(403);
+		}
+		
 	}
 
 	@RequestMapping(value = { "/search/{search}" }, method = RequestMethod.GET, produces = "application/json")
 	public void busca(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0,1,2)){
 		AsignadorDeCharset.asignar(re, rs);
 		List<Tornillo> lista = tornillodao.buscar(search);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
+		}else{
+			rs.sendError(403);
+		}
 	}
 
 	@RequestMapping(value = { "/findAll" }, method = RequestMethod.GET, produces = "application/json")
 	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException, SQLException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0,1,2)){
 		AsignadorDeCharset.asignar(re, rs);
 		List<Tornillo> lista = tornillodao.todos();
+
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
+		}else{
+			rs.sendError(403);
+		}
 	}
 
 	@RequestMapping(value = { "/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
 	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException, SQLException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0,1,2)){
 		AsignadorDeCharset.asignar(re, rs);
 		List<Tornillo> lista = tornillodao.page(page);
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
+		}else{
+			rs.sendError(403);
+		}
 	}
 
 	@RequestMapping(value = { "/numPages" }, method = RequestMethod.GET, produces = "application/json")

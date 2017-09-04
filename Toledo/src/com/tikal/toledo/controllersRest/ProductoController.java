@@ -18,9 +18,12 @@ import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
+import com.tikal.toledo.security.PerfilDAO;
+import com.tikal.toledo.security.UsuarioDAO;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
 import com.tikal.toledo.util.Parseador;
+import com.tikal.toledo.util.Util;
 
 @Controller
 @RequestMapping(value={"/productos"})
@@ -35,13 +38,23 @@ public class ProductoController {
 	@Autowired
 	TornilloDAO tdao;
 	
+	@Autowired
+	UsuarioDAO usuariodao;
+	
+	@Autowired
+	PerfilDAO perfildao;
+	
 	@RequestMapping(value = {
 	"/add" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void add(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, SQLException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0)){
 		AsignadorDeCharset.asignar(re, rs);
 			Producto c= (Producto) JsonConvertidor.fromJson(json, Producto.class);
 			productodao.guardar(c);
 			rs.getWriter().println(JsonConvertidor.toJson(c));
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {
@@ -114,24 +127,36 @@ public class ProductoController {
 	@RequestMapping(value = {
 	"/find/{id}" }, method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String id) throws IOException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0,1,2)){
 			AsignadorDeCharset.asignar(re, rs);
 			rs.getWriter().println(JsonConvertidor.toJson(productodao.cargar(Long.parseLong(id))));
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {
 	"/search/{search}" }, method = RequestMethod.GET, produces = "application/json")
 	public void busca(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0,1,2)){
 			AsignadorDeCharset.asignar(re, rs);
 			List<Producto> lista= productodao.buscar(search);
 			rs.getWriter().println(JsonConvertidor.toJson(lista));
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {
 	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
 	public void search(HttpServletRequest re, HttpServletResponse rs,@PathVariable int page) throws IOException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0,1,2)){
 		AsignadorDeCharset.asignar(re, rs);
 		List<Producto> lista= productodao.todos();
 		rs.getWriter().println(JsonConvertidor.toJson(lista));
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = { "/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
@@ -159,14 +184,19 @@ public class ProductoController {
 	@RequestMapping(value = {
 	"/elimina" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void delete(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, SQLException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0)){
 		AsignadorDeCharset.asignar(re, rs);	
 		Producto p= (Producto) JsonConvertidor.fromJson(json, Producto.class);
 		productodao.eliminar(p);
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = {
 	"/aplicaFormula" }, method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public void formula(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException{
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 0)){
 			String[] args= json.split(",");
 			float impuesto =Float.parseFloat(args[0])/100;
 			float descuento= Float.parseFloat(args[1])/100;
@@ -174,6 +204,9 @@ public class ProductoController {
 			productodao.formula(impuesto, descuento, ganancia);
 			tornillodao.formula(impuesto, descuento, ganancia);
 			rs.getWriter().println(JsonConvertidor.toJson(args));
+		}else{
+			rs.sendError(403);
+		}
 	}
 	
 	private String hazqueryt(Tornillo t){

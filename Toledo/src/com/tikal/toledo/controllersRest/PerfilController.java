@@ -17,6 +17,7 @@ import com.tikal.toledo.security.PerfilDAO;
 import com.tikal.toledo.security.UsuarioDAO;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
+import com.tikal.toledo.util.Util;
 
 @Controller
 @RequestMapping("/perfil")
@@ -31,7 +32,7 @@ public class PerfilController {
 	@RequestMapping(value = { "/crear" }, method = RequestMethod.POST, consumes = "Application/Json")
 	public void crearPerfil(HttpServletRequest request, HttpServletResponse response, @RequestBody String json)
 			throws IOException {
-		if (ServicioSesion.verificarPermiso(request, usuarioimp, perfilimp, 9)) {
+		if (ServicioSesion.verificarPermiso(request, usuarioimp, perfilimp, 5)) {
 			AsignadorDeCharset.asignar(request, response);
 			Perfil perfil = (Perfil) JsonConvertidor.fromJson(json, Perfil.class);
 			perfilimp.crearPerfil(perfil);
@@ -42,7 +43,7 @@ public class PerfilController {
 
 	@RequestMapping(value = { "/consultarTodos" }, method = RequestMethod.GET, produces = "application/json")
 	public void consultarUsuarios(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		if (ServicioSesion.verificarPermiso(request, usuarioimp, perfilimp, 10)) {
+		if (ServicioSesion.verificarPermiso(request, usuarioimp, perfilimp, 6)) {
 			AsignadorDeCharset.asignar(request, response);
 			this.consultar(response);
 		}else{
@@ -53,7 +54,7 @@ public class PerfilController {
 	@RequestMapping(value = { "/actualiza" }, method = RequestMethod.POST, consumes = "Application/Json")
 	public void actualizarUsuario(HttpServletRequest request, HttpServletResponse response, @RequestBody String json)
 			throws IOException {
-		if (ServicioSesion.verificarPermiso(request, usuarioimp, perfilimp, 10)) {
+		if (ServicioSesion.verificarPermiso(request, usuarioimp, perfilimp, 6)) {
 			AsignadorDeCharset.asignar(request, response);
 			Perfil perfil = (Perfil) JsonConvertidor.fromJson(json, Perfil.class);
 			Perfil aux = perfilimp.consultarPerfilPorId(perfil.getId());
@@ -69,14 +70,18 @@ public class PerfilController {
 	@RequestMapping(value = { "/elimina" }, method = RequestMethod.POST, consumes = "Application/Json")
 	public void eliminarUsuario(HttpServletRequest request, HttpServletResponse response, @RequestBody String json)
 			throws IOException {
+		if(Util.verificarPermiso(request, usuarioimp, perfilimp, 5,6)){
 		AsignadorDeCharset.asignar(request, response);
 		Perfil perfil = (Perfil) JsonConvertidor.fromJson(json, Perfil.class);
 		perfilimp.eliminarPerfil(perfil.getTipo());
+		}else{
+			response.sendError(403);
+		}
 	}
 	
 	@RequestMapping(value = { "/consultarTodosU" }, method = RequestMethod.GET, produces = "application/json")
 	public void consultarPerfiles(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		if (ServicioSesion.verificarPermiso(request, usuarioimp, perfilimp, 7)) {
+		if (Util.verificarPermiso(request, usuarioimp, perfilimp, 5,6)) {
 			AsignadorDeCharset.asignar(request, response);
 			this.consultar(response);
 		}else{

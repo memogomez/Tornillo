@@ -20,8 +20,11 @@ import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.model.Producto;
 import com.tikal.toledo.model.Tornillo;
 import com.tikal.toledo.reporte.ReporteInventario;
+import com.tikal.toledo.security.PerfilDAO;
+import com.tikal.toledo.security.UsuarioDAO;
 import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
+import com.tikal.toledo.util.Util;
 
 @Controller
 @RequestMapping(value = { "/inventario" })
@@ -32,9 +35,16 @@ public class InventarioController {
 
 	@Autowired
 	ProductoDAO productodao;
+	
+	@Autowired
+	UsuarioDAO usuariodao;
+	
+	@Autowired
+	PerfilDAO perfildao;
 
 	@RequestMapping(value = { "/pages/{page}" }, method = RequestMethod.GET, produces = "application/json")
 	public void pages(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException, SQLException {
+		if(Util.verificarsesion(re)){
 		AsignadorDeCharset.asignar(re, rs);
 
 		int totalp = productodao.total();
@@ -55,10 +65,12 @@ public class InventarioController {
 		
 		listaf.add(listap);
 		rs.getWriter().println(JsonConvertidor.toJson(listaf));
+		}
 	}
 	
 	@RequestMapping(value = { "/numPages" }, method = RequestMethod.GET, produces = "application/json")
 	public void numOfPages(HttpServletRequest re, HttpServletResponse rs) throws IOException {
+		
 		int totalp=productodao.total();
 		int totalt= tornillodao.total();
 		
@@ -69,6 +81,7 @@ public class InventarioController {
 	
 	@RequestMapping(value = { "/buscar/{search}" }, method = RequestMethod.GET, produces = "application/json")
 	public void buscar(HttpServletRequest re, HttpServletResponse rs, @PathVariable String search) throws IOException {
+		if(Util.verificarsesion(re)){
 		List<List> listaf= new ArrayList<List>();
 		List<Producto> listap = productodao.buscar(search);
 		List<Tornillo> listat= tornillodao.buscar(search);
@@ -79,14 +92,17 @@ public class InventarioController {
 			listaf.add(listat);
 		}
 		rs.getWriter().print(JsonConvertidor.toJson(listaf));
+		}
 	}
 	
 	@RequestMapping(value = { "/descargarInventario" }, method = RequestMethod.GET, produces = "application/vnd.ms-excel")
 	public void descarga(HttpServletRequest re, HttpServletResponse rs) throws IOException, SQLException {
+		if(Util.verificarPermiso(re, usuariodao, perfildao, 2,5,6)){
 		List<Producto> productos= productodao.todos();
 		List<Tornillo> tornillos= tornillodao.todos();
 		ReporteInventario reporte= new ReporteInventario();
 		HSSFWorkbook rep=reporte.getReporte(productos, tornillos);
 		rep.write(rs.getOutputStream());
+		}
 	}
 }
