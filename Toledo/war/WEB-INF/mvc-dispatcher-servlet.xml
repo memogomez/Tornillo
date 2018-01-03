@@ -88,18 +88,16 @@
 	<!-- Data source Cloud SQL Bean -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<!-- Production GoogleDriver -->
-		<!-- <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver" 
-			/> -->
-		<!-- <property name="url" value="jdbc:google:mysql://stdsistema2:us-central1:std2sql/catalogos" 
-			/> -->
-		<!-- <property name="username" value="ismael" /> -->
-		<!-- <property name="password" value="nMVKLZ7yuj" /> -->
+		<property name="driverClassName" value="com.mysql.jdbc.GoogleDriver"/>
+		<property name="url" value="jdbc:google:mysql://stdsistema2:us-central1:std2sql/catalogos"/>
+		<property name="username" value="ismael" />
+		<property name="password" value="nMVKLZ7yuj" />
 
 		<!-- Development Driver -->
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://192.168.100.11:3306/catalogos" />
-		<property name="username" value="felipe" />
-		<property name="password" value="123456" />
+<!-- 		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
+<!-- 		<property name="url" value="jdbc:mysql://192.168.100.11:3306/catalogos" /> -->
+<!-- 		<property name="username" value="felipe" /> -->
+<!-- 		<property name="password" value="123456" /> -->
 
 		<property name="validationQuery" value="SELECT 1" />
 	</bean>
