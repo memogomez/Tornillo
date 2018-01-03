@@ -38,6 +38,8 @@ public class Venta {
 	
 	private String factura;
 	
+	private String version;
+	
 	public float getMonto() {
 		return monto;
 	}
@@ -154,4 +156,13 @@ public class Venta {
 	public void setFactura(String factura) {
 		this.factura = factura;
 	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+	
 }

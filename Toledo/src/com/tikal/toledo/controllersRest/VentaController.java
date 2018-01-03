@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.tikal.cacao.factura.Estatus;
 import com.tikal.toledo.dao.AlertaDAO;
 import com.tikal.toledo.dao.ClienteDAO;
 import com.tikal.toledo.dao.EmisorDAO;
@@ -36,7 +37,6 @@ import com.tikal.toledo.dao.ProductoDAO;
 import com.tikal.toledo.dao.SeriesDAO;
 import com.tikal.toledo.dao.TornilloDAO;
 import com.tikal.toledo.dao.VentaDAO;
-import com.tikal.toledo.factura.Estatus;
 import com.tikal.toledo.facturacion.ComprobanteVentaFactory;
 import com.tikal.toledo.facturacion.ws.WSClient;
 import com.tikal.toledo.model.AlertaInventario;
@@ -132,10 +132,19 @@ public class VentaController {
 				l.setCliente(c.getNombre());
 			}
 			l.setEstatus("VENDIDO");
-			
-			l.setMonto(actualizarInventario(l.getDetalles()));
+			float monto=0;
+			for(Detalle d:l.getDetalles()){
+				float total= d.getCantidad()*d.getPrecioUnitario();
+				if(total != d.getTotal()){
+					d.setPrecioUnitario(d.getTotal()/d.getCantidad());
+				}
+				monto+= d.getTotal();
+			}
+			l.setMonto(monto);
+			actualizarInventario(l.getDetalles());
 			l.setFolio(seriesdao.getSerieVenta());
 			seriesdao.incSerieVenta();
+			l.setVersion("3.3");
 			ventadao.guardar(l);
 			rs.getWriter().println(JsonConvertidor.toJson(l));
 	}
@@ -347,7 +356,7 @@ public class VentaController {
 //				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
 //				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
 //			}else{
-				pdfFactura.construirPdf(cfdi, "", null, Estatus.valueOf(venta.getEstatus()),0);
+				pdfFactura.construirPdf(cfdi, "", null, com.tikal.toledo.factura.Estatus.valueOf(venta.getEstatus()),0);
 //			}
 			pdfFactura.getDocument().close();
 			res.getOutputStream().flush();
@@ -383,7 +392,7 @@ public class VentaController {
 				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
 				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
 			}else{
-				pdfFactura.construirPdf(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getEstatus(),1);
+				pdfFactura.construirPdf(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),com.tikal.toledo.factura.Estatus.valueOf(factura.getEstatus().toString()),1);
 			}
 			pdfFactura.getDocument().close();
 			res.getOutputStream().flush();
@@ -448,9 +457,11 @@ public class VentaController {
 		List<Producto> listap = productodao.todos(page);
 		if (rest < 1) {
 			List<Tornillo> lista = tornillodao.page(Math.abs(rest)+1);
-			lista= lista.subList(0, 50-offset);
-			if(rest<0){
-				lista.addAll(tornillodao.page(Math.abs(rest)).subList(offset, 49));
+			if(lista.size()>0){
+				lista= lista.subList(0, lista.size()-offset);
+				if(rest<0){
+					lista.addAll(tornillodao.page(Math.abs(rest)).subList(offset, 49));
+				}
 			}
 			listaf.add(lista);
 		}else{

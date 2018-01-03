@@ -56,7 +56,6 @@ public class InventarioController {
 		List<Producto> listap = productodao.todos(page);
 		if (rest < 1) {
 			List<Tornillo> lista = tornillodao.page(Math.abs(rest)+1);
-			lista= lista.subList(0, 50-offset);
 			if(rest<0){
 				lista.addAll(tornillodao.page(Math.abs(rest)).subList(offset, 49));
 			}

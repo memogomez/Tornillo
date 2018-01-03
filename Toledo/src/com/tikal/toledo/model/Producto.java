@@ -18,6 +18,9 @@ public class Producto {
 	private float precioMayoreo;
 	private float precioCredito;
 	private float precioReferencia;
+	private String claveSat;
+	private String claveUnidad;
+	private String unidadSat;
 	
 	@Index
 	private String proveedor;
@@ -181,4 +184,30 @@ public class Producto {
 		aux=(int) (this.precioCredito*100);
 		this.precioCredito= aux/100f;
 	}
+
+	public String getClaveSat() {
+		return claveSat;
+	}
+
+	public void setClaveSat(String claveSat) {
+		this.claveSat = claveSat;
+	}
+
+	public String getClaveUnidad() {
+		return claveUnidad;
+	}
+
+	public void setClaveUnidad(String claveUnidad) {
+		this.claveUnidad = claveUnidad;
+	}
+
+	public String getUnidadSat() {
+		return unidadSat;
+	}
+
+	public void setUnidadSat(String unidadSat) {
+		this.unidadSat = unidadSat;
+	}
+	
+	
 }

@@ -1,87 +1,92 @@
 
-<div class="col-sm-8 text-left"> 
-    <div id="page-wrapper">
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header"> Edita Herramientas</h1>
-            </div>
-            <!-- /.col-lg-12 -->
-        </div>
-        <!-- /.row -->
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Modificación de Herramientas
-                    </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <form>
-                          <div class="col-md-6">
-                          Nombre:<br>
-                          <input type="text" class="form-control" ng-model="newHerramienta.nombre">
-                          <br>
-                          </div>
-                          <div class="col-md-6">
-                          Clave:<br>
-                          <input type="text" class="form-control" ng-model="newHerramienta.clave">
-                          <br>
-                          </div>
-                          <div class="col-md-6">
-                          Precio Mostrador:<br>
-                          <input type="text" class="form-control" ng-model="newHerramienta.precioMostrador">
-                          <br>
-                          </div>
-                          <div class="col-md-6">
-                          Precio Mayoreo:<br>
-                          <input type="text" class="form-control" ng-model="newHerramienta.precioMayoreo">
-                          <br>
-                          </div>
-                          <div class="col-md-6">
-                          Precio Credito:<br>
-                          <input type="text" class="form-control" ng-model="newHerramienta.precioCredito">
-                          <br>
-                          </div>
-                          <div class="col-md-6">
-                          Marca:<br>
-                          <input type="text" class="form-control" ng-model="newHerramienta.marca">
-                          <br>
-                          </div>
-                           <div class="col-md-6">
-                          M&aacute;ximo:<br>
-                          <input type="text" class="form-control" ng-model="newHerramienta.maximo">
-                          <br>
-                          </div>
-                           <div class="col-md-6">
-                          M&iacute;nimo:<br>
-                          <input type="text" class="form-control" ng-model="newHerramienta.minimo">
-                          <br>
-                          </div>
-                          
-                          <div class="col-md-6">
-                          Proveedor:<br>                          
-                          <select class="form-control" ng-model="newHerramienta.proveedor">
-							<option ng-repeat="prov in proveedores">{{prov.nombre}}</option>
-						  </select><br>
-						  </div>
-						  <div class="col-md-6">
-                          Existencia:<br>
-                          <input type="number" class="form-control" ng-model="newHerramienta.existencia">
-                          <br>
-                          </div>
-                          <br>
-                          <div class="col-md-6">
-                          <button type="submit" value="Registrar" class="btn btn-primary" ng-click="editaHerramienta(newHerramienta)">Modificar</button>
-                          </div>
-                      </form> 
-                      <!-- /.table-responsive -->
-                  </div>
-                  <!-- /.panel-body -->
-              </div>
-              <!-- /.panel -->
-          </div>
-          <!-- /.col-lg-12 -->
-      </div>
-  </div>
-</div ng-view>
+<div class="col-sm-8 text-left">
+	<div id="page-wrapper">
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">Edita Materiales</h1>
+			</div>
+			<!-- /.col-lg-12 -->
+		</div>
+		<!-- /.row -->
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Modificación de Materiales</div>
+					<!-- /.panel-heading -->
+					<div class="panel-body">
+						<form>
+							<div class="col-md-6">
+								Nombre:<br> <input type="text" class="form-control"
+									ng-model="newHerramienta.nombre"> <br>
+							</div>
+							<div class="col-md-6">
+								Clave Interna:<br> <input type="text" class="form-control"
+									ng-model="newHerramienta.clave"> <br>
+							</div>
+							<div class="col-md-6">
+								Clave SAT:<br> <input type="text" class="form-control"
+									ng-model="newHerramienta.claveSat"> <br>
+							</div>
+							<div class="col-md-6">
+								Clave de Unidad SAT:<br> <input type="text"
+									class="form-control" ng-model="newHerramienta.claveUnidad">
+								<br>
+							</div>
+							<div class="col-md-6">
+								Descripci&oacute;n Unidad SAT:<br> <input type="text"
+									class="form-control" ng-model="newHerramienta.unidadSat">
+								<br>
+							</div>
+							<div class="col-md-6">
+								Precio Mostrador:<br> <input type="text"
+									class="form-control" ng-model="newHerramienta.precioMostrador">
+								<br>
+							</div>
+							<div class="col-md-6">
+								Precio Mayoreo:<br> <input type="text" class="form-control"
+									ng-model="newHerramienta.precioMayoreo"> <br>
+							</div>
+							<div class="col-md-6">
+								Precio Credito:<br> <input type="text" class="form-control"
+									ng-model="newHerramienta.precioCredito"> <br>
+							</div>
+							<div class="col-md-6">
+								Marca:<br> <input type="text" class="form-control"
+									ng-model="newHerramienta.marca"> <br>
+							</div>
+							<div class="col-md-6">
+								M&aacute;ximo:<br> <input type="text" class="form-control"
+									ng-model="newHerramienta.maximo"> <br>
+							</div>
+							<div class="col-md-6">
+								M&iacute;nimo:<br> <input type="text" class="form-control"
+									ng-model="newHerramienta.minimo"> <br>
+							</div>
+
+							<div class="col-md-6">
+								Proveedor:<br> <select class="form-control"
+									ng-model="newHerramienta.proveedor">
+									<option ng-repeat="prov in proveedores">{{prov.nombre}}</option>
+								</select><br>
+							</div>
+							<div class="col-md-6">
+								Existencia:<br> <input type="number" class="form-control"
+									ng-model="newHerramienta.existencia"> <br>
+							</div>
+							<br>
+							<div class="col-md-6">
+								<button type="submit" value="Registrar" class="btn btn-primary"
+									ng-click="editaHerramienta(newHerramienta)">Modificar</button>
+							</div>
+						</form>
+						<!-- /.table-responsive -->
+					</div>
+					<!-- /.panel-body -->
+				</div>
+				<!-- /.panel -->
+			</div>
+			<!-- /.col-lg-12 -->
+		</div>
+	</div>
+</div>
 

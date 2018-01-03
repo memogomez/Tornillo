@@ -10,43 +10,144 @@
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
 	<context:component-scan
-		base-package="com.tikal.toledo.controllersRest" />
-		
-	<!-- Beans DAOs GAE storage implementation -->
-	<bean class="com.tikal.toledo.dao.imp.ClienteDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.LoteDAOImp"/>
-<!-- 	<bean class="com.tikal.toledo.dao.imp.ProductoDAOImp"/> -->
-<!-- 	<bean class="com.tikal.toledo.dao.imp.TornilloDAOIpm"/> -->
-	<bean class="com.tikal.toledo.dao.imp.VentaDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.EmisorDAOImp"/>
-	<bean class="com.tikal.toledo.security.UsuarioDAOImp"/>
-	<bean class="com.tikal.toledo.security.PerfilDAOImp"/>
-	
-	<bean class="com.tikal.toledo.dao.imp.AlertaDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.SeriesDAOImp"/>
+		base-package="com.tikal.toledo.controllersRest, com.tikal.cacao.factura, com.tikal.cacao.factura.ws,
+		 com.tikal.cacao.service.impl" />
 
-	
-	<bean class="com.tikal.toledo.dao.imp.ProveedorDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.FacturaDAOImpl"/>
+
+	<!-- Beans DAOs GAE storage implementation -->
+	<bean class="com.tikal.toledo.dao.imp.ClienteDAOImp" />
+	<bean class="com.tikal.toledo.dao.imp.LoteDAOImp" />
+	<bean class="com.tikal.toledo.dao.imp.ProductoDAOImp" />
+	<bean class="com.tikal.toledo.dao.imp.TornilloDAOIpm" />
+	<bean class="com.tikal.toledo.dao.imp.VentaDAOImp" />
+	<bean class="com.tikal.toledo.dao.imp.EmisorDAOImp" />
+	<bean class="com.tikal.toledo.security.UsuarioDAOImp" />
+	<bean class="com.tikal.toledo.security.PerfilDAOImp" />
+	<bean class="com.tikal.cacao.dao.imp.FacturaVttDAOImpl" />
+	<bean class="com.tikal.cacao.dao.imp.ImagenDAOImp" />
+	<bean class="com.tikal.toledo.dao.imp.AlertaDAOImp" />
+	<bean class="com.tikal.toledo.dao.imp.SeriesDAOImp" />
+
+
+	<bean class="com.tikal.toledo.dao.imp.ProveedorDAOImp" />
+	<bean class="com.tikal.toledo.dao.imp.FacturaDAOImpl" />
 	<!-- Register Bean for Objectify's Entities -->
 	<bean class="com.tikal.toledo.Register" scope="singleton" />
-	
-	<bean class="com.tikal.toledo.facturacion.ComprobanteVentaFactory"/>
-	
-	<bean class="com.tikal.toledo.facturacion.ws.GenericClient"/>
-	
-	<bean class="com.tikal.toledo.database.sql.Conexion" scope="singleton"/>
-	<bean class="com.tikal.toledo.dao.imp.sql.TornilloDAOImp"/>
-	<bean class="com.tikal.toledo.dao.imp.sql.ProductoDAOImp"/>
-	
-    
-	
-	
-<!-- 	<bean class="com.tikal.cacao.security.CustomUsuarioServicio"></bean> -->
-	
-	<!-- Beans Components -->
-	
-	<!-- <bean class="com.tikal.cacao.sat.calculos.MapaRecursos" scope="singleton"></bean> -->
+
+	<bean class="com.tikal.toledo.facturacion.ComprobanteVentaFactory" />
+	<bean class="com.tikal.toledo.facturacion.ComprobanteVentaFactory33" />
+
+	<bean class="com.tikal.toledo.facturacion.ws.GenericClient" />
+
+	<!-- <bean class="com.tikal.toledo.database.sql.Conexion" scope="singleton"> -->
+	<!-- <property name="datasource" ref="dataSource"></property> -->
+	<!-- </bean> -->
+	<!-- <bean class="com.tikal.toledo.dao.imp.sql.TornilloDAOImp"/> -->
+	<!-- <bean class="com.tikal.toledo.dao.imp.sql.ProductoDAOImp"/> -->
+
+	<!-- <bean id="dataSource" -->
+	<!-- class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+	<!-- <property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
+	<!-- <property name="url" value="jdbc:mysql://23.229.178.197/tornillos_db" 
+		/> -->
+	<!-- <property name="username" value="tornillosroot" /> -->
+	<!-- <property name="password" value="TodoPoderoso1" /> -->
+	<!-- </bean> -->
+
+	<!-- Hibernate 4 SessionFactory Bean definition -->
+	<bean id="hibernate4AnnotatedSessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.tikal.cacao.model.orm.Tipo</value>
+				<value>com.tikal.cacao.model.orm.Division</value>
+				<value>com.tikal.cacao.model.orm.Grupo</value>
+				<value>com.tikal.cacao.model.orm.Clase</value>
+				<value>com.tikal.cacao.model.orm.ProductoOServicio</value>
+
+				<value>com.tikal.cacao.model.orm.UnidadDeMedida</value>
+				<value>com.tikal.cacao.model.orm.UsoDeCFDI</value>
+				<value>com.tikal.cacao.model.orm.RegimenFiscal</value>
+				<value>com.tikal.cacao.model.orm.FormaDePago</value>
+				<value>com.tikal.cacao.model.orm.Impuesto</value>
+
+				<value>com.tikal.cacao.model.orm.Moneda</value>
+				<value>com.tikal.cacao.model.orm.TipoDeComprobante</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.current_session_context_class">thread</prop>
+				<prop key="hibernate.show_sql">true</prop> <!-- false in production -->
+			</props>
+		</property>
+	</bean>
+
+	<!-- Data source Cloud SQL Bean -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<!-- Production GoogleDriver -->
+		<!-- <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver" 
+			/> -->
+		<!-- <property name="url" value="jdbc:google:mysql://stdsistema2:us-central1:std2sql/catalogos" 
+			/> -->
+		<!-- <property name="username" value="ismael" /> -->
+		<!-- <property name="password" value="nMVKLZ7yuj" /> -->
+
+		<!-- Development Driver -->
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.100.11:3306/catalogos" />
+		<property name="username" value="felipe" />
+		<property name="password" value="123456" />
+
+		<property name="validationQuery" value="SELECT 1" />
+	</bean>
+
+	<bean id="tipoDAOH" class="com.tikal.cacao.dao.sqlimpl.TipoDAOHibernateImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+	<bean id="claseDAOH" class="com.tikal.cacao.dao.sqlimpl.ClaseDAOHibernateImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+	<bean id="productoServicioDAOH"
+		class="com.tikal.cacao.dao.sqlimpl.ProductoOServicioDAOHibernateImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+	<bean id="unidadDeMedidaDAOH"
+		class="com.tikal.cacao.dao.sqlimpl.UnidadDeMedidaDAOHibernateImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+	<bean id="usoDeCfdiDAOH" class="com.tikal.cacao.dao.sqlimpl.UsoDeCFDIDAOHibernateImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+	<bean id="regimenFiscalDAOH"
+		class="com.tikal.cacao.dao.sqlimpl.RegimenFiscalDAOHibernateImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+	<bean id="formaDePagoDAOH" class="com.tikal.cacao.dao.sqlimpl.FormaDePagoHibernateDAOImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+	<bean id="tipoDeComprobanteDAOH"
+		class="com.tikal.cacao.dao.sqlimpl.TipoDeComprobanteHibernateDAOImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+	<bean id="impuestoDAOH" class="com.tikal.cacao.dao.sqlimpl.ImpuestoHibernateDAOImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
+	<bean id="monedaDAOH" class="com.tikal.cacao.dao.sqlimpl.MonedaHibernateDAOImpl">
+		<property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</bean>
+
 	<mvc:annotation-driven />
 
 </beans>

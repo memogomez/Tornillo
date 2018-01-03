@@ -188,4 +188,140 @@ public class NumberToLetterConverter {
             return origin.charAt(origin.length() - position - 1) - 48;
         return 0;
     }
+    
+    /**
+     * Convierte a letras un numero de la forma $123,456.32
+     * @param number Numero en representacion texto
+     * @throws NumberFormatException 
+     * Si valor del numero no es valido (fuera de rango o )
+     * @return Numero en letras
+     */
+    public static String convertNumberToLetter(String number, String moneda)
+            throws NumberFormatException {
+        return convertNumberToLetter(Double.parseDouble(number), moneda);
+    }
+
+    /**
+     * Convierte un numero en representacion numerica a uno en representacion de
+     * texto. El numero es valido si esta entre 0 y 999'999.999
+     * @param doubleNumber Numero a convertir
+     * @return Numero convertido a texto
+     * @throws NumberFormatException
+     * Si el numero esta fuera del rango
+     */
+    public static String convertNumberToLetter(double doubleNumber, String moneda)
+            throws NumberFormatException {
+
+        StringBuilder converted = new StringBuilder();
+
+        String patternThreeDecimalPoints = "#.###";
+
+        DecimalFormat format = new DecimalFormat(patternThreeDecimalPoints);
+        format.setRoundingMode(RoundingMode.DOWN);
+
+        // formateamos el numero, para ajustarlo a el formato de tres puntos
+        // decimales
+        String formatedDouble = format.format(doubleNumber);
+        doubleNumber = Double.parseDouble(formatedDouble);
+
+        // Validamos que sea un numero legal
+        if (doubleNumber > 999999999)
+            throw new NumberFormatException(
+                    "El numero es mayor de 999'999.999, "
+                            + "no es posible convertirlo");
+
+        if (doubleNumber < 0)
+            throw new NumberFormatException("El numero debe ser positivo");
+
+        String splitNumber[] = String.valueOf(doubleNumber).replace('.', '#')
+                .split("#");
+
+        // Descompone el trio de millones
+        int millon = Integer.parseInt(String.valueOf(getDigitAt(splitNumber[0],
+                8))
+                + String.valueOf(getDigitAt(splitNumber[0], 7))
+                + String.valueOf(getDigitAt(splitNumber[0], 6)));
+        if (millon == 1)
+            converted.append("=UN MILLON ");
+        else if (millon > 1)
+            converted.append("=")
+                    .append(convertNumber(String.valueOf(millon)))
+                    .append("MILLONES ");
+
+        // Descompone el trio de miles
+        int miles = Integer.parseInt(String.valueOf(getDigitAt(splitNumber[0],
+                5))
+                + String.valueOf(getDigitAt(splitNumber[0], 4))
+                + String.valueOf(getDigitAt(splitNumber[0], 3)));
+        if(millon>=1){
+            if(miles==1)
+                converted.append(convertNumber(String.valueOf(miles)))
+                        .append("MIL ");
+            else if(miles>1)
+                converted.append(convertNumber(String.valueOf(miles)))
+                        .append("MIL ");
+        }else{
+            if (miles == 1)
+                converted.append("=UN MIL ");
+
+            if (miles > 1)
+                converted.append("=")
+                        .append(convertNumber(String.valueOf(miles)))
+                        .append("MIL ");
+        }
+
+        //booleano para caso de $1.00
+        boolean unPeso = false;
+        
+        // Descompone el ultimo trio de unidades
+        int cientos = Integer.parseInt(String.valueOf(getDigitAt(
+                splitNumber[0], 2))
+                + String.valueOf(getDigitAt(splitNumber[0], 1))
+                + String.valueOf(getDigitAt(splitNumber[0], 0)));
+        if(miles>=1 || millon>=1){
+            if (cientos >= 1)
+            converted.append(convertNumber(String.valueOf(cientos)));
+        }else{
+            if (cientos == 1) {
+            	if (moneda.contentEquals("MXN")) {
+            		converted.append("=UN PESO ");
+                	unPeso = true;
+            	} else if (moneda.contentEquals("USD")) {
+            		converted.append("=UN DOLAR ");
+            		unPeso = true;
+            	}
+            	
+            }
+               
+            if (cientos > 1)
+                converted.append("=").append(convertNumber(String.valueOf(cientos)));
+        }
+
+        if (millon + miles + cientos == 0)
+            converted.append("=CERO ");
+
+        if (!unPeso && moneda.contentEquals("MXN")) {
+        	converted.append("PESOS ");
+        } else if (!unPeso && moneda.contentEquals("USD")) {
+        	converted.append("DOLARES ");
+        }
+        	
+        
+       // Descompone los centavos
+       String valor = splitNumber[1];
+       if(valor.length()==1){
+           converted.append(splitNumber[1]).append("0").append("/100 ");
+       }else{
+          converted.append(splitNumber[1]).append("/100 "); 
+       }
+       	if (moneda.contentEquals("MXN")) {
+       		converted.append("M.N.=");
+       	} else {
+       		converted.append("=");
+       	}
+        
+        return converted.toString();
+    }
+
+    
 }

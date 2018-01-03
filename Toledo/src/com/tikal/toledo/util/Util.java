@@ -351,6 +351,11 @@ public class Util {
 		return true;
 	}
 	
-	
+	public static int obtenerDecimales(double valor) {
+		String strValor = String.valueOf(valor);
+		String[] split = strValor.split("\\.");
+		String strDecimales = split[1];
+		return strDecimales.length();
+	}
 	
 }

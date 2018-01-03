@@ -1,10 +1,12 @@
 package com.tikal.toledo;
 
 import com.googlecode.objectify.ObjectifyService;
+import com.tikal.cacao.model.Imagen;
 import com.tikal.toledo.model.AlertaInventario;
 import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.model.DatosEmisor;
 import com.tikal.toledo.model.Factura;
+import com.tikal.toledo.model.FacturaVTT;
 import com.tikal.toledo.model.Lote;
 import com.tikal.toledo.model.Perfil;
 import com.tikal.toledo.model.Producto;
@@ -30,5 +32,7 @@ public class Register {
 		ObjectifyService.register(AlertaInventario.class);
 		ObjectifyService.register(SerieFactura.class);
 		ObjectifyService.register(SerieVenta.class);
+		ObjectifyService.register(FacturaVTT.class);
+		ObjectifyService.register(Imagen.class);
 	}
 }

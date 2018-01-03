@@ -3,7 +3,7 @@
 	<div id="page-wrapper">
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header">Alta Herramientas</h1>
+				<h1 class="page-header">Alta Materiales</h1>
 			</div>
 			<!-- /.col-lg-12 -->
 		</div>
@@ -11,7 +11,7 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="panel panel-default">
-					<div class="panel-heading">Alta Herramientas</div>
+					<div class="panel-heading">Alta Materiales</div>
 					<!-- /.panel-heading -->
 					<div class="panel-body">
 						<form>
@@ -20,8 +20,22 @@
 									ng-model="newHerramienta.nombre"> <br>
 							</div>
 							<div class="col-md-6">
-								Clave:<br> <input type="text" class="form-control"
+								Clave Interna:<br> <input type="text" class="form-control"
 									ng-model="newHerramienta.clave"> <br>
+							</div>
+							<div class="col-md-6">
+								Clave SAT:<br> <input type="text" class="form-control"
+									ng-model="newHerramienta.claveSat"> <br>
+							</div>
+							<div class="col-md-6">
+								Clave de Unidad SAT:<br> <input type="text"
+									class="form-control" ng-model="newHerramienta.claveUnidad">
+								<br>
+							</div>
+							<div class="col-md-6">
+								Descripci&oacute;n Unidad SAT:<br> <input type="text"
+									class="form-control" ng-model="newHerramienta.unidadSat">
+								<br>
 							</div>
 							<div class="col-md-6">
 								Precio Mostrador:<br> <input type="text"
@@ -42,11 +56,13 @@
 							</div>
 							<div class="col-md-6">
 								Inventario M&aacute;ximo:<br> <input type="text"
-									class="form-control" ng-model="newHerramienta.maximo"> <br>
+									class="form-control" ng-model="newHerramienta.maximo">
+								<br>
 							</div>
 							<div class="col-md-6">
 								Inventario M&iacute;nimo:<br> <input type="text"
-									class="form-control" ng-model="newHerramienta.minimo"> <br>
+									class="form-control" ng-model="newHerramienta.minimo">
+								<br>
 							</div>
 							<div class="col-md-6">
 								Proveedor:<br> <select class="form-control"
@@ -59,7 +75,7 @@
 									ng-model="newHerramienta.existencia"> <br>
 							</div>
 							<br>
-							<div class="col-md-6">
+							<div class="col-md-12">
 								<button type="submit" value="Registrar" class="btn btn-primary"
 									ng-click="registraHerramienta(newHerramienta)">Registrar</button>
 							</div>
@@ -73,5 +89,5 @@
 			<!-- /.col-lg-12 -->
 		</div>
 	</div>
-</div ng-view>
+</div>
 

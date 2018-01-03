@@ -56,7 +56,7 @@
 									<td>{{venta.monto}}</td>
 									<td>{{venta.formaDePago}}</td>
 									<td>{{venta.estatus}}</td>
-									<td><a class="btn btn-info" data-toggle="tooltip"
+									<td ng-hide="venta.version=='3.3'"><a class="btn btn-info" data-toggle="tooltip"
 											ng-show="venta.estatus!='FACTURADO'" title="Imprimir nota"
 											href="ventas/descargaNota/{{venta.id}}" download="{{venta.folio+'.pdf'}}">
 											<i class="glyphicon glyphicon-print"></i>
@@ -84,6 +84,37 @@
 											ng-click="cancelarFactura(venta)">
 											<i class="glyphicon glyphicon-ban-circle"></i>
 										</button>
+									</td>
+									<!-- botones 33 -->
+									<td ng-show="venta.version=='3.3'"><a class="btn btn-info" data-toggle="tooltip"
+											ng-show="venta.estatus!='FACTURADO'" title="Imprimir nota"
+											href="ventas/descargaNota/{{venta.id}}" download="{{venta.folio+'.pdf'}}">
+											<i class="glyphicon glyphicon-print"></i>
+										</a>
+										<button class="btn btn-success" data-toggle="tooltip"
+											ng-show="venta.estatus!='FACTURADO' && venta.estatus!='CANCELADO'" title="Facturar"
+											ng-click="facturar33(venta)">
+											<i class="glyphicon glyphicon-list-alt"></i>
+										</button> <a class="btn btn-danger" data-toggle="tooltip"
+										ng-show="venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO'" title="Imprimir PDF"
+										href="ventas33/pdfDescarga/{{venta.uuid}}" download="{{venta.uuid+'.pdf'}}"> <i
+											class="glyphicon glyphicon-print"></i>
+									</a> <a class="btn btn-primary" data-toggle="tooltip"
+										ng-show="venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO'" title="Imprimir XML"
+										href="ventas33/xmlDescarga/{{venta.uuid}}" download="{{venta.uuid+'.xml'}}"> <i
+											class="glyphicon glyphicon-print"></i>
+									</a>
+										<button class="btn btn-info" data-toggle="tooltip"
+											ng-show="(venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO')&&venta.cliente!='Otro'" title="Enviar mail"
+											ng-click="mailFactura33(venta)">
+											<i class="glyphicon glyphicon-envelope" ></i>
+										</button>
+										<button class="btn btn-danger" data-toggle="tooltip"
+											ng-show="venta.estatus=='FACTURADO'" title="Cancelar"
+											ng-click="cancelarFactura33(venta)">
+											<i class="glyphicon glyphicon-ban-circle"></i>
+										</button>
+									</td>
 								</tr>
 							</tbody>
 						</table>

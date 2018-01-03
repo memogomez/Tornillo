@@ -16,6 +16,7 @@ import com.tikal.toledo.dao.ClienteDAO;
 import com.tikal.toledo.model.Cliente;
 import com.tikal.toledo.security.PerfilDAO;
 import com.tikal.toledo.security.UsuarioDAO;
+import com.tikal.toledo.util.AsignadorDeCharset;
 import com.tikal.toledo.util.JsonConvertidor;
 import com.tikal.toledo.util.Util;
 
@@ -69,6 +70,7 @@ public class ClienteController {
 	@RequestMapping(value = {
 	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
 	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
 		if(Util.verificarsesion(re)){
 		List<Cliente> lista= clientesdao.todos();
 		rs.getWriter().println(JsonConvertidor.toJson(lista));

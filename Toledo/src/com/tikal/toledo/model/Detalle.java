@@ -2,6 +2,9 @@ package com.tikal.toledo.model;
 
 public class Detalle {
 	
+	private String claveUnidad;
+	private String unidad;
+	private String claveSat;
 	private String descripcion;
 	private Long idProducto;
 	private int cantidad;
@@ -45,5 +48,29 @@ public class Detalle {
 	public void setTipo(int tipo) {
 		this.tipo = tipo;
 	}
-	
+	public String getClaveUnidad() {
+		return claveUnidad;
 	}
+	public void setClaveUnidad(String claveUnidad) {
+		this.claveUnidad = claveUnidad;
+	}
+	public String getUnidad() {
+		return unidad;
+	}
+	public void setUnidad(String unidad) {
+		this.unidad = unidad;
+	}
+	public String getClaveSat() {
+		return claveSat;
+	}
+	public void setClaveSat(String claveSat) {
+		this.claveSat = claveSat;
+	}
+	public float getImporte() {
+		return importe;
+	}
+	public void setImporte(float importe) {
+		this.importe = importe;
+	}
+	
+}

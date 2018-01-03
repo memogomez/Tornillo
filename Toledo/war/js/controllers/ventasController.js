@@ -73,6 +73,17 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		return d.promise;
 	}
 	
+	this.facturarVenta33= function(venta){
+		var d = $q.defer();
+		$http.post("/ventas33/facturar/",venta).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
+	
 	this.cancelarFactura= function(venta){
 		var d = $q.defer();
 		$http.post("/ventas/cancelarAck/",venta).then(function(response) {
@@ -83,9 +94,31 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		});
 		return d.promise;
 	}
+	
+	this.cancelarFactura33= function(venta){
+		var d = $q.defer();
+		$http.post("/ventas33/cancelarAck/",venta).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
+	
 	this.enviarFactura= function(venta){
 		var d = $q.defer();
 		$http.post("/ventas/sendmail/",venta).then(function(response) {
+			console.log(response);
+			d.resolve(response.data);
+		}, function(response) {
+			d.reject(response);
+		});
+		return d.promise;
+	}
+	this.enviarFactura33= function(venta){
+		var d = $q.defer();
+		$http.post("/ventas33/sendmail/",venta).then(function(response) {
 			console.log(response);
 			d.resolve(response.data);
 		}, function(response) {
@@ -104,7 +137,7 @@ app.service("ventasService",['$http','$q',function($http,$q){
 		});
 		return d.promise;
 	}
-	//cancelarAck
+	// cancelarAck
 }]);
 
 app.controller("ventaController",['$window','clientesService','ventasService','tornillosService','herramientasService','$scope','$location',function($window,clientesService,ventasService,tornillosService,herramientasService,$scope,$location){
@@ -191,28 +224,28 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 			}
 		}
 	}
-//	$scope.productos=[];
-//	$scope.herramientas = function() {
-//		herramientasService.findHerramientasAll().then(
-//			function(data) {
-//				$scope.herramientas = data;				
-//				for(var i =0; i<data.length; i++){
-//					$scope.productos.push(data[i]);
-//				}
+// $scope.productos=[];
+// $scope.herramientas = function() {
+// herramientasService.findHerramientasAll().then(
+// function(data) {
+// $scope.herramientas = data;
+// for(var i =0; i<data.length; i++){
+// $scope.productos.push(data[i]);
+// }
 //				
-//			})
-//	}
-//	$scope.herramientas();
-//	$scope.tornillos = function() {
-//		tornillosService.findTornillos().then(
-//			function(data) {
-//				$scope.tornillos = data;				
-//				for(var i =0; i<data.length; i++){
-//					$scope.productos.push(data[i]);
-//				}
-//			})
-//	}
-//	$scope.tornillos();
+// })
+// }
+// $scope.herramientas();
+// $scope.tornillos = function() {
+// tornillosService.findTornillos().then(
+// function(data) {
+// $scope.tornillos = data;
+// for(var i =0; i<data.length; i++){
+// $scope.productos.push(data[i]);
+// }
+// })
+// }
+// $scope.tornillos();
 	
 	$scope.agregarDetalle=function(producto){
 		if(producto.precio){
@@ -227,6 +260,9 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 		detalle.cantidad=producto.cantidad;
 		detalle.precioUnitario=producto.precio;
 		detalle.importe= producto.importe;
+		detalle.claveUnidad=producto.claveUnidad;
+		detalle.claveSat=producto.claveSat;
+		detalle.unidad=producto.unidad;
 		if($scope.descuento){
 				detalle.importe =	producto.importe - (producto.importe * ($scope.venta.descuento/100));
 				detalle.importe= parseFloat(detalle.importe.toFixed(2));
@@ -249,19 +285,19 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 	
 	$scope.busqueda=[];
 	
-//	$scope.buscar = function(buscar){
-//		$scope.todos=false;
-//		console.log(buscar);
-//		tornillosService.busqueda(buscar).then(
-//				function(data) {
-//					$scope.productos = data;
-//					for(var i =0; i<data.length; i++){
-//						$scope.busqueda.push(data[i]);
-//					}
-//					$scope.busqueda.buscar="";
-//					console.log(data);
-//				})
-//	}
+// $scope.buscar = function(buscar){
+// $scope.todos=false;
+// console.log(buscar);
+// tornillosService.busqueda(buscar).then(
+// function(data) {
+// $scope.productos = data;
+// for(var i =0; i<data.length; i++){
+// $scope.busqueda.push(data[i]);
+// }
+// $scope.busqueda.buscar="";
+// console.log(data);
+// })
+// }
 	$scope.buscar = function(buscar){
 		$scope.todos=false;
 		$scope.busqueda=[];
@@ -269,18 +305,18 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 		if(buscar.tipo){
 			if(buscar.tipo=="Herramientas"){
 				herramientasService.busqueda(buscar.buscar).then(function(data) {
-//					$scope.herramientas = data;	
+// $scope.herramientas = data;
 					$scope.productos=data;
 				});
 			}else{
 				tornillosService.busqueda(buscar.buscar).then(
 						function(data) {
 							$scope.productos = data;
-//							for(var i =0; i<data.length; i++){
-//								$scope.busqueda.push(data[i]);
-//							}
-//							$scope.busqueda.buscar="";
-//							$scope.productos=$scope.busqueda;
+// for(var i =0; i<data.length; i++){
+// $scope.busqueda.push(data[i]);
+// }
+// $scope.busqueda.buscar="";
+// $scope.productos=$scope.busqueda;
 						});
 			}
 		}else{
@@ -361,6 +397,12 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 		})
 	}
 	
+	$scope.mailFactura33=function(venta){
+		ventasService.enviarFactura33(venta).then(function(venta){
+			alert("Factura enviada");
+		})
+	}
+	
 
 	$scope.facturar = function(venta){
 		
@@ -368,6 +410,27 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 			var r = confirm("¿Seguro que desea facturar?");
 			if(r==true){
 			ventasService.facturarVenta(venta).then(
+					function(data){
+						console.log(data);
+						if(data[0]=="0"){
+							alert("Facturado con éxito");
+						}else{
+							alert(data[1]);
+						}
+						$window.location.reload();
+					})
+			}
+		}else{
+			alert('Esta Venta no tiene asociado un Cliente registrado');
+		}
+	}
+	
+	$scope.facturar33 = function(venta){
+		
+		if(venta.idCliente!=0){
+			var r = confirm("¿Seguro que desea facturar?");
+			if(r==true){
+			ventasService.facturarVenta33(venta).then(
 					function(data){
 						console.log(data);
 						if(data[0]=="0"){
@@ -408,7 +471,7 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 	
 	$scope.ventas(1);
 	
-	//busqueda por fechas
+	// busqueda por fechas
 	$scope.buscar=function(){
 		$scope.url
 		ventasService.buscar($scope.fechaInicio,$scope.fechaFin).then(function(data){
@@ -419,6 +482,17 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 	
 	$scope.cancelarFactura=function(venta){
 		ventasService.cancelarFactura(venta.id).then(function(data){
+			if(data[0]=="0"){
+				alert("La factura se canceló con éxito");
+			}else{
+				alert(data[1]);
+			}
+			$window.location.reload();
+		})
+	}
+	
+	$scope.cancelarFactura33=function(venta){
+		ventasService.cancelarFactura33(venta.id).then(function(data){
 			if(data[0]=="0"){
 				alert("La factura se canceló con éxito");
 			}else{
