@@ -40,6 +40,8 @@ public class Venta {
 	
 	private String version;
 	
+	private String metodoDePago;
+	
 	public float getMonto() {
 		return monto;
 	}
@@ -163,6 +165,14 @@ public class Venta {
 
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	public String getMetodoDePago() {
+		return metodoDePago;
+	}
+
+	public void setMetodoDePago(String metodoDePago) {
+		this.metodoDePago = metodoDePago;
 	}
 	
 }

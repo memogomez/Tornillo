@@ -34,7 +34,7 @@ public class ProductoDAOImp implements ProductoDAO{
 		String query = "INSERT INTO t_producto (descuento, existencia, ganancia, impuesto, marca, maximo, minimo, nombre, precioCredito, PrecioMayoreo, precioMostrador, precioReferencia, proveedor, tipo, clave) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement statementCreate = conn.c.prepareStatement(query);
 			statementCreate.setFloat(1, p.getDescuento());
-			statementCreate.setInt(2, p.getExistencia());
+			statementCreate.setFloat(2, p.getExistencia());
 			statementCreate.setFloat(3, p.getGanancia());
 			statementCreate.setFloat(4, p.getImpuesto());
 			String marca=p.getMarca();
@@ -243,7 +243,7 @@ public class ProductoDAOImp implements ProductoDAO{
 		String query = "UPDATE t_producto set descuento= ?,existencia =?,ganancia=?,impuesto=?,marca=?,maximo=?,minimo=?,nombre=?,precioCredito=?, precioMayoreo=?,precioMostrador=?,precioReferencia=?,proveedor=?, clave=? WHERE id="+t.getId();
 		try (PreparedStatement statementCreate = conn.c.prepareStatement(query)) {
 			statementCreate.setFloat(1, t.getDescuento());
-			statementCreate.setInt(2, t.getExistencia());
+			statementCreate.setFloat(2, t.getExistencia());
 			statementCreate.setFloat(3, t.getGanancia());
 			statementCreate.setFloat(4, t.getImpuesto());
 			String marca=t.getMarca();

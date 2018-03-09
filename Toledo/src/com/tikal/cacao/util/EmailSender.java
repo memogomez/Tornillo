@@ -118,7 +118,7 @@ public class EmailSender {
 ////			
 //			msg.setText("correo de prueba");
 			
-			msg.setFrom(new InternetAddress("no.reply.fcon@gmail.com", "Facturación"));
+			msg.setFrom(new InternetAddress("no.reply.fcon@gmail.com", "Facturación Electrónica"));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(emailReceptor, "Empresa"));
 			msg.setSubject("Factura "+factura.getUuid());
 //			msg.setText("Prueba de correo 2");
@@ -152,7 +152,7 @@ public class EmailSender {
 			//append PDF
 			Multipart mp = new MimeMultipart();
 			MimeBodyPart mbp = new MimeBodyPart();
-			mbp.setContent("<h1>Factura timbrada</h1>","text/html");
+			mbp.setContent("<h1>Factura timbrada</h1><br/><p>Este correo se genera de manera automática. No se responden correos enviados a esta dirección.</p>","text/html");
 			mp.addBodyPart(mbp);
 			ByteArrayOutputStream os= new ByteArrayOutputStream();
 			//com.tikal.cacao.sat.cfd33.Comprobante cfdi = Util.unmarshallCFDI33XML(factura.getCfdiXML());

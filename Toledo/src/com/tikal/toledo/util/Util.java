@@ -269,6 +269,7 @@ public class Util {
     	GregorianCalendar c = new GregorianCalendar();
     	c.setTime(date);
     	XMLGregorianCalendar date2 = null;
+    	c.add(GregorianCalendar.HOUR_OF_DAY, -6);
     	try {
 	    	switch (formato) {
 			case COMPROBANTE:
@@ -291,6 +292,18 @@ public class Util {
     	return date2;
     }
 	
+	public static XMLGregorianCalendar getXMLDateISR(Date date, FormatoFecha formato) {
+		GregorianCalendar c = new GregorianCalendar(TimeZone.getTimeZone("America/Mexico_City"));
+		XMLGregorianCalendar date2=null;
+		try{
+			date2= DatatypeFactory.newInstance().newXMLGregorianCalendar(c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND),DatatypeConstants.FIELD_UNDEFINED, DatatypeConstants.FIELD_UNDEFINED);
+		}catch(Exception e){
+			return null;
+		}
+		
+		return date2;
+		
+	}
 	
 	public static String marshallComprobante(Comprobante c) {
 		try {

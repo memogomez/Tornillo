@@ -1,3 +1,32 @@
+function getFechilla(fecha){
+	
+	var regreso="";
+	var dato= fecha.getMonth()+1;
+	dato= completar(dato);
+	regreso= fecha.getFullYear()+"-"+dato+"-";
+	dato = fecha.getDate();
+	regreso+=completar(dato)+" ";
+	dato= fecha.getHours();
+	regreso+= completar(dato)+":";
+	dato = fecha.getMinutes();
+	regreso+= completar(dato)+":";
+	dato = fecha.getSeconds();
+	regreso+=completar(dato)+"";
+	
+	return regreso;
+	
+}
+
+function completar(dato){
+	
+	if(dato<10){
+		return 0+""+dato;
+	}
+
+	return dato+"";
+	
+}
+
 app.service("ventasService",['$http','$q',function($http,$q){
 	this.addVenta=function(venta){
 		var d = $q.defer();
@@ -188,9 +217,10 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 	$scope.venta={
 			fecha:new Date(),
 			detalles:[],
-			formaDePago:"Efectivo"
+			formaDePago:"Efectivo",
+			metodoDePago:"PUE"
 	};
-	clientesService.findClientes().then(function(data){
+	clientesService.findClientesFull().then(function(data){
 		$scope.clientes=data;
 	})
 	
@@ -262,7 +292,7 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 		detalle.importe= producto.importe;
 		detalle.claveUnidad=producto.claveUnidad;
 		detalle.claveSat=producto.claveSat;
-		detalle.unidad=producto.unidad;
+		detalle.unidad=producto.unidadSat;
 		if($scope.descuento){
 				detalle.importe =	producto.importe - (producto.importe * ($scope.venta.descuento/100));
 				detalle.importe= parseFloat(detalle.importe.toFixed(2));
@@ -362,7 +392,7 @@ app.controller("ventaController",['$window','clientesService','ventasService','t
 	$scope.busquedas={tipo:"Herramientas"}
 }]);
 app.controller("ventaListController",['clientesService','ventasService','tornillosService','herramientasService','$scope','$location','$window',function(clientesService,ventasService,tornillosService,herramientasService,$scope,$location,$window){
-	$scope.paginaActual=1;
+
 	$scope.url="/ventas/findAll/"
 	$scope.llenarPags=function(){
 		var inicio=0;
@@ -382,10 +412,18 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 		}
 		$('#pag'+$scope.paginaActual).addClass("active");
 	}
-	$scope.ventas = function(page) {
+	
+	$scope.cargarVentas = function(page) {
 		ventasService.findVentas($scope.url,page).then(
 			function(data) {
 				$scope.ventas = data;
+				for(var i=0;i < $scope.ventas.length; i++){
+					
+					$scope.ventas[i].fechaString = new Date($scope.ventas[i].fecha);
+//					$scope.ventas[i].fecha = new Date($scope.ventas[i].fecha.getTime() - (6*1000*3600));
+					$scope.ventas[i].fechaString = getFechilla($scope.ventas[i].fechaString);
+					
+				}
 				console.log(data);
 				$scope.llenarPags();
 			})
@@ -403,13 +441,16 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 		})
 	}
 	
+	$scope.paraTimbrar= function(venta){
+		$scope.ventaTimbrar= venta;
+	}
 
-	$scope.facturar = function(venta){
-		
-		if(venta.idCliente!=0){
+	$scope.facturar = function(){
+		var send=$scope.ventaTimbrar+"$$$"+$scope.usoCFDI;
+		if($scope.ventaTimbrar.idCliente!=0){
 			var r = confirm("¿Seguro que desea facturar?");
 			if(r==true){
-			ventasService.facturarVenta(venta).then(
+			ventasService.facturarVenta(send).then(
 					function(data){
 						console.log(data);
 						if(data[0]=="0"){
@@ -425,12 +466,14 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 		}
 	}
 	
-	$scope.facturar33 = function(venta){
-		
-		if(venta.idCliente!=0){
+	$scope.facturar33 = function(){
+		var send={venta:$scope.ventaTimbrar,
+				uso:$scope.usoCFDI
+		};
+		if($scope.ventaTimbrar.idCliente!=0){
 			var r = confirm("¿Seguro que desea facturar?");
 			if(r==true){
-			ventasService.facturarVenta33(venta).then(
+			ventasService.facturarVenta33(send).then(
 					function(data){
 						console.log(data);
 						if(data[0]=="0"){
@@ -449,9 +492,10 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 	$scope.cargarPagina=function(pag){
 		if($scope.paginaActual!=pag){
 			$scope.paginaActual=pag;
-			$scope.ventas(pag);
+			$scope.cargarVentas(pag);
 		}
 	}
+	
 	ventasService.numPages().then(function(data){
 		$scope.maxPage=data;
 		$scope.llenarPags();
@@ -469,7 +513,6 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 	    $(this).datepicker("format","mm-dd-yyyy");
 	});
 	
-	$scope.ventas(1);
 	
 	// busqueda por fechas
 	$scope.buscar=function(){
@@ -502,5 +545,7 @@ app.controller("ventaListController",['clientesService','ventasService','tornill
 		})
 	}
 
+	$scope.cargarPagina(1);
+	
 	
 }]);

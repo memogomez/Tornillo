@@ -68,8 +68,20 @@ public class ClienteController {
 	
 
 	@RequestMapping(value = {
-	"/findAll" }, method = RequestMethod.GET, produces = "application/json")
-	public void search(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+	"/findAll/{page}" }, method = RequestMethod.GET, produces = "application/json")
+	public void search(HttpServletRequest re, HttpServletResponse rs, @PathVariable int page) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
+		if(Util.verificarsesion(re)){
+		List<Cliente> lista= clientesdao.todos(page);
+		rs.getWriter().println(JsonConvertidor.toJson(lista));
+		}else{
+			rs.sendError(403);
+		}
+	}
+	
+	@RequestMapping(value = {
+	"/findFull" }, method = RequestMethod.GET, produces = "application/json")
+	public void todos(HttpServletRequest re, HttpServletResponse rs) throws IOException{
 		AsignadorDeCharset.asignar(re, rs);
 		if(Util.verificarsesion(re)){
 		List<Cliente> lista= clientesdao.todos();
@@ -78,5 +90,13 @@ public class ClienteController {
 			rs.sendError(403);
 		}
 	}
+	
+	@RequestMapping(value = {
+	"/pages" }, method = RequestMethod.GET, produces = "application/json")
+	public void pages(HttpServletRequest re, HttpServletResponse rs) throws IOException{
+		AsignadorDeCharset.asignar(re, rs);
+		rs.getWriter().print(clientesdao.pages());
+	}
+	
 		
 }

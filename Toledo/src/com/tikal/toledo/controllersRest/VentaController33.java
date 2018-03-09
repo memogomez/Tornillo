@@ -2,6 +2,7 @@ package com.tikal.toledo.controllersRest;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
@@ -20,9 +21,11 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.tikal.cacao.dao.FacturaVttDAO;
 import com.tikal.cacao.factura.RespuestaWebServicePersonalizada;
+import com.tikal.cacao.sat.cfd.catalogos.dyn.C_UsoCFDI;
 import com.tikal.cacao.sat.cfd33.Comprobante;
 import com.tikal.cacao.service.FacturaVTTService;
 import com.tikal.cacao.springController.viewObjects.v33.ComprobanteVO;
+import com.tikal.toledo.controllersRest.VO.VentaVO;
 import com.tikal.toledo.dao.AlertaDAO;
 import com.tikal.toledo.dao.ClienteDAO;
 import com.tikal.toledo.dao.EmisorDAO;
@@ -41,7 +44,6 @@ import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.security.PerfilDAO;
 import com.tikal.toledo.security.UsuarioDAO;
 import com.tikal.toledo.util.AsignadorDeCharset;
-import com.tikal.toledo.util.EmailSender;
 import com.tikal.toledo.util.JsonConvertidor;
 import com.tikal.toledo.util.Util;
 
@@ -110,7 +112,8 @@ public class VentaController33 {
 	public void facturar(HttpServletRequest re, HttpServletResponse rs, @RequestBody String json) throws IOException, MessagingException, DocumentException{
 		if(Util.verificarPermiso(re, usuariodao, perfildao, 3)){
 		AsignadorDeCharset.asignar(re, rs);
-			Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
+			VentaVO ventavo= (VentaVO) JsonConvertidor.fromJson(json, VentaVO.class);
+			Venta venta= ventavo.getVenta();
 			DatosEmisor emisor= emisordao.getActivo();
 			int folio = seriesdao.getSerieFactura();
 			Cliente cliente= clientedao.cargar(venta.getIdCliente());
@@ -118,9 +121,11 @@ public class VentaController33 {
 			//facturar
 			c.setFolio(folio+"");
 			c.setSerie("FS");
+			c.getReceptor().setUsoCFDI(new C_UsoCFDI(ventavo.getUso()));
 			
 			ComprobanteVO comprobanteVO= new ComprobanteVO();
 			comprobanteVO.setComprobante(c);
+			comprobanteVO.setEmail(cliente.getEmail());
 			RespuestaWebServicePersonalizada respuestaws = servicio33.timbrarPOS(comprobanteVO, re.getSession());
 			String uuid= respuestaws.getUuidFactura();
 			String[] respuesta= new String[2];
@@ -219,7 +224,6 @@ public class VentaController33 {
 		Venta venta= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 		Cliente c= clientedao.cargar(venta.getIdCliente());
 		Factura f= facturadao.consultar(venta.getUuid());
-		EmailSender mailero = new EmailSender();
 		if(f!=null){
 			if(c.getEmail()!=null){
 				servicio33.enviarEmail(c.getEmail(), f.getUuid(), re.getSession());
@@ -228,6 +232,20 @@ public class VentaController33 {
 		}
 		}else{
 			res.sendError(403);
+		}
+	}
+	
+	@RequestMapping(value = "/arreglar", method = RequestMethod.GET)
+	public void corrije(HttpServletRequest req, HttpServletResponse res){
+		int p= ventadao.pages();
+		for(int i=1; i<=p; i++){
+			List<Venta> lista= ventadao.todos(i);
+			for(Venta v:lista){
+				if(v.getFormaDePago().compareTo("Transferecia")==0){
+					v.setFormaDePago("Transferencia");
+					ventadao.guardar(v);
+				}
+			}
 		}
 	}
 	

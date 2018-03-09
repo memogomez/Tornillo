@@ -10,7 +10,7 @@ public class ReporteRenglon {
 	private String nombre;
 	private String medidas;
 	private String clave;
-	private int cantidad;
+	private float cantidad;
 	private float precioMostrador;
 	private float precioMayoreo;
 	private float precioCredito;
@@ -86,11 +86,11 @@ public class ReporteRenglon {
 		this.clave = clave;
 	}
 
-	public int getCantidad() {
+	public float getCantidad() {
 		return cantidad;
 	}
 
-	public void setCantidad(int cantidad) {
+	public void setCantidad(float cantidad) {
 		this.cantidad = cantidad;
 	}
 	

@@ -95,8 +95,8 @@
 
 		<!-- Development Driver -->
 <!-- 		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
-<!-- 		<property name="url" value="jdbc:mysql://192.168.100.11:3306/catalogos" /> -->
-<!-- 		<property name="username" value="felipe" /> -->
+<!-- 		<property name="url" value="jdbc:mysql://192.168.100.200:3306/catalogos" /> -->
+<!-- 		<property name="username" value="admin" /> -->
 <!-- 		<property name="password" value="123456" /> -->
 
 		<property name="validationQuery" value="SELECT 1" />

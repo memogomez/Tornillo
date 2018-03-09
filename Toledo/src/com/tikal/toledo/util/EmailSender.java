@@ -106,7 +106,7 @@ public class EmailSender {
 ////			
 //			msg.setText("correo de prueba");
 			
-			msg.setFrom(new InternetAddress("no.reply.fcon@gmail.com", "Tornillos"));
+			msg.setFrom(new InternetAddress("no.reply.fcon@gmail.com", "Facturación Electrónica"));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(emailReceptor, "Cliente"));
 			msg.setSubject("Factura "+factura.getUuid());
 //			msg.setText("P");

@@ -37,7 +37,7 @@ public class Producto {
 	
 	private int minimo;
 	
-	private int existencia;
+	private float existencia;
 	
 	private int tipo;
 	
@@ -93,11 +93,11 @@ public class Producto {
 		this.minimo = minimo;
 	}
 
-	public int getExistencia() {
+	public float getExistencia() {
 		return existencia;
 	}
 
-	public void setExistencia(int existencia) {
+	public void setExistencia(float existencia) {
 		this.existencia = existencia;
 	}
 

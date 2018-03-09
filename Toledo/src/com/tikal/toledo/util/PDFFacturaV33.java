@@ -391,17 +391,17 @@ public class PDFFacturaV33 {
 //			imgLogo = Image.getInstance(new URL(imagen.getImage()));
 //			imgLogo.setScaleToFitHeight(false);
 //			imgLogo.scaleToFit(125F, 37.25F);
-//			Chunk chunkLogo = new Chunk(imgLogo, 0, -25);
-//			celdaLogo.addElement(chunkLogo);
-			imgLogo = Image.getInstance("images/Construrama.png");
+			
+			imgLogo = Image.getInstance("images/Construrama.jpeg");
 			imgLogo.setScaleToFitHeight(false);
 			imgLogo.scaleToFit(125F, 37.25F);
-		} //else {
-//			imgLogo = Image.getInstance("images/Logo-Tikal.png");
-//			imgLogo.setScaleToFitHeight(false);
-//			imgLogo.scaleToFit(125F, 37.25F);
-//		}
-		
+		}else {
+			imgLogo = Image.getInstance("images/Construrama.jpeg");
+			imgLogo.setScaleToFitHeight(false);
+			imgLogo.scaleToFit(125F, 37.25F);
+		}
+		Chunk chunkLogo = new Chunk(imgLogo, 0, -25);
+		celdaLogo.addElement(chunkLogo);
 		subTablaLogo.addCell(celdaLogo);
 		PdfPCell celdaTablaLogo = new PdfPCell();
 		celdaTablaLogo.addElement(subTablaLogo);

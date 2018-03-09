@@ -15,7 +15,7 @@ public class Lote {
 	@Index
 	private Long idProducto;
 	
-	private int cantidad;
+	private float cantidad;
 	
 	@Index
 	private Date fecha;
@@ -42,11 +42,11 @@ public class Lote {
 		this.idProducto = idProducto;
 	}
 
-	public int getCantidad() {
+	public float getCantidad() {
 		return cantidad;
 	}
 
-	public void setCantidad(int cantidad) {
+	public void setCantidad(float cantidad) {
 		this.cantidad = cantidad;
 	}
 

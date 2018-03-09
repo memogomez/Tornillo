@@ -33,7 +33,7 @@ public class TornilloDAOImp implements TornilloDAO {
 		String query = "INSERT INTO t_tornillo (descuento, existencia, ganancia, impuesto, marca, maximo, minimo, mayoreo, medidas, nombre, precioCredito, PrecioMayoreo, precioMostrador, precioReferencia, proveedor, tipo, clave) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement statementCreate = conn.c.prepareStatement(query)) {
 			statementCreate.setFloat(1, t.getDescuento());
-			statementCreate.setInt(2, t.getExistencia());
+			statementCreate.setFloat(2, t.getExistencia());
 			statementCreate.setFloat(3, t.getGanancia());
 			statementCreate.setFloat(4, t.getImpuesto());
 			String marca=t.getMarca();
@@ -304,7 +304,7 @@ public class TornilloDAOImp implements TornilloDAO {
 		String query = "UPDATE t_tornillo set descuento= ?,existencia =?,ganancia=?,impuesto=?,marca=?,maximo=?,minimo=?,mayoreo=?,medidas=?,nombre=?,precioCredito=?,precioMayoreo=?,precioMostrador=?,precioReferencia=?,proveedor=?,clave=? WHERE t_tornillo.id="+t.getId();
 		try (PreparedStatement statementCreate = conn.c.prepareStatement(query)) {
 			statementCreate.setFloat(1, t.getDescuento());
-			statementCreate.setInt(2, t.getExistencia());
+			statementCreate.setFloat(2, t.getExistencia());
 			statementCreate.setFloat(3, t.getGanancia());
 			statementCreate.setFloat(4, t.getImpuesto());
 			String marca=t.getMarca();

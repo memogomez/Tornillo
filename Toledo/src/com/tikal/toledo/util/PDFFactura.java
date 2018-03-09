@@ -2,6 +2,7 @@ package com.tikal.toledo.util;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;				
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.tikal.cacao.model.Imagen;							
 import com.tikal.toledo.factura.Estatus;
 import com.tikal.toledo.model.Venta;
 import com.tikal.toledo.sat.cfd.Comprobante;
@@ -45,24 +47,26 @@ public class PDFFactura {
 	private NumberFormat formatter = NumberFormat.getCurrencyInstance();
 	private MyFooter pieDePagina = new MyFooter(null);
 
-	private Font fontTituloSellos = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.BOLD);
-	private Font fontContenidoSellos = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.NORMAL);
-	private Font font2 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.BOLD);
-	private Font font3 = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
-	private Font fontSerieYFolio = new Font(Font.FontFamily.HELVETICA, 9.5F, Font.BOLD);
-	private Font fontHead = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL);
+	private Font fontTituloSellos = new Font(Font.FontFamily.HELVETICA, 6.5F, Font.BOLD);
+	private Font fontContenidoSellos = new Font(Font.FontFamily.HELVETICA, 6.5F, Font.NORMAL);
+	private Font font1 = new Font(Font.FontFamily.HELVETICA, 7F, Font.BOLD);
+	private Font font2 = new Font(Font.FontFamily.HELVETICA, 6.5F, Font.BOLD);
+	private Font font3 = new Font(Font.FontFamily.HELVETICA, 6.5F, Font.NORMAL);
+	private Font fontSerieYFolio = new Font(Font.FontFamily.HELVETICA, 8.5F, Font.BOLD);
+	private Font fontHead = new Font(Font.FontFamily.HELVETICA, 7.5F, Font.NORMAL);
 	// fontHead.setColor(BaseColor.WHITE);
 
 	private PdfPCell emptyCell = new PdfPCell();
 	// emptyCell.setBorderWidth(0);
 
 	public PDFFactura() {
-		fontHead.setColor(BaseColor.WHITE);
+		fontHead.setColor(BaseColor.BLUE);
 		emptyCell.setBorderWidth(0);
 
 		this.document = new Document();
 		this.document.setPageSize(PageSize.A4);
-		this.document.setMargins(40, 40, 40, 40); // Left Right Top Bottom
+		this.document.setPageSize(PageSize.LETTER.rotate());
+		this.document.setMargins(35, 35, 35, 35); // Left Right Top Bottom
 	}
 
 	public Document getDocument() {
@@ -90,7 +94,7 @@ public class PDFFactura {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public Document construirPdf(Comprobante comprobante, String selloDigital, byte[] bytesQRCode, Estatus estatus, int tipo)
+	public Document construirPdf(Comprobante comprobante, String selloDigital, byte[] bytesQRCode, Estatus estatus, int tipo, Imagen imagen)
 			throws DocumentException, MalformedURLException, IOException {
 		TimbreFiscalDigital tfd = null;
 		if(tipo==1){
@@ -106,7 +110,7 @@ public class PDFFactura {
 			}
 		}
 		}
-		construirBoceto(comprobante, tfd,tipo, estatus);
+		construirBoceto(comprobante, tfd,tipo, estatus, imagen);
 
 		// si no hay timbre lanzar una excepción
 		/*
@@ -428,9 +432,9 @@ public class PDFFactura {
 		return document;
 	}
 
-	public Document construirPdf(Comprobante comprobante, Estatus estatus) throws DocumentException, MalformedURLException, IOException {
+	public Document construirPdf(Comprobante comprobante, Estatus estatus, Imagen imagen) throws DocumentException, MalformedURLException, IOException {
 
-		construirBoceto(comprobante, null,0, estatus);
+		construirBoceto(comprobante, null,0, estatus, imagen);
 
 		/*
 		 * Font fontContenidoSellos = new Font(Font.FontFamily.HELVETICA, 7.5F,
@@ -516,7 +520,7 @@ public class PDFFactura {
 		 * document.add(tablaReceptorYHoraCert);
 		 * 
 		 * // DIRECCIÓN Y OTROS DATOS FISCALES PdfPTable tablaDirYOtrosDatosFis
-		 * = new PdfPTable(2); tablaDirYOtrosDatosFis.setWidthPercentage(100);
+		 * += new PdfPTable(2); tablaDirYOtrosDatosFis.setWidthPercentage(100);
 		 * tablaDirYOtrosDatosFis.setWidths(new float[] { 40, 60 });
 		 * 
 		 * agregarCeldaConFondo("Dirección", fontHead, tablaDirYOtrosDatosFis,
@@ -749,7 +753,7 @@ public class PDFFactura {
 	}
 
 	public Document construirPdfCancelado(Comprobante comprobante, String selloDigital, byte[] bytesQRCode,
-			String selloCancelacion, Date fechaCancelacion)
+			String selloCancelacion, Date fechaCancelacion,Imagen imagen)
 			throws MalformedURLException, DocumentException, IOException {
 		// this.document = construirPdf(comprobante, selloDigital, bytesQRCode,
 		// imagen, estatus);
@@ -763,7 +767,7 @@ public class PDFFactura {
 			}
 		}
 
-		construirBoceto(comprobante, tfd,0, Estatus.CANCELADO);
+		construirBoceto(comprobante, tfd,0, Estatus.CANCELADO, imagen);
 		construirTimbre(selloDigital, bytesQRCode, tfd);
 
 		/*
@@ -801,9 +805,9 @@ public class PDFFactura {
 	private void agregarCeldaConFondo(String contenidoCelda, Font fuente, PdfPTable tabla, boolean centrado) {
 		PdfPCell celda = new PdfPCell(new Paragraph(contenidoCelda, fuente));
 		celda.setBorderWidth(1);
-		celda.setBorderColor(BaseColor.GRAY);
+		celda.setBorderColor(new BaseColor(255,117,020));
 		celda.setPadding(5);
-		celda.setBackgroundColor(BaseColor.GRAY);
+		celda.setBackgroundColor(new BaseColor(255,117,020));
 
 		if (centrado)
 			celda.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -929,95 +933,61 @@ public class PDFFactura {
 		ColumnText.showTextAligned(fondo, Element.ALIGN_CENTER, frase, 297, 650, 45);
 		fondo.restoreState();
 	}
+	
+	public void crearNotaDoble(PdfPTable tablaPrincipal, boolean borde,float col1, float col2, float col3, PdfPTable tablaColumna) throws DocumentException{
+		tablaPrincipal.setWidthPercentage(100);
+		tablaPrincipal.setWidths(new float[]{col1,col2,col3});
+		PdfPCell celdaPrincipal = new PdfPCell();
+		if (borde == true){
+			celdaPrincipal.setBorderColor(BaseColor.GRAY);
+			celdaPrincipal.setBorderWidth(1);
+		}else{
+			celdaPrincipal.setBorder(PdfPCell.NO_BORDER);
+		}
+		
+		celdaPrincipal.addElement(tablaColumna);
+		tablaPrincipal.addCell(celdaPrincipal);
+		emptyCell.setBackgroundColor(BaseColor.WHITE);
+		tablaPrincipal.addCell(emptyCell);
+		tablaPrincipal.addCell(celdaPrincipal);
+		
+	}
 
-	private void construirBoceto(Comprobante comprobante, TimbreFiscalDigital tfd,int encabezado, Estatus estatus)
+	private void construirBoceto(Comprobante comprobante, TimbreFiscalDigital tfd,int encabezado, Estatus estatus, Imagen imagen)
 			throws DocumentException, MalformedURLException, IOException {
-		/*
-		 * Font fontTituloSellos = new Font(Font.FontFamily.HELVETICA, 7.5F,
-		 * Font.BOLD); Font fontContenidoSellos = new
-		 * Font(Font.FontFamily.HELVETICA, 7.5F, Font.NORMAL); Font font2 = new
-		 * Font(Font.FontFamily.HELVETICA, 8.5F, Font.BOLD); Font font3 = new
-		 * Font(Font.FontFamily.HELVETICA, 8.5F, Font.NORMAL); Font
-		 * fontSerieYFolio = new Font(Font.FontFamily.HELVETICA, 9.5F,
-		 * Font.BOLD); Font fontHead = new Font(Font.FontFamily.HELVETICA, 8.5F,
-		 * Font.NORMAL); fontHead.setColor(BaseColor.WHITE);
-		 * 
-		 * PdfPCell emptyCell = new PdfPCell(); emptyCell.setBorderWidth(0);
-		 */
 
-		// BaseColor gris = new BaseColor(153, 153, 102);
-		// BaseColor otroGris = new BaseColor(235, 235, 224);
-
-		PdfPTable tablaEncabezado = new PdfPTable(3);
+		// Encabezado
+		PdfPTable tablaEncabezado = new PdfPTable(2);
 		tablaEncabezado.setWidthPercentage(100);
-		tablaEncabezado.setWidths(new float[] { 30, 40, 30 });
-
-		// ENCABEZADO DEL COMPROBANTE
+		tablaEncabezado.setWidths(new float[] { 70, 30 });
+		PdfPCell celdaTablaLogo = new PdfPCell();
+		PdfPCell celdaFechaHora = new PdfPCell();
+		
+		// celda Logo y fecha del encabezado
 		PdfPTable subTablaLogo = new PdfPTable(1);
 		PdfPCell celdaLogo = new PdfPCell();
 		celdaLogo.setBorder(PdfPCell.NO_BORDER);
-		// if (imagen != null) {
-		// Image imgLogo = Image.getInstance(new URL(imagen.getImage()));
-		// Chunk chunkLogo = new Chunk(imgLogo, 0, -35);
-		// celdaLogo.addElement(chunkLogo);
-		// }
+		Image imgLogo = null;
+		 if (imagen != null) {
+//			 Image imgLogo = Image.getInstance(new URL(imagen.getImage()));
+//			 Chunk chunkLogo = new Chunk(imgLogo, 0, -35);
+//			 celdaLogo.addElement(chunkLogo);
+
+			imgLogo = Image.getInstance("images/Construrama.jpeg");
+			imgLogo.setScaleToFitHeight(false);
+			imgLogo.scaleToFit(115F, 37.25F);
+			Chunk chunkLogo = new Chunk(imgLogo, 10, -15);
+			celdaLogo.addElement(chunkLogo);
+		 }
 		subTablaLogo.addCell(celdaLogo);
-		PdfPCell celdaTablaLogo = new PdfPCell();
 		celdaTablaLogo.addElement(subTablaLogo);
 		celdaTablaLogo.disableBorderSide(PdfPCell.RIGHT);
-		celdaTablaLogo.setBorderColor(BaseColor.GRAY);
+		celdaTablaLogo.setBorder(PdfPCell.NO_BORDER);
 		tablaEncabezado.addCell(celdaTablaLogo);
-
-		PdfPCell celdaDatosEmisor = new PdfPCell();
-		Phrase fraseDatosEmisor = new Phrase();
-		Chunk chunkNombreEmisor = new Chunk(comprobante.getEmisor().getNombre(), font2);
-		Chunk chunkRFCEmisor = new Chunk("R.F.C. ".concat(comprobante.getEmisor().getRfc()), font3);
-		String dom = "";
-		if (comprobante.getEmisor().getDomicilioFiscal() != null) {
-			dom = comprobante.getEmisor().getDomicilioFiscal().toString();
-		}
-		Chunk chunkDomicilioEmisor = new Chunk(dom, font3);
-		fraseDatosEmisor.add(chunkNombreEmisor);
-		fraseDatosEmisor.add(Chunk.NEWLINE);
-		fraseDatosEmisor.add(chunkRFCEmisor);
-		fraseDatosEmisor.add(Chunk.NEWLINE);
-		fraseDatosEmisor.add(chunkDomicilioEmisor);
-		celdaDatosEmisor.setBorderWidth(1);
-		celdaDatosEmisor.disableBorderSide(PdfPCell.LEFT);
-		celdaDatosEmisor.addElement(fraseDatosEmisor);
-		celdaDatosEmisor.setHorizontalAlignment(Element.ALIGN_CENTER);
-		celdaDatosEmisor.setBorderColor(BaseColor.GRAY);
-		tablaEncabezado.addCell(celdaDatosEmisor);
-
-		PdfPCell celdaSubTablaEncabezado = new PdfPCell();
-		celdaSubTablaEncabezado.setBorderWidth(1);
-		PdfPTable subTablaEncabezado = new PdfPTable(1);
-		if(estatus.equals(Estatus.CANCELADO)|| estatus.equals(Estatus.TIMBRADO)){
-		agregarCeldaSinBorde("FACTURA", fontSerieYFolio, subTablaEncabezado, true);
-		}else{
-			agregarCeldaSinBorde("NOTA", fontSerieYFolio, subTablaEncabezado, true);
-		}
-		agregarCeldaSinBorde(getFolioYSerie(comprobante), fontSerieYFolio, subTablaEncabezado, true);
-		celdaSubTablaEncabezado.addElement(subTablaEncabezado);
-		celdaSubTablaEncabezado.setBorderColor(BaseColor.GRAY);
-		tablaEncabezado.addCell(celdaSubTablaEncabezado);
-		document.add(tablaEncabezado);
-
-		// TODO continuar
-		// INFORMACIÒN DEL RECEPTOR, LUGAR Y FECHA DE EMISIÓN / HORA DE
-		// CERTIFICACIÓN
-		PdfPTable tablaReceptorYHoraCert = new PdfPTable(3);
-		tablaReceptorYHoraCert.setWidthPercentage(100);
-		tablaReceptorYHoraCert.setWidths(new float[] { 40, 15, 45 });
-
-		agregarCeldaConFondo("Nombre o razón social", fontHead, tablaReceptorYHoraCert, false);
-		agregarCeldaConFondo("R.F.C.", fontHead, tablaReceptorYHoraCert, false);
-		agregarCeldaConFondo("Lugar y fecha de emisión / hora de certificación", fontHead, tablaReceptorYHoraCert,
-				false);
-
-		agregarCelda(comprobante.getReceptor().getNombre(), font3, tablaReceptorYHoraCert, false);
-		agregarCelda(comprobante.getReceptor().getRfc(), font3, tablaReceptorYHoraCert, false);
-
+		
+		PdfPTable subTablaFecha = new PdfPTable(1);
+		PdfPCell celdaSubTablaFecha = new PdfPCell();
+		celdaSubTablaFecha.setBorder(PdfPCell.NO_BORDER);
 		String lugarFechaEmiHoraCert = "";
 		if(encabezado==1){
 		 if (estatus.equals(Estatus.TIMBRADO) ||
@@ -1029,53 +999,76 @@ public class PDFFactura {
 		}else{
 			lugarFechaEmiHoraCert = comprobante.getLugarExpedicion().concat(" a ").concat(comprobante.getFecha().toString());
 		}
-		agregarCelda(lugarFechaEmiHoraCert, font3, tablaReceptorYHoraCert, false);
+		agregarCeldaSinBorde(lugarFechaEmiHoraCert, font3, subTablaFecha, true);
+		agregarCeldaSinBorde(" ", font1, subTablaFecha, true);
+		
+		celdaSubTablaFecha.addElement(subTablaFecha);
+		celdaSubTablaFecha.setBorderColor(BaseColor.GRAY);
+		tablaEncabezado.addCell(celdaSubTablaFecha);
+		
+		
+		//celda datos y no. de nota del encabezado
+		PdfPCell celdaDatosEmisor = new PdfPCell();
+		celdaDatosEmisor.setBorder(PdfPCell.NO_BORDER);
+		Phrase fraseDatosEmisor = new Phrase();
+		font1.setColor(BaseColor.BLUE);
+		String dom = "";
+		if (comprobante.getEmisor().getDomicilioFiscal() != null) {
+			dom = comprobante.getEmisor().getDomicilioFiscal().toString();
+		}
 
-		document.add(tablaReceptorYHoraCert);
+		 agregarChunkYNuevaLinea("CONSTRURAMA METEPEC", font1, fraseDatosEmisor);
+		 agregarChunkYNuevaLinea(comprobante.getEmisor().getNombre(), font2, fraseDatosEmisor);
+		 agregarChunkYNuevaLinea("R.F.C. ".concat(comprobante.getEmisor().getRfc()),font3, fraseDatosEmisor);
+		 agregarChunkYNuevaLinea(dom, font3, fraseDatosEmisor);
+		 agregarChunkYNuevaLinea("Tel: (722) 271 0404", font3, fraseDatosEmisor);
+		 agregarChunkYNuevaLinea("construramachm@gmail.com", font3, fraseDatosEmisor);
+		
+		 celdaDatosEmisor.setMinimumHeight(45);
+		 celdaDatosEmisor.setPhrase(fraseDatosEmisor);
+		celdaDatosEmisor.setHorizontalAlignment(Element.ALIGN_LEFT);
+		tablaEncabezado.addCell(celdaDatosEmisor);
 
-		// DIRECCIÓN Y OTROS DATOS FISCALES
+		PdfPTable subTablaNota = new PdfPTable(1);
+		PdfPCell celdaNota = new PdfPCell();
+		celdaNota.setBorder(PdfPCell.NO_BORDER);
+		if(estatus.equals(Estatus.CANCELADO)|| estatus.equals(Estatus.TIMBRADO)){
+			agregarCeldaSinBorde("FACTURA", fontSerieYFolio, subTablaNota, true);
+		}else{
+			agregarCeldaSinBorde("NOTA", fontSerieYFolio, subTablaNota, true);
+		}
+		agregarCeldaSinBorde(getFolioYSerie(comprobante), fontSerieYFolio, subTablaNota, true);
+		
+		celdaNota.addElement(subTablaNota);
+		//celdaNota.setBorderColor(BaseColor.GRAY);
+		tablaEncabezado.addCell(celdaNota);
+		
+		PdfPTable tablaPrincipalEncabezado = new PdfPTable(3);
+		crearNotaDoble(tablaPrincipalEncabezado,true,48,4,48,tablaEncabezado);
+		document.add(tablaPrincipalEncabezado);
+
+		// DIRECCIÓN 
 		PdfPTable tablaDirYOtrosDatosFis = new PdfPTable(2);
 		tablaDirYOtrosDatosFis.setWidthPercentage(100);
-		tablaDirYOtrosDatosFis.setWidths(new float[] { 40, 60 });
+		tablaDirYOtrosDatosFis.setWidths(new float[] { 25, 75 });
 
 		agregarCeldaConFondo("Dirección", fontHead, tablaDirYOtrosDatosFis, false);
-		agregarCeldaConFondo("Otros datos fiscales", fontHead, tablaDirYOtrosDatosFis, false);
 
 		String domr = "";
 		if (comprobante.getReceptor().getDomicilio() != null) {
 			domr = comprobante.getReceptor().getDomicilio().toString();
 		}
-		agregarCelda(domr, font3, tablaDirYOtrosDatosFis, false);
-
-		Phrase fraseDatosFiscales = new Phrase();
-		// if (estatus.equals(Estatus.TIMBRADO)) { //TODO agregar caso de
-		// cancelado
-		if (tfd != null) {
-			agregarChunkYNuevaLinea("Folio fiscal: ".concat(tfd.getUUID()), font3, fraseDatosFiscales);
-			agregarChunkYNuevaLinea("Serie del certificado de emisor:".concat(comprobante.getNoCertificado()), font3,
-					fraseDatosFiscales);
-			agregarChunkYNuevaLinea("Serie del certificado del SAT:".concat(tfd.getNoCertificadoSAT()), font3,
-					fraseDatosFiscales);
-			// }
-		}
-		if(comprobante.getEmisor().getRegimenFiscal().get(0).getRegimen()!=null){
-		agregarChunkYNuevaLinea(
-				"Régimen fiscal: ".concat(comprobante.getEmisor().getRegimenFiscal().get(0).getRegimen()), font3,
-				fraseDatosFiscales);
+		agregarCeldaSinBorde(domr, font3, tablaDirYOtrosDatosFis, false);
 		
-		PdfPCell celdaDatosFiscales = new PdfPCell();
-		celdaDatosFiscales.setMinimumHeight(45);
-		celdaDatosFiscales.setPhrase(fraseDatosFiscales);
-		celdaDatosFiscales.setBorderColor(BaseColor.GRAY);
-		tablaDirYOtrosDatosFis.addCell(celdaDatosFiscales);
-		document.add(tablaDirYOtrosDatosFis);
-		}
+		PdfPTable tablaPrincipalDireccion = new PdfPTable(3);
+		crearNotaDoble(tablaPrincipalDireccion,true,48,4,48,tablaDirYOtrosDatosFis);
+		document.add(tablaPrincipalDireccion);
+		
+		
 		// TABLA CONCEPTOS
-		PdfPTable tablaConceptos = new PdfPTable(6);
+		PdfPTable tablaConceptos = new PdfPTable(5);
 		tablaConceptos.setWidthPercentage(100);
-		tablaConceptos.setWidths(new float[] { 10, 10, 10, 40, 15, 15 });
-
-		agregarCeldaConFondo("Clave", fontHead, tablaConceptos, true);
+		tablaConceptos.setWidths(new float[] { 12, 12, 40, 13, 13 });
 
 		agregarCeldaConFondo("Cantidad", fontHead, tablaConceptos, true);
 
@@ -1090,7 +1083,7 @@ public class PDFFactura {
 		if (comprobante.getConceptos() != null) {
 			List<Concepto> listaConceptos = comprobante.getConceptos().getConcepto();
 			for (Concepto concepto : listaConceptos) {
-				agregarCelda(concepto.getNoIdentificacion(), font3, tablaConceptos, true);
+				//agregarCelda(concepto.getNoIdentificacion(), font3, tablaConceptos, true);
 				agregarCelda(concepto.getCantidad().toString(), font3, tablaConceptos, true);
 				agregarCelda(concepto.getUnidad(), font3, tablaConceptos, true);
 				agregarCelda(concepto.getDescripcion(), font3, tablaConceptos, false);
@@ -1098,10 +1091,14 @@ public class PDFFactura {
 				agregarCelda(formatter.format(concepto.getImporte().doubleValue()), font3, tablaConceptos, true);
 			}
 		}
-		tablaConceptos.setSpacingBefore(5);
-		tablaConceptos.setSpacingAfter(5);
-		document.add(tablaConceptos);
-
+		tablaConceptos.setSpacingBefore(4);
+		tablaConceptos.setSpacingAfter(3);
+		
+		PdfPTable tablaPrincipalConceptos = new PdfPTable(3);
+		crearNotaDoble(tablaPrincipalConceptos,false,48,4,48,tablaConceptos);
+		document.add(tablaPrincipalConceptos);
+		
+		
 		// IMPORTE CON LETRA
 		PdfPTable tablaImporteConLetra = new PdfPTable(3);
 		tablaImporteConLetra.setWidthPercentage(100);
@@ -1118,9 +1115,13 @@ public class PDFFactura {
 		celdaImporteConLetra.setPhrase(fraseImporteConLetra);
 		tablaImporteConLetra.addCell(celdaImporteConLetra);
 
-		emptyCell.setBackgroundColor(BaseColor.GRAY);
+		emptyCell.setBackgroundColor(new BaseColor(255,117,020));
 		tablaImporteConLetra.addCell(emptyCell);
-		document.add(tablaImporteConLetra);
+		
+		PdfPTable tablaPrincipalImporte = new PdfPTable(3);
+		crearNotaDoble(tablaPrincipalImporte,false,48,4,48,tablaImporteConLetra);
+		document.add(tablaPrincipalImporte);
+
 
 		// LEYENDA Y, SUBTOTAL, IVA Y TOTAL
 		PdfPTable tablaLeyendaTotal = new PdfPTable(3);
@@ -1129,7 +1130,7 @@ public class PDFFactura {
 
 		Phrase fraseLeyenda = new Phrase();
 		// if (!estatus.equals(Estatus.GENERADO)) {
-		Chunk chunkLeyenda = new Chunk("Este documento es una representación impresa de un CFDI", fontTituloSellos);
+		Chunk chunkLeyenda = new Chunk("Todos los pedidos se entregan a pie de carro, cualquier maniobra adicional se cotiza extra.", fontTituloSellos);
 		// fraseLeyenda.add(Chunk.NEWLINE);
 		fraseLeyenda.add(chunkLeyenda);
 		// }
@@ -1200,7 +1201,7 @@ public class PDFFactura {
 		tablaLeyendaTotal.addCell(celdaTablaEtqTotal);
 		PdfPTable subTablaValoresTotal = new PdfPTable(1);
 		if(comprobante.getSubTotal()!=null){
-		agregarCelda(formatter.format(comprobante.getSubTotal().doubleValue()), font3, subTablaValoresTotal, true);
+			agregarCelda(formatter.format(comprobante.getSubTotal().doubleValue()), font3, subTablaValoresTotal, true);
 		}
 		if (existeIVATraslado)
 			agregarCelda(formatter.format(importe), font3, subTablaValoresTotal, true);
@@ -1211,8 +1212,11 @@ public class PDFFactura {
 		PdfPCell celdaTablaValoresTotal = new PdfPCell(subTablaValoresTotal);
 		celdaTablaValoresTotal.setHorizontalAlignment(Element.ALIGN_CENTER);
 		tablaLeyendaTotal.addCell(celdaTablaValoresTotal);
-
-		document.add(tablaLeyendaTotal);
+		
+		PdfPTable tablaPrincipalLeyendaTotal = new PdfPTable(3);
+		crearNotaDoble(tablaPrincipalLeyendaTotal,false,48,4,48,tablaLeyendaTotal);
+		document.add(tablaPrincipalLeyendaTotal);
+		
 	}
 
 	public void construirTimbre(String selloDigital, byte[] bytesQRCode, TimbreFiscalDigital tfd)

@@ -54,7 +54,7 @@ public class ComprobanteVentaFactory {
 	public Comprobante generarNota(Venta venta, Cliente cliente, DatosEmisor emisor) {
 		Comprobante comprobante = new Comprobante();
 		comprobante.setVersion("3.2");
-		comprobante.setFecha(Util.getXMLDate(new Date(), FormatoFecha.COMPROBANTE));
+		comprobante.setFecha(Util.getXMLDate(venta.getFecha(), FormatoFecha.COMPROBANTE));
 		comprobante.setMoneda("MXN");
 		comprobante.setLugarExpedicion("Toluca, México"); //TODO agregar ciudad
 		comprobante.setTipoDeComprobante("");
@@ -100,10 +100,10 @@ public class ComprobanteVentaFactory {
 		double importeTotalIVA = 0;
 		for (Detalle detalle : detalleVenta) {
 			Concepto concepto = new Concepto();
-			int cantidad = detalle.getCantidad();
+			double cantidad = detalle.getCantidad();
 			concepto.setNoIdentificacion( Long.toString( detalle.getIdProducto() ) );
-			concepto.setCantidad( BigDecimal.valueOf( (long)cantidad ) );
-			concepto.setUnidad("PZA");
+			concepto.setCantidad( BigDecimal.valueOf( cantidad ) );
+			concepto.setUnidad(detalle.getUnidad());
 			concepto.setDescripcion(detalle.getDescripcion());
 			
 			double valorUnitarioSinIVA = detalle.getPrecioUnitario() / 1.16;

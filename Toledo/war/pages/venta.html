@@ -109,17 +109,22 @@
 					</tbody>
 				</table>
 				<label ng_hide="MetodoPago">Metodo de Pago:</label>
-					<select class="pago col-md-offset-4 "
+					<select class="pago"
 						ng-model="venta.formaDePago" ng_hide="MetodoPago">
 						<option>Tarjeta de Cr&eacute;dito</option>
 						<option>Tarjeta de D&eacute;bito</option>
 						<option>Efectivo</option>
-						<option>Transferecia</option>
+						<option>Transferencia</option>
 						<option>Cheque</option>
 						<option>Cr&eacute;dito</option>						
 					</select><br>
 				
-				
+					<label ng_hide="MetodoPago">Forma de Pago:</label>
+					<select class="pago"
+						ng-model="venta.metodoDePago" ng_hide="MetodoPago">
+						<option value="PUE">Pago en una sola exhibici&oacute;n</option>
+						<option value="PPD">Pago en parcialidades o diferido</option>
+					</select><br>
 				<button class="btn btn-small" ng-click="guardarVenta()">Guardar</button>
 			</div>
 		</div>

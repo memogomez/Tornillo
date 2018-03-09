@@ -12,5 +12,9 @@ public interface ClienteDAO {
 
 	public List<Cliente> buscar(String search);
 	
+	public List<Cliente> todos(int page);
+	
 	public List<Cliente> todos();
+	
+	public int pages();
 }

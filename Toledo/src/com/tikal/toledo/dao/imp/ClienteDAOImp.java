@@ -34,8 +34,20 @@ public class ClienteDAOImp implements ClienteDAO{
 	}
 
 	@Override
+	public List<Cliente> todos(int page) {
+		return ofy().load().type(Cliente.class).offset((page-1)*25).limit(25).list();
+	}
+
+	@Override
+	public int pages() {
+		int total= ofy().load().type(Cliente.class).count();
+		return ((total-1)/25)+1;
+	}
+
+	@Override
 	public List<Cliente> todos() {
-		return ofy().load().type(Cliente.class).limit(50).list();
+		// TODO Auto-generated method stub
+		return ofy().load().type(Cliente.class).list();
 	}
 
 }

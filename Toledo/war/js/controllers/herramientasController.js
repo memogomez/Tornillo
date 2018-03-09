@@ -102,7 +102,7 @@ app.controller("herramientasController",[
 	$scope.llenarPags=function(){
 		var inicio=0;
 		if($scope.paginaActual>3){
-			inicio=$scope.paginaActual;
+			inicio=$scope.paginaActual-3;
 		}
 		var fin = inicio+5;
 		if(fin>$scope.maxPage){

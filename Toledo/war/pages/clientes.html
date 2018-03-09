@@ -5,7 +5,16 @@
 			<div class="col-lg-12">
 				<h1 class="page-header">Clientes</h1>
 			</div>
-			<!-- /.col-lg-12 -->
+			<div class="col-md-12">
+				<div class="form-group col-md-6">
+					<label>Buscar:</label> <input type="text" ng-model="searchText" />
+				</div>
+				<button type="submit" class="btn btn-primary" ng-click="buscar()">
+      		  <span class="glyphicon glyphicon-search"></span>
+      		</button>
+      		<button class="btn btn-primary" data-toggle="tooltip" title="Mostrar Todos" ng-click="clientesPage(1)">
+      		  <span class="glyphicon glyphicon-eye-open"></span></button>
+			</div>
 		</div>
 		<!-- /.row -->
 		<div class="row">
@@ -25,23 +34,28 @@
 									<th>Direccion</th>
 									<th>Telefono</th>
 									<th>Maximo Credito</th>
-									<th>Acciones</th>									
+									<th>Acciones</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="cliente in clientes" class="odd gradeX">
+								<tr ng-repeat="cliente in clientes"
+									" class="odd gradeX">
 									<td>{{cliente.id}}</td>
 									<td>{{cliente.nombre}}</td>
 									<td>{{cliente.rfc}}</td>
-									<td>{{cliente.domicilio.calle}} {{cliente.domicilio.colonia}} {{cliente.domicilio.numero}}</td>
+									<td>{{cliente.domicilio.calle}}
+										{{cliente.domicilio.colonia}} {{cliente.domicilio.numero}}</td>
 									<td>{{cliente.telefono}}</td>
 									<td>{{cliente.credito}}</td>
 									<td>
 
-										<button class="btn btn-success" data-toggle="tooltip" title="Editar" ng-click="editar(cliente.id)"><i class="glyphicon glyphicon-pencil"></i></button>
-										
+										<button class="btn btn-success" data-toggle="tooltip"
+											title="Editar" ng-click="editar(cliente.id)">
+											<i class="glyphicon glyphicon-pencil"></i>
+										</button>
+
 									</td>
-								</tr>								
+								</tr>
 							</tbody>
 						</table>
 						<button type="submit" value="enviar" class="btn btn-primary"
@@ -52,7 +66,20 @@
 				</div>
 				<!-- /.panel -->
 			</div>
+			<div>
+				<ul class="pagination .pagination-sm">
+					<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"><a
+						ng-click="clientesPage(abc)">{{abc}}</a></li>
+
+				</ul>
+			</div>
 			<!-- /.col-lg-12 -->
 		</div>
+		<!-- 		<div class="row"> -->
+		<!-- 			<ul class="pagination .pagination-sm"> -->
+		<!-- 				<li ng-repeat="abc in paginas" id="{{'pag'+abc}}" -->
+		<!-- 					ng-click="cargarPagina(abc)"><a>{{abc}}</a></li> -->
+		<!-- 			</ul> -->
+		<!-- 		</div> -->
 	</div>
 </div>

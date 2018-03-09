@@ -49,9 +49,10 @@
 									<th>Acciones</th>
 								</tr>
 							</thead>
+							
 							<tbody>
 								<tr ng-repeat="venta in ventas" class="odd gradeX">
-									<td>{{venta.fecha}}</td>
+									<td>{{venta.fechaString}}</td>
 									<td>{{venta.cliente}}</td>
 									<td>{{venta.monto}}</td>
 									<td>{{venta.formaDePago}}</td>
@@ -91,9 +92,9 @@
 											href="ventas/descargaNota/{{venta.id}}" download="{{venta.folio+'.pdf'}}">
 											<i class="glyphicon glyphicon-print"></i>
 										</a>
-										<button class="btn btn-success" data-toggle="tooltip"
+										<button class="btn btn-success" data-toggle="modal"
 											ng-show="venta.estatus!='FACTURADO' && venta.estatus!='CANCELADO'" title="Facturar"
-											ng-click="facturar33(venta)">
+											data-target="#myModal3" ng-click="paraTimbrar(venta)">
 											<i class="glyphicon glyphicon-list-alt"></i>
 										</button> <a class="btn btn-danger" data-toggle="tooltip"
 										ng-show="venta.estatus=='FACTURADO' || venta.estatus=='CANCELADO'" title="Imprimir PDF"
@@ -122,7 +123,7 @@
 						<div>
 							<ul class="pagination .pagination-sm">
 								<li ng-repeat="abc in paginas" id="{{'pag'+abc}}"><a
-									ng-click="cargaPagina(abc)">{{abc}}</a></li>
+									ng-click="cargarPagina(abc)">{{abc}}</a></li>
 
 							</ul>
 						</div>
@@ -134,4 +135,57 @@
 			<!-- /.col-lg-12 -->
 		</div>
 	</div>
-</div ng-view>
+</div>
+
+
+<div class="modal fade" id="myModal3" role="dialog" tabindex='-1'>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group ">
+							<label for="example-text-input" class="col-2 col-form-label">Uso de CFDI:</label>
+							<div class="col-10">
+	<!-- 							<input class="form-control facInp" type="text" value="" -->
+	<!-- 								id="condPago" name="condPago" -->
+	<!-- 								ng-model="comprobante.receptor.usoCFDI.valor"> -->
+									<select class="form-control facInp"
+								ng-model="usoCFDI" ng-change="usoFDIhide()" required>
+									<option value="G01">G01-Adquisici&oacute;n de mercancias</option>
+									<option value="G02">G02-Devoluciones, descuentos o bonificaciones</option>
+									<option value="G03">G03-Gastos en general</option>
+									<option value="I01">I01-Construcciones</option>
+									<option value="I02">I02-Mobilario y equipo de oficina por inversiones</option>
+									<option value="I03">I03-Equipo de transporte</option>
+									<option value="I04">I04-Equipo de computo y accesorios</option>
+									<option value="I05">I05-Dados, troqueles, moldes, matrices y herramental</option>
+									<option value="I06">I06-Comunicaciones telef&oacute;nicas</option>
+									<option value="I07">I07-Comunicaciones satelitales</option>
+									<option value="I08">I08-Otra maquinaria y equipo</option>
+									<option value="D01" class="nomoral">D01-Honorarios m&eacute;dicos, dentales y gastos hospitalarios.</option>
+									<option value="D02" class="nomoral">D02-Gastos m&eacute;dicos por incapacidad o discapacidad</option>
+									<option value="D03" class="nomoral">D03-Gastos funerales.</option>
+									<option value="D04" class="nomoral">D04-Donativos.</option>
+									<option value="D05" class="nomoral">D05-Intereses reales efectivamente pagados por cr&eacute;ditos hipotecarios (casa habitaci&oacute;n).</option>
+									<option value="D06" class="nomoral">D06-Aportaciones voluntarias al SAR.</option>
+									<option value="D07" class="nomoral">D07-Primas por seguros de gastos m&eacute;dicos.</option>
+									<option value="D08" class="nomoral">D08-Gastos de transportaci&oacute;n escolar obligatoria.</option>
+									<option value="D09" class="nomoral">D09-Dep&oacute;sitos en cuentas para el ahorro, primas que tengan como base planes de pensiones.</option>
+									<option value="D10" class="nomoral">D10-Pagos por servicios educativos (colegiaturas)</option>
+									<option value="P01">P01-Por definir</option>								
+							</select>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+					<button class="btn2 btn-small btn-success" data-toggle="modal"
+							 type="button" data-target="#myModal3" ng-click="facturar33()">Timbrar</button>
+					</div>
+				</div>
+			</div>
+<!-- ng-click="facturar33(venta)" -->
+		</div>
+	</div>
+</div>
+

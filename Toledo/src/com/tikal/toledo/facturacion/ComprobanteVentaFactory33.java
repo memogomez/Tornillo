@@ -43,14 +43,17 @@ public class ComprobanteVentaFactory33 {
 	public Comprobante generarFactura(Venta venta, Cliente cliente, DatosEmisor emisor) {
 		Comprobante comprobante = new Comprobante();
 		comprobante.setVersion("3.3");
-		comprobante.setFecha(Util.getXMLDate(new Date(), FormatoFecha.COMPROBANTE));
+		comprobante.setFecha(Util.getXMLDateISR(new Date(), FormatoFecha.COMPROBANTE));
 		comprobante.setMoneda(new C_Moneda("MXN"));
 		comprobante.setLugarExpedicion(new C_CodigoPostal(emisor.getDomicilioFiscal().getCodigoPostal()));
 		comprobante.setTipoDeComprobante(new C_TipoDeComprobante("I"));
 		
 		comprobante.setFormaPago(new C_FormaDePago(this.getFormaPago(venta.getFormaDePago())));
-		comprobante.setMetodoPago(new C_MetodoDePago("PUE"));
-		
+		if(venta.getMetodoDePago()!=null){
+		comprobante.setMetodoPago(new C_MetodoDePago(venta.getMetodoDePago()));
+		}else{
+			comprobante.setMetodoPago(new C_MetodoDePago("PUE"));
+		}
 		
 		comprobante.setEmisor(construirEmisor(emisor));
 		comprobante.setReceptor(construirReceptor(cliente));
@@ -90,7 +93,17 @@ public class ComprobanteVentaFactory33 {
 		Emisor emisor = new Comprobante.Emisor();
 		emisor.setRfc(de.getRfc());
 		emisor.setNombre(de.getNombre());
-		emisor.setRegimenFiscal(new C_RegimenFiscal("601"));
+		switch(de.getRegimen()){
+			case "Personas Físicas con Actividades Empresariales y Profesionales":{
+				emisor.setRegimenFiscal(new C_RegimenFiscal("612"));
+				break;
+			}
+			default:{
+				emisor.setRegimenFiscal(new C_RegimenFiscal("601"));
+				break;
+			}
+		}
+		
 		
 		return emisor;
 	}
@@ -108,12 +121,13 @@ public class ComprobanteVentaFactory33 {
 	private void construirConceptos(List<Detalle> detalleVenta, Comprobante c) {
 		Conceptos conceptos = new Conceptos();
 		BigDecimal subtotal = new BigDecimal(0);
+		BigDecimal importeImpuesto= new BigDecimal(0);
 		double importeTotalIVA = 0;
 		for (Detalle detalle : detalleVenta) {
 			Concepto concepto = new Concepto();
-			int cantidad = detalle.getCantidad();
+			double cantidad = detalle.getCantidad();
 			concepto.setNoIdentificacion( Long.toString( detalle.getIdProducto() ) );
-			concepto.setCantidad( BigDecimal.valueOf( (long)cantidad ) );
+			concepto.setCantidad( BigDecimal.valueOf( (double)cantidad ) );
 			concepto.setUnidad(detalle.getUnidad());
 			concepto.setClaveUnidad(new C_ClaveUnidad(detalle.getClaveUnidad()));
 			concepto.setClaveProdServ(detalle.getClaveSat());
@@ -129,9 +143,9 @@ public class ComprobanteVentaFactory33 {
 			Comprobante.Conceptos.Concepto.Impuestos impuestos= new Comprobante.Conceptos.Concepto.Impuestos();
 			Comprobante.Conceptos.Concepto.Impuestos.Traslados traslados= new Comprobante.Conceptos.Concepto.Impuestos.Traslados();
 			Comprobante.Conceptos.Concepto.Impuestos.Traslados.Traslado traslado= new Comprobante.Conceptos.Concepto.Impuestos.Traslados.Traslado();
-			
+			BigDecimal impimp=new BigDecimal(importeIVA).setScale(2, RoundingMode.HALF_UP);
 			traslado.setBase(new BigDecimal(importe).setScale(2, RoundingMode.HALF_UP));
-			traslado.setImporte(new BigDecimal(importeIVA).setScale(2, RoundingMode.HALF_UP));
+			traslado.setImporte(impimp);
 			traslado.setTasaOCuota(new BigDecimal(0.16).setScale(2, RoundingMode.HALF_UP));
 			traslado.setTipoFactor(new C_TipoFactor("Tasa"));
 			traslado.setImpuesto(new C_Impuesto("002"));
@@ -141,12 +155,13 @@ public class ComprobanteVentaFactory33 {
 			
 			conceptos.getConcepto().add(concepto);
 			subtotal = subtotal.add(concepto.getImporte());
+			importeImpuesto=importeImpuesto.add(impimp);
 			importeTotalIVA += importeIVA;
 		}
 		
 		c.setSubTotal(subtotal);
 		c.setConceptos(conceptos);
-		c.setImpuestos(construirImuestos(BigDecimal.valueOf(importeTotalIVA)));
+		c.setImpuestos(construirImuestos(importeImpuesto));
 	}
 	
 	private Impuestos construirImuestos(BigDecimal importe) {

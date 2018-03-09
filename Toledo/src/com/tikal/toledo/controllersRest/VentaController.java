@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.tikal.cacao.dao.ImagenDAO;
 import com.tikal.cacao.factura.Estatus;
 import com.tikal.toledo.dao.AlertaDAO;
 import com.tikal.toledo.dao.ClienteDAO;
@@ -108,6 +109,9 @@ public class VentaController {
 	@Autowired
 	PerfilDAO perfildao;
 	
+	@Autowired
+	ImagenDAO imagendao;
+	
 	@PostConstruct
 	public void init() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
@@ -124,7 +128,7 @@ public class VentaController {
 			AsignadorDeCharset.asignar(re, rs);
 			Venta l= (Venta)JsonConvertidor.fromJson(json, Venta.class);
 			Calendar cal=Calendar.getInstance(TimeZone.getTimeZone("America/Mexico_City"));
-			cal.add(Calendar.HOUR, -5);
+//			cal.add(Calendar.HOUR_OF_DAY, -6);
 			l.setFecha(cal.getTime());
 			l.setCliente("Otro");
 			if(l.getIdCliente()!=0){
@@ -134,7 +138,7 @@ public class VentaController {
 			l.setEstatus("VENDIDO");
 			float monto=0;
 			for(Detalle d:l.getDetalles()){
-				float total= d.getCantidad()*d.getPrecioUnitario();
+				double total= d.getCantidad()*d.getPrecioUnitario();
 				if(total != d.getTotal()){
 					d.setPrecioUnitario(d.getTotal()/d.getCantidad());
 				}
@@ -356,7 +360,7 @@ public class VentaController {
 //				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
 //				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
 //			}else{
-				pdfFactura.construirPdf(cfdi, "", null, com.tikal.toledo.factura.Estatus.valueOf(venta.getEstatus()),0);
+				pdfFactura.construirPdf(cfdi, "", null, com.tikal.toledo.factura.Estatus.valueOf(venta.getEstatus()), 0, imagendao.get("AAA010101AAA"));
 //			}
 			pdfFactura.getDocument().close();
 			res.getOutputStream().flush();
@@ -372,41 +376,6 @@ public class VentaController {
 		}
 	}
 	
-	@RequestMapping(value = {"/pdfDescarga/{id}" }, method = RequestMethod.GET)
-	public void pdf(HttpServletRequest re, HttpServletResponse res, @PathVariable String id) throws IOException{
-		if(Util.verificarPermiso(re, usuariodao, perfildao, 1,3)){
-		res.setContentType("Application/PDF");
-		Factura factura=facturadao.consultar(id);
-		Comprobante cfdi = Util.unmarshallXML(factura.getCfdiXML());
-		try {
-			TimbreFiscalDigital timbre= (TimbreFiscalDigital)cfdi.getComplemento().getAny().get(0);
-			String uuid= timbre.getUUID();
-			PDFFactura pdfFactura = new PDFFactura();
-			PdfWriter writer = PdfWriter.getInstance(pdfFactura.getDocument(), res.getOutputStream());
-			pdfFactura.getDocument().open();
-			pdfFactura.getPieDePagina().setUuid(uuid);
-			
-			if (factura.getEstatus().equals(Estatus.CANCELADO)) {
-				pdfFactura.getPieDePagina().setFechaCancel(factura.getFechaCancelacion());
-				pdfFactura.getPieDePagina().setSelloCancel(factura.getSelloCancelacion());
-				pdfFactura.construirPdfCancelado(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),factura.getSelloCancelacion(),factura.getFechaCancelacion());
-				pdfFactura.crearMarcaDeAgua("CANCELADO", writer);
-			}else{
-				pdfFactura.construirPdf(cfdi, factura.getSelloDigital(), factura.getCodigoQR(),com.tikal.toledo.factura.Estatus.valueOf(factura.getEstatus().toString()),1);
-			}
-			pdfFactura.getDocument().close();
-			res.getOutputStream().flush();
-			res.getOutputStream().close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (DocumentException e) {
-			e.printStackTrace();
-		}
-		}else{
-			res.sendError(403);
-		}
-	}
 	
 	@RequestMapping(value = {"/sendmail" }, method = RequestMethod.POST,consumes= "application/json")
 	public void mail(HttpServletRequest re, HttpServletResponse res, @RequestBody String json) throws IOException, MessagingException, DocumentException{
@@ -507,14 +476,14 @@ public class VentaController {
 		for(Detalle d:detalles){
 			if(d.getTipo()==0){
 				Producto p= productodao.cargar(d.getIdProducto());
-				int restante= p.getExistencia()-d.getCantidad();
-				p.setExistencia(restante);
+				double restante= p.getExistencia()-d.getCantidad();
+				p.setExistencia((float)restante);
 				List<Lote> lista= lotedao.porProducto(p.getId());
-				int aux= d.getCantidad();
+				double aux= d.getCantidad();
 				
 				for(Lote l : lista){
 					if(aux< l.getCantidad()){
-						l.setCantidad(l.getCantidad()-aux);
+						l.setCantidad((float)l.getCantidad()-(float)aux);
 						break;
 					}else{
 						aux= aux-l.getCantidad();
@@ -543,14 +512,14 @@ public class VentaController {
 				}
 			}else{
 				Tornillo p= tornillodao.cargar(d.getIdProducto());
-				int restante= p.getExistencia()-d.getCantidad();
-				p.setExistencia(restante);
+				double restante= p.getExistencia()-d.getCantidad();
+				p.setExistencia((float)restante);
 				List<Lote> lista= lotedao.porProducto(p.getId());
-				int aux= d.getCantidad();
+				double aux= d.getCantidad();
 				
 				for(Lote l : lista){
 					if(aux< l.getCantidad()){
-						l.setCantidad(l.getCantidad()-aux);
+						l.setCantidad(l.getCantidad()- (float)aux);
 						break;
 					}else{
 						aux= aux-l.getCantidad();

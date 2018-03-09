@@ -7,7 +7,7 @@ import com.tikal.toledo.model.Lote;
 public class LoteVO {
 	private String nombre;
 	private Date fecha;
-	private int cantidad;
+	private float cantidad;
 	private float costo;
 	private String proveedor;
 	
@@ -33,7 +33,7 @@ public class LoteVO {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	public int getCantidad() {
+	public float getCantidad() {
 		return cantidad;
 	}
 	public void setCantidad(int cantidad) {

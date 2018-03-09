@@ -34,5 +34,6 @@ public class Register {
 		ObjectifyService.register(SerieVenta.class);
 		ObjectifyService.register(FacturaVTT.class);
 		ObjectifyService.register(Imagen.class);
+
 	}
 }
